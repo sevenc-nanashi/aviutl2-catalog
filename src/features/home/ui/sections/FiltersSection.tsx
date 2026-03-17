@@ -20,6 +20,7 @@ import {
 } from '@/layouts/app-shell/constants';
 import { cn } from '@/lib/cn';
 import { layout, state, surface } from '@/components/ui/_styles';
+import { isDesktop } from '@/lib/target';
 
 function renderInstallStatusIcon(status: FiltersSectionProps['installStatus'], tone: 'accent' | 'neutral' = 'neutral') {
   if (status === 'installed') {
@@ -131,47 +132,49 @@ export default function FiltersSection({
               <span className={cn('text-xs font-bold ml-1', neutralControlTextClass)}>件</span>
             </div>
 
-            <div className="relative">
-              <Button
-                onClick={onToggleInstallMenu}
-                variant={installButtonVariant}
-                size="actionSm"
-                className="whitespace-nowrap cursor-pointer"
-                type="button"
-              >
-                {renderInstallStatusIcon(installStatus, installStatus === 'installed' ? 'accent' : 'neutral')}
-                <span className={cn('text-sm font-medium', installButtonTextClass)}>{installButtonLabel}</span>
-                <ChevronDown size={14} />
-              </Button>
-              {isInstallMenuOpen ? (
-                <>
-                  <button
-                    type="button"
-                    aria-label="インストール状態メニューを閉じる"
-                    className="fixed inset-0 z-10"
-                    onClick={onCloseInstallMenu}
-                  />
-                  <div className={dropdownPanelClass}>
-                    {INSTALL_STATUS_OPTIONS.map((option) => (
-                      <button
-                        key={option.value}
-                        onClick={() => onSelectInstallStatus(option.value)}
-                        className={cn(
-                          dropdownItemBaseClass,
-                          installStatus === option.value ? dropdownItemSelectedClass : dropdownItemIdleClass,
-                        )}
-                        type="button"
-                      >
-                        <span className="flex items-center gap-2">
-                          {renderInstallStatusIcon(option.value)}
-                          <span>{option.label}</span>
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </>
-              ) : null}
-            </div>
+            {isDesktop && (
+              <div className="relative">
+                <Button
+                  onClick={onToggleInstallMenu}
+                  variant={installButtonVariant}
+                  size="actionSm"
+                  className="whitespace-nowrap cursor-pointer"
+                  type="button"
+                >
+                  {renderInstallStatusIcon(installStatus, installStatus === 'installed' ? 'accent' : 'neutral')}
+                  <span className={cn('text-sm font-medium', installButtonTextClass)}>{installButtonLabel}</span>
+                  <ChevronDown size={14} />
+                </Button>
+                {isInstallMenuOpen ? (
+                  <>
+                    <button
+                      type="button"
+                      aria-label="インストール状態メニューを閉じる"
+                      className="fixed inset-0 z-10"
+                      onClick={onCloseInstallMenu}
+                    />
+                    <div className={dropdownPanelClass}>
+                      {INSTALL_STATUS_OPTIONS.map((option) => (
+                        <button
+                          key={option.value}
+                          onClick={() => onSelectInstallStatus(option.value)}
+                          className={cn(
+                            dropdownItemBaseClass,
+                            installStatus === option.value ? dropdownItemSelectedClass : dropdownItemIdleClass,
+                          )}
+                          type="button"
+                        >
+                          <span className="flex items-center gap-2">
+                            {renderInstallStatusIcon(option.value)}
+                            <span>{option.label}</span>
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                ) : null}
+              </div>
+            )}
 
             <Button
               onClick={onToggleFilterExpanded}

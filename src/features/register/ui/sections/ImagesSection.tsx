@@ -13,6 +13,7 @@ import type { PackageImagesSectionProps, RegisterSelectedImageInput } from '../t
 import DeleteButton from '../components/DeleteButton';
 import { cn } from '@/lib/cn';
 import { layout, surface, text } from '@/components/ui/_styles';
+import { isDesktop } from '@/lib/target';
 
 type InfoImageCardProps = {
   entryKey: string;
@@ -172,6 +173,7 @@ const PackageImagesSection = memo(
       let unlistenDragLeave: (() => void) | null = null;
 
       const setupDragDrop = async () => {
+        if (!isDesktop) return;
         try {
           const appWindow = tauriWindow.getCurrentWindow();
           let scaleFactor = 1;

@@ -8,6 +8,7 @@ import UpdateDialog from '@/features/app-update/UpdateDialog';
 import { useUpdatePrompt } from '@/features/app-update/useUpdatePrompt';
 import InitSetupPage from '@/features/init-setup/ui/InitSetupPage';
 import TitleBar from '@/layouts/app-shell/title-bar/TitleBar';
+// oxlint-disable-next-line import/no-unassigned-import
 import '@/styles/index.css';
 import { CatalogProvider, useCatalogDispatch, initCatalog } from '@/utils/catalogStore';
 // eslint-disable-next-line import/no-unassigned-import
@@ -16,9 +17,12 @@ import 'markdown-it-github-alerts/styles/github-colors-light.css';
 import 'markdown-it-github-alerts/styles/github-colors-dark-media.css';
 // eslint-disable-next-line import/no-unassigned-import
 import 'markdown-it-github-alerts/styles/github-base.css';
+import { isDesktop, isWeb, target } from './lib/target';
 
 applyBootThemeInitClass();
-scheduleMainWindowReveal();
+if (isWeb) {
+  scheduleMainWindowReveal();
+}
 
 function Bootstrapper() {
   const dispatch = useCatalogDispatch();
@@ -47,7 +51,7 @@ function Bootstrapper() {
 function App() {
   return (
     <>
-      <TitleBar />
+      {isDesktop && <TitleBar />}
       <div className="app-scroll">
         <CatalogProvider init={initCatalog()}>
           <Bootstrapper />
@@ -86,3 +90,5 @@ if (!rootElement) {
 }
 const root = createRoot(rootElement);
 root.render(<RootApp />);
+
+document.body.setAttribute('data-target', target);

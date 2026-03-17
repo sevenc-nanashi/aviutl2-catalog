@@ -1,6 +1,7 @@
 import * as tauriWindow from '@tauri-apps/api/window';
 import { formatUnknownError } from '@/utils/errors';
 import { logError } from '@/utils/logging';
+import { isWeb } from '@/lib/target';
 
 export type AppMode = 'loading' | 'init' | 'main';
 
@@ -32,6 +33,7 @@ export function scheduleMainWindowReveal(): void {
 }
 
 export async function detectWindowLabel(): Promise<string> {
+  if (isWeb) return 'main';
   try {
     const win = tauriWindow.getCurrentWindow();
     if (typeof win.label === 'string' && win.label) return win.label;
