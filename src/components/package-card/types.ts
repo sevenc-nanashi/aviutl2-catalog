@@ -3,7 +3,7 @@ import type { PackageInstallBusyAction } from '@/utils/usePackageInstallerAction
 
 export type PackageCardItem = Pick<
   PackageItem,
-  'id' | 'name' | 'author' | 'type' | 'tags' | 'summary' | 'images' | 'updatedAt' | 'installed'
+  'id' | 'name' | 'author' | 'type' | 'tags' | 'summary' | 'images' | 'updatedAt' | 'installed' | 'repoURL'
 > &
   Partial<Pick<PackageItem, 'description' | 'isLatest' | 'installedVersion' | 'installer' | 'latest-version'>>;
 

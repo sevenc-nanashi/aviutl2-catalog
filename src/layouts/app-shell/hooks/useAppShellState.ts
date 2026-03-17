@@ -247,6 +247,10 @@ export default function useAppShellState() {
     }
   }, []);
 
+  const downloadCatalog = useCallback(async () => {
+    window.open('https://github.com/neosku/aviutl2-catalog', '_blank', 'noopener');
+  }, []);
+
   const toggleSidebar = useCallback(() => setSidebarCollapsed((prev) => !prev), []);
   const routeActionHandlers = useMemo(() => createSidebarRouteActionHandlers(navigate), [navigate]);
   const sidebarActionHandlers = useMemo<SidebarActionHandlers>(
@@ -255,6 +259,7 @@ export default function useAppShellState() {
       'launch-aviutl2': launchAviUtl2,
       'open-data-dir': openDataDir,
       'toggle-sidebar': toggleSidebar,
+      'download-catalog': downloadCatalog,
     }),
     [launchAviUtl2, openDataDir, routeActionHandlers, toggleSidebar],
   );

@@ -1,15 +1,27 @@
 import type { MouseEvent } from 'react';
-import { CheckCircle2, CirclePause, Download, RefreshCw, Trash2, type LucideIcon } from 'lucide-react';
+import {
+  CheckCircle2,
+  CirclePause,
+  CircleQuestionMark,
+  Download,
+  ExternalLink,
+  RefreshCw,
+  Trash2,
+  type LucideIcon,
+} from 'lucide-react';
 import ProgressCircle from '../../ProgressCircle';
 import type { PackageCardActionHandler, PackageCardBusyAction, PackageCardProgressView } from '../types';
 import { layout, surface } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
+import { isWeb } from '@/lib/target';
 
 interface PackageCardActionSectionProps {
   isInstalled: boolean;
   hasUpdate: boolean;
   isPauseStateLoaded: boolean;
   isUpdatePaused: boolean;
+  isDirectDownloadSupported: boolean;
+  homepage: string | null;
   canInstall: boolean;
   busyAction: PackageCardBusyAction;
   isBusy: boolean;
@@ -18,6 +30,8 @@ interface PackageCardActionSectionProps {
   onDownload: PackageCardActionHandler;
   onUpdate: PackageCardActionHandler;
   onRemove: PackageCardActionHandler;
+  onOpenDetail: () => void;
+  onWebDownload?: PackageCardActionHandler;
 }
 
 const actionButtonBaseClass = 'text-xs font-bold rounded-lg';
@@ -43,7 +57,7 @@ interface PrimaryActionButtonProps {
   title: string;
   icon: LucideIcon;
   iconClassName?: string;
-  progressClassName: string;
+  progressClassName?: string;
   className: string;
   onAction: PackageCardActionHandler;
 }
@@ -125,6 +139,8 @@ export default function PackageCardActionSection({
   isPauseStateLoaded,
   isUpdatePaused,
   canInstall,
+  isDirectDownloadSupported,
+  homepage,
   busyAction,
   isBusy,
   progress,
@@ -132,6 +148,8 @@ export default function PackageCardActionSection({
   onDownload,
   onUpdate,
   onRemove,
+  onOpenDetail,
+  onWebDownload,
 }: PackageCardActionSectionProps) {
   const downloading = busyAction === 'download';
   const updating = busyAction === 'update';
@@ -150,7 +168,47 @@ export default function PackageCardActionSection({
       </div>
 
       <div className={cn(layout.inlineGap2, 'pointer-events-auto shrink-0 w-[140px] justify-end')}>
-        {!isInstalled ? (
+        {isWeb ? (
+          isDirectDownloadSupported ? (
+            <PrimaryActionButton
+              busy={false}
+              disabled={false}
+              progress={progress}
+              label="ダウンロード"
+              title="ブラウザでダウンロード"
+              icon={Download}
+              progressClassName="text-white"
+              className="h-9 w-full gap-1.5 px-2 bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 active:scale-95 cursor-pointer disabled:cursor-not-allowed"
+              onAction={onWebDownload!}
+            />
+          ) : homepage ? (
+            <PrimaryActionButton
+              busy={false}
+              disabled={false}
+              progress={progress}
+              label="ホームページ"
+              title="ホームページを開く"
+              icon={ExternalLink}
+              className="h-9 w-full gap-1.5 px-2 bg-gray-600 hover:bg-gray-500 text-white transition-all shadow-lg shadow gray-600/20 hover:shadow-gray-600/30 active:scale-95 cursor-pointer disabled:cursor-not-allowed"
+              onAction={async () => {
+                window.open(homepage!, '_blank', 'noopener');
+              }}
+            />
+          ) : (
+            <PrimaryActionButton
+              busy={false}
+              disabled={false}
+              progress={progress}
+              label="詳細"
+              title="詳細情報を確認"
+              icon={CircleQuestionMark}
+              className="h-9 w-full gap-1.5 px-2 bg-gray-600 hover:bg-gray-500 text-white transition-all shadow-lg shadow gray-600/20 hover:shadow-gray-600/30 active:scale-95 cursor-pointer disabled:cursor-not-allowed"
+              onAction={async () => {
+                onOpenDetail();
+              }}
+            />
+          )
+        ) : !isInstalled ? (
           <PrimaryActionButton
             busy={downloading}
             disabled={primaryDisabled}

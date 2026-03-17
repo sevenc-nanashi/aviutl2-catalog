@@ -44,6 +44,7 @@ export default function RegisterPreviewSection({
       updatedAt: new Date(updatedAt).getTime() || null,
       installed: false,
       isLatest: true,
+      repoURL: '',
     }),
     [
       packageForm.id,

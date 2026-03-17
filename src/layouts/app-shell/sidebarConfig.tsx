@@ -31,8 +31,7 @@ export type SidebarActionId =
   | 'feedback'
   | 'settings'
   | 'toggle-sidebar'
-  | 'download-catalog'
-  | 'switch-theme';
+  | 'download-catalog';
 
 export type SidebarActionHandler = () => void | Promise<void>;
 export type SidebarActionHandlers = Record<SidebarActionId, SidebarActionHandler>;

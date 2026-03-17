@@ -1,8 +1,11 @@
+import { checkIsDirectDownloadSupported } from '@/utils/isDirectDownloadSupported';
+import { webDownloadPackage } from '@/utils/webDownload';
 import PackageCardActionSection from './sections/PackageCardActionSection';
 import PackageCardMetaSection from './sections/PackageCardMetaSection';
 import PackageCardThumbnailSection from './sections/PackageCardThumbnailSection';
 import type { PackageCardViewProps } from './types';
 import { cn } from '@/lib/cn';
+import { isWeb } from '@/lib/target';
 
 const EMPTY_TAGS: string[] = [];
 
@@ -25,6 +28,8 @@ export default function PackageCardView({
   onRemove,
 }: PackageCardViewProps) {
   const tags = Array.isArray(item.tags) ? item.tags : EMPTY_TAGS;
+  const isDirectDownloadSupported = checkIsDirectDownloadSupported(item);
+  const onWebDownload = isWeb ? async () => { await webDownloadPackage(item); } : undefined;
 
   return (
     <article
@@ -46,6 +51,8 @@ export default function PackageCardView({
           hasUpdate={hasUpdate}
           isPauseStateLoaded={isPauseStateLoaded}
           isUpdatePaused={isUpdatePaused}
+          isDirectDownloadSupported={isDirectDownloadSupported}
+          homepage={item.repoURL}
           canInstall={canInstall}
           busyAction={busyAction}
           isBusy={isBusy}
@@ -54,6 +61,8 @@ export default function PackageCardView({
           onDownload={onDownload}
           onUpdate={onUpdate}
           onRemove={onRemove}
+          onOpenDetail={onOpenDetail}
+          onWebDownload={onWebDownload}
         />
       </div>
 
