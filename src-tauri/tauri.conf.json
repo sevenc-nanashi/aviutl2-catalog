@@ -5,8 +5,8 @@
   "version": "0.3.3",
   "identifier": "aviutl2-catalog",
   "build": {
-    "beforeDevCommand": "vite",
-    "beforeBuildCommand": "vite build",
+    "beforeDevCommand": "cross-env VITE_TARGET=desktop vite",
+    "beforeBuildCommand": "cross-env VITE_TARGET=desktop vite build",
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173"
   },
