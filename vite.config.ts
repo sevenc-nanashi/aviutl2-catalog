@@ -1,9 +1,9 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { reactRouter } from '@react-router/dev/vite';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [reactRouter(), tailwindcss()],
   resolve: {
     alias: {
       '@': new URL('./src', import.meta.url).pathname,
@@ -11,6 +11,9 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    watch: {
+      ignored: ['./target/**'],
+    },
   },
   optimizeDeps: {
     // 開発環境では重い Tauri プラグインの事前バンドルを避ける（遅延ロードされる）

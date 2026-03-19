@@ -111,6 +111,7 @@ export default function useRegisterCatalogState({
   }, [catalogLoadState, setError, setPackageForm]);
 
   useEffect(() => {
+    console.debug('Triggering catalog load...');
     loadCatalog();
   }, [loadCatalog]);
 

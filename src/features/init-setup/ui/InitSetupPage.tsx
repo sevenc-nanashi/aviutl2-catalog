@@ -35,7 +35,6 @@ export default function InitSetupPage() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none animate-pulse z-0" />
         )}
 
-        <TitleBar />
         <StepIndicator step={state.step} installed={state.installed} />
 
         <main className="flex-1 overflow-hidden relative flex flex-col z-0">
