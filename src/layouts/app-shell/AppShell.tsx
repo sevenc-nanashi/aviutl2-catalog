@@ -11,6 +11,7 @@ import { useUpdatePrompt } from '@/features/app-update/useUpdatePrompt';
 import { useGlobalGuards } from '@/bootstrap/useGlobalGuards';
 import { useCatalogBootstrap } from '@/bootstrap/useCatalogBootstrap';
 import UpdateDialog from '@/features/app-update/UpdateDialog';
+import { useShowMainWindow } from '@/utils/useShowMainWindow';
 
 export { SORT_OPTIONS };
 
@@ -20,6 +21,7 @@ export default function AppShell() {
   const { updateInfo, updateBusy, updateError, confirmUpdate, dismissUpdate } = useUpdatePrompt();
 
   useGlobalGuards();
+  useShowMainWindow();
   useCatalogBootstrap(dispatch);
 
   return (

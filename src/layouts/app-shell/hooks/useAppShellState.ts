@@ -22,6 +22,7 @@ import type {
   UrlOverrideValue,
 } from '../types';
 import useDebouncedValue from './useDebouncedValue';
+import { isDesktop } from '@/lib/target';
 
 function toSortKey(rawSortKey: string | null): SortKey {
   if (rawSortKey === 'newest' || rawSortKey === 'trend' || rawSortKey === 'added' || rawSortKey === 'popularity') {
@@ -70,7 +71,8 @@ export default function useAppShellState() {
   const selectedCategory = parseQuery.type || 'すべて';
   const selectedTags = parseQuery.tags;
   const sortOrder = sortOrderFromQuery(parseQuery.sortKey);
-  const isHome = location.pathname === '/';
+
+  const isHome = location.pathname === (isDesktop ? '/home' : '/');
   const homeRestoreState = useMemo(
     () => (isHome ? readHomeRestoreState(location.state) : null),
     [isHome, location.state],

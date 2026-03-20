@@ -1,17 +1,6 @@
-import { AlertOctagon, AlertTriangle, createElement, IconNode, Info, Lightbulb, MessageSquareWarning } from 'lucide';
+import { AlertOctagon, AlertTriangle, Info, Lightbulb, MessageSquareWarning } from 'lucide-static';
 import { MarkdownExit } from 'markdown-exit';
 import githubAlerts, { MarkdownItGitHubAlertsOptions } from 'markdown-it-github-alerts';
-
-function renderAlertIcon(iconNode: IconNode): string {
-  const svgString = createElement(iconNode, {
-    size: 16,
-    strokeWidth: 1.8,
-    'aria-hidden': 'true',
-    role: 'presentation',
-    'data-is-alert-icon': 'true',
-  });
-  return svgString.outerHTML;
-}
 
 /** GitHubのアラートつきコードブロック */
 export function alertBlock(md: MarkdownExit): void {
@@ -24,11 +13,11 @@ export function alertBlock(md: MarkdownExit): void {
       caution: '注意',
     },
     icons: {
-      note: renderAlertIcon(Info),
-      tip: renderAlertIcon(Lightbulb),
-      important: renderAlertIcon(MessageSquareWarning),
-      warning: renderAlertIcon(AlertTriangle),
-      caution: renderAlertIcon(AlertOctagon),
+      note: Info,
+      tip: Lightbulb,
+      important: MessageSquareWarning,
+      warning: AlertTriangle,
+      caution: AlertOctagon,
     },
   } satisfies MarkdownItGitHubAlertsOptions);
 }

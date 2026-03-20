@@ -1,7 +1,7 @@
 import { redirect } from 'react-router';
 import { detectWindowLabel } from './bootstrap/window';
 
-async function loggingMiddleware() {
+export async function clientLoader() {
   const label = await detectWindowLabel();
   if (label === 'init-setup') {
     throw redirect('/init-setup');
@@ -10,4 +10,6 @@ async function loggingMiddleware() {
   }
 }
 
-export const clientMiddleware = [loggingMiddleware];
+export default function DesktopBootstrap() {
+  return null;
+}

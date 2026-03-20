@@ -5,13 +5,6 @@ import { isWeb } from '@/lib/target';
 
 export type AppMode = 'loading' | 'init' | 'main';
 
-export function applyBootThemeInitClass(): void {
-  const bootRoot = document?.documentElement;
-  if (!bootRoot) return;
-  bootRoot.classList.add('dark');
-  bootRoot.classList.add('theme-init');
-}
-
 async function showMainWindow(): Promise<void> {
   const win = tauriWindow.getCurrentWindow();
   await win.show();

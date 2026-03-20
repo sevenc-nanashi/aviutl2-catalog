@@ -3,7 +3,7 @@
   "productName": "AviUtl2 カタログ",
   "mainBinaryName": "AviUtl2_Catalog",
   "version": "0.3.3",
-  "identifier": "aviutl2-catalog",
+  "identifier": "aviutl2-catalog-dev",
   "build": {
     "beforeDevCommand": "cross-env VITE_TARGET=desktop vite",
     "beforeBuildCommand": "cross-env VITE_TARGET=desktop vite build",

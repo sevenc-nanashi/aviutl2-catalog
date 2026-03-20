@@ -15,7 +15,7 @@ import {
 import aviutl2Icon from '../../../src-tauri/icons/aviutl2.png';
 import type { SidebarButtonVariant, SidebarIconProps, SidebarIconType } from './components/SidebarButton';
 import type { ActivePage } from './types';
-import { isWeb } from '@/lib/target';
+import { isDesktop, isWeb } from '@/lib/target';
 
 type SidebarRoutePage = Exclude<ActivePage, '' | 'package'>;
 type SidebarRouteMatchMode = 'exact' | 'prefix';
@@ -121,7 +121,7 @@ const homeSidebarItem = {
   label: 'パッケージ一覧',
   icon: PackageSearch,
   page: 'home',
-  path: '/',
+  path: isDesktop ? '/home' : '/',
   matchMode: 'exact',
   shortcut: { code: 'KeyP', label: 'Alt+P' },
 } as const satisfies SidebarRouteItemDefinition;

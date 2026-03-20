@@ -3,7 +3,7 @@ import * as tauriApp from '@tauri-apps/api/app';
 import type { Dispatch, SetStateAction } from 'react';
 import { logError } from '@/utils/logging';
 import { getSettings } from '@/utils/settings';
-import { applyTheme, toErrorMessage, toSettingsForm } from '../../model/helpers';
+import { toErrorMessage, toSettingsForm } from '../../model/helpers';
 import type { SettingsFormState } from '../../model/types';
 
 interface UseSettingsInitializationParams {
@@ -28,7 +28,6 @@ export default function useSettingsInitialization({
         if (mounted) {
           setForm(nextForm);
           setInitialPackageStateOptOut(nextForm.packageStateOptOut);
-          applyTheme(nextForm.theme);
         }
       } catch (settingsError) {
         try {
