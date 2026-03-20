@@ -6,4 +6,8 @@ const target: 'desktop' | 'web' = process.env.TARGET === 'desktop' ? 'desktop' :
 export default {
   appDirectory: 'src',
   ssr: target === 'web',
+  buildDirectory: 'dist',
+  future: {
+    v8_viteEnvironmentApi: true,
+  },
 } satisfies Config;

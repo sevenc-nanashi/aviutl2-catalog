@@ -24,7 +24,7 @@ import usePackageInstallActions from './hooks/usePackageInstallActions';
 import { PackageContentSection, PackageHeaderSection, PackageSidebarSection } from './sections';
 import { page } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
-import { isDesktop, isWeb } from '@/lib/target';
+import { isWeb } from '@/lib/target';
 
 const MARKDOWN_BASE_URL = 'https://raw.githubusercontent.com/Neosku/aviutl2-catalog-data/main/md/';
 
@@ -35,7 +35,7 @@ async function loaderImpl({ params }: ClientLoaderFunctionArgs) {
   return { item };
 }
 
-export const clientLoader = isDesktop ? loaderImpl : undefined;
+export const clientLoader = loaderImpl;
 export const loader = isWeb ? loaderImpl : undefined;
 
 export const meta: MetaFunction<typeof loaderImpl> = ({ loaderData: data }) => {

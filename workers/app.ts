@@ -14,9 +14,9 @@ declare module 'react-router' {
 const requestHandler = createRequestHandler(
   () =>
     // @ts-expect-error ビルド時に書き換わる
-    import('virtual:react-router/server-build'),
+    import('../dist/server/index.js'),
   // @ts-expect-error ビルド時に書き換わる
-  import.meta.env.MODE,
+  import.meta.env?.MODE,
 );
 
 export default {

@@ -7,22 +7,31 @@ import { cloudflare } from '@cloudflare/vite-plugin';
 export default defineConfig(() => {
   const target: 'desktop' | 'web' = process.env.TARGET === 'desktop' ? 'desktop' : 'web';
   const isWeb = target === 'web';
+  const isProduction = process.env.NODE_ENV === 'production';
   return {
     plugins: [
-      isWeb &&
+      reactRouter(),
+      !isProduction &&
+        isWeb &&
         cloudflare({
           // NOTE: なぜかデフォルトのEnvironmentだと動かないのでworkaround
           viteEnvironment: {
             name: 'ssr',
           },
         }),
-      reactRouter(),
       tailwindcss(),
     ],
     resolve: {
-      alias: {
-        '@': new URL('./src', import.meta.url).pathname,
-      },
+      alias: [
+        {
+          find: '@',
+          replacement: `${import.meta.dirname}/src`,
+        },
+        {
+          find: '../build/server/index.js',
+          replacement: 'virtual:react-router/server-build',
+        },
+      ],
     },
     server: {
       port: 5173,
