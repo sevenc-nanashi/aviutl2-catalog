@@ -28,6 +28,9 @@ export default function Layout() {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <Meta />
         <Links />
+
+        {/* NOTE: テスト段階なので一旦クローラーにインデックスさせない */}
+        <meta name="robots" content="noindex, nofollow" />
       </head>
       <body data-target={target}>
         {isDesktop && <TitleBar />}
