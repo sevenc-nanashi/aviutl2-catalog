@@ -47,6 +47,7 @@ export const meta: MetaFunction<typeof loaderImpl> = ({ loaderData: data }) => {
     { title: `${item.name} | AviUtl2 カタログ` },
     { name: 'description', content: item.summary },
     { property: 'og:title', content: item.name },
+    { property: 'og:site_name', content: 'AviUtl2 カタログ' },
     { property: 'og:description', content: item.summary },
     { property: 'og:type', content: 'website' },
   ];
