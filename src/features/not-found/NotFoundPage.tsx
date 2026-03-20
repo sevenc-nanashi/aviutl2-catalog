@@ -1,6 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/cn';
 import { Button } from '@/components/ui';
+
+export function loader() {
+  return new Response(null, { status: 404 });
+}
+
 export default function NotFoundPage() {
   const navigate = useNavigate();
 

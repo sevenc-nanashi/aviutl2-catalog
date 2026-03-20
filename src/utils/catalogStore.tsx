@@ -37,7 +37,7 @@ const CatalogDispatchContext = createContext<React.Dispatch<CatalogAction> | nul
 
 // 更新日のタイムスタンプを算出
 // 仕様: version[].release_date の最大値を updatedAt として使用
-function toUpdatedAt(pkg: CatalogEntry) {
+export function toUpdatedAt(pkg: CatalogEntry) {
   if (!pkg.version.length) return null;
   let maxTs = 0;
   for (const ver of pkg.version) {

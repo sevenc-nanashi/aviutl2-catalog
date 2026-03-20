@@ -1,0 +1,2 @@
+patchedDependencies:
+  '@cloudflare/vite-plugin': patches/@cloudflare__vite-plugin.patch

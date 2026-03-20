@@ -1,0 +1,5 @@
+# :$schema "./node_modules/wrangler/config-schema.json"
+name = "aviutl2-catalog"
+compatibility_date = "2026-03-20"
+main = "./workers/app.ts"
+compatibility_flags = ["nodejs_compat"]

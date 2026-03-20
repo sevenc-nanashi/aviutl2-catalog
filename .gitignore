@@ -34,3 +34,5 @@
 archive
 
 .react-router
+build
+.wrangler

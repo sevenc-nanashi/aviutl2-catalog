@@ -1,12 +1,13 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useLoaderData, type ClientLoaderFunctionArgs, type MetaFunction } from 'react-router';
 import { APP_ROUTE_PATHS } from '@/routePaths';
 import ErrorDialog from '@/components/ErrorDialog';
-import { latestVersionOf } from '@/utils/catalog';
-import { useCatalog, useCatalogDispatch } from '@/utils/catalogStore';
+import { latestVersionOf, loadCatalogData } from '@/utils/catalog';
+import { useCatalog, useCatalogDispatch, toUpdatedAt, type PackageItem } from '@/utils/catalogStore';
 import { hasInstaller } from '@/utils/installer';
 import { buildLicenseBody } from '@/utils/licenseTemplates';
-import { formatDate } from '@/utils/text';
+import { formatDate, normalize } from '@/utils/text';
 import { HOME_LIST_RESTORE_STATE } from '@/layouts/app-shell/types';
 import { openExternalLink } from '@/utils/externalLink';
 import {
@@ -23,16 +24,42 @@ import usePackageInstallActions from './hooks/usePackageInstallActions';
 import { PackageContentSection, PackageHeaderSection, PackageSidebarSection } from './sections';
 import { page } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
+import { isDesktop, isWeb } from '@/lib/target';
 
 const MARKDOWN_BASE_URL = 'https://raw.githubusercontent.com/Neosku/aviutl2-catalog-data/main/md/';
 
+async function loaderImpl({ params }: ClientLoaderFunctionArgs) {
+  const id = String(params.id || '');
+  const { items } = await loadCatalogData({ timeoutMs: 10000 });
+  const item = items.find((entry) => entry.id === id) ?? null;
+  return { item };
+}
+
+export const clientLoader = isDesktop ? loaderImpl : undefined;
+export const loader = isWeb ? loaderImpl : undefined;
+
+export const meta: MetaFunction<typeof loaderImpl> = ({ loaderData: data }) => {
+  const item = data?.item;
+  if (!item) return [{ title: 'AviUtl2 カタログ' }];
+
+  const thumbnail = item.images.find((g) => g.thumbnail)?.thumbnail;
+  const tags: ReturnType<MetaFunction> = [
+    { title: `${item.name} | AviUtl2 カタログ` },
+    { name: 'description', content: item.summary },
+    { property: 'og:title', content: item.name },
+    { property: 'og:description', content: item.summary },
+    { property: 'og:type', content: 'website' },
+  ];
+  if (thumbnail) tags.push({ property: 'og:image', content: thumbnail });
+  return tags;
+};
+
 export default function PackagePage() {
-  const { id } = useParams();
+  const { item: baseItem } = useLoaderData<typeof loaderImpl>();
   const location = useLocation();
-  const { items, loading } = useCatalog();
+  const { detectedMap } = useCatalog();
   const dispatch = useCatalogDispatch();
   const [openLicense, setOpenLicense] = useState<PackageLicenseEntry | null>(null);
-  const packageItems = items;
 
   const listSearch = useMemo(() => readPackageListSearchFromDetail(location.search), [location.search]);
   const detailSource = useMemo(() => readPackageDetailSource(location.search), [location.search]);
@@ -49,7 +76,23 @@ export default function PackagePage() {
         : 'パッケージ一覧';
   const listLinkState = detailSource === 'home' ? HOME_LIST_RESTORE_STATE : undefined;
 
-  const item = useMemo(() => packageItems.find((entry) => entry.id === id), [id, packageItems]);
+  const item = useMemo<PackageItem | undefined>(() => {
+    if (!baseItem) return undefined;
+    const detectedVersion = detectedMap[baseItem.id] || '';
+    const latest = latestVersionOf(baseItem) || '';
+    return {
+      ...baseItem,
+      updatedAt: toUpdatedAt(baseItem),
+      nameKey: normalize(baseItem.name || ''),
+      authorKey: normalize(baseItem.author || ''),
+      summaryKey: normalize(baseItem.summary || ''),
+      installed: detectedVersion !== '',
+      installedVersion: detectedVersion,
+      isLatest: !!detectedVersion && !!latest && detectedVersion === latest,
+      catalogIndex: 0,
+    };
+  }, [baseItem, detectedMap]);
+
   const { heroImage, carouselImages } = useMemo(() => collectPackageImages(item?.images), [item?.images]);
 
   const descriptionSource = item?.description || '';
@@ -97,13 +140,6 @@ export default function PackagePage() {
   }, []);
 
   if (!item) {
-    if (loading || items.length === 0) {
-      return (
-        <div className={page.container3xl}>
-          <div className="p-6 text-slate-500 dark:text-slate-400">読み込み中…</div>
-        </div>
-      );
-    }
     return (
       <div className={page.container3xl}>
         <div className="error">パッケージが見つかりませんでした。</div>

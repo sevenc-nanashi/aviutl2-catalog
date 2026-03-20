@@ -1,0 +1,25 @@
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 01e71145d81179c7adf26c52bf5a1bcbd8675ead..b2bb08b523648e69b2d13d119726130ce0e2ec84 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -21708,7 +21708,8 @@ const resolveExtensions = [
+ ];
+ function createCloudflareEnvironmentOptions({ workerConfig, userConfig, mode, environmentName, isEntryWorker, isParentEnvironment, hasNodeJsCompat: hasNodeJsCompat$1 }) {
+ 	const rollupOptions = isParentEnvironment ? {
+-		input: { [MAIN_ENTRY_NAME]: VIRTUAL_WORKER_ENTRY },
++		// input: { [MAIN_ENTRY_NAME]: VIRTUAL_WORKER_ENTRY },
++		input: VIRTUAL_WORKER_ENTRY,
+ 		preserveEntrySignatures: "strict"
+ 	} : {};
+ 	const define$1 = getProcessEnvReplacements(hasNodeJsCompat$1, mode);
+@@ -26603,8 +26604,8 @@ const outputConfigPlugin = createPlugin("output-config", (ctx) => {
+ 			let outputConfig;
+ 			const inputWorkerConfig = ctx.getWorkerConfig(this.environment.name);
+ 			if (inputWorkerConfig) {
+-				const entryChunk = Object.values(bundle).find((chunk) => chunk.type === "chunk" && chunk.isEntry && chunk.name === MAIN_ENTRY_NAME);
+-				assert(entryChunk, `Expected entry chunk with name "${MAIN_ENTRY_NAME}"`);
++				const entryChunk = Object.values(bundle).find((chunk) => chunk.type === "chunk" && chunk.isEntry && chunk.facadeModuleId === "\x00" + VIRTUAL_WORKER_ENTRY);
++				assert(entryChunk, `Expected entry chunk with facadeModuleId "\x00${VIRTUAL_WORKER_ENTRY}" to be present in bundle`);
+ 				const isPrerenderWorker = this.environment.name === ctx.resolvedPluginConfig.prerenderWorkerEnvironmentName;
+ 				const isEntryWorker = ctx.resolvedPluginConfig.type === "workers" && this.environment.name === ctx.resolvedPluginConfig.entryWorkerEnvironmentName;
+ 				outputConfig = {

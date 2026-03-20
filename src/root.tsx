@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, type MetaFunction } from 'react-router';
 import { isDesktop, target } from './lib/target';
 // oxlint-disable-next-line import/no-unassigned-import
 import '@/styles/index.css';
@@ -13,6 +13,8 @@ import TitleBar from './layouts/app-shell/title-bar/TitleBar';
 import { getSettings } from './utils/settings';
 import { applyTheme, toSettingsForm } from './features/settings/model/helpers';
 
+export const meta: MetaFunction = () => [{ title: 'AviUtl2 カタログ' }];
+
 export default function Layout() {
   useEffect(() => {
     getSettings().then((raw) => {
@@ -24,7 +26,6 @@ export default function Layout() {
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>AviUtl2 カタログ</title>
         <Meta />
         <Links />
       </head>
