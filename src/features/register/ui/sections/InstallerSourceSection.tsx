@@ -1,12 +1,15 @@
 /**
  * インストーラーのソースコンポーネント
  */
+import { useTranslation } from 'react-i18next';
+import { useMemo } from 'react';
 import { Alert } from '@/components/ui/Alert';
 import Button, { buttonVariants } from '@/components/ui/Button';
 import { ExternalLink } from 'lucide-react';
 import { INSTALLER_SOURCES } from '../../model/form';
 import type { PackageInstallerSectionProps } from '../types';
-import { action, grid, layout, surface, text } from '@/components/ui/_styles';
+import SegmentedOptionGroup from '../components/SegmentedOptionGroup';
+import { grid, layout, surface, text } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
 
 type InstallerSourceSectionProps = Pick<
@@ -32,41 +35,40 @@ export default function InstallerSourceSection({
   packageFileImporting,
   onSelectPackageFile,
 }: InstallerSourceSectionProps) {
+  const { t } = useTranslation('register');
+  const installerSourceOptions = useMemo(
+    () =>
+      INSTALLER_SOURCES.map((option) => ({
+        value: option.value,
+        label:
+          option.value === 'googleDrive'
+            ? t('installer.sourceTypes.googleDrive')
+            : t(`installer.sourceTypes.${option.value}`),
+      })),
+    [t],
+  );
   const packageFileSummaryText = packageFileSummary
-    ? packageFileSummary.groups.map((group) => `${group.root}: ${group.count}件`).join(' / ')
+    ? packageFileSummary.groups
+        .map((group) => t('installer.packageFileGroupSummary', { root: group.root, count: group.count }))
+        .join(' / ')
     : '';
 
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <div className={text.labelSm}>ダウンロード元</div>
-        <div className={cn(action.segmentedGroup, 'flex flex-wrap gap-1')}>
-          {INSTALLER_SOURCES.map((option) => {
-            const isActive = installer.sourceType === option.value;
-            return (
-              <Button
-                variant="plain"
-                size="xs"
-                key={option.value}
-                type="button"
-                className={cn(
-                  action.segmentedOptionBase,
-                  'flex-1',
-                  isActive ? action.segmentedOptionActive : action.segmentedOptionInactive,
-                )}
-                onClick={() => updateInstallerField('sourceType', option.value)}
-              >
-                {option.label}
-              </Button>
-            );
-          })}
-        </div>
+        <div className={text.labelSm}>{t('installer.downloadSource')}</div>
+        <SegmentedOptionGroup
+          value={installer.sourceType}
+          options={installerSourceOptions}
+          onChange={(value) => updateInstallerField('sourceType', value)}
+          ariaLabel={t('installer.downloadSource')}
+        />
       </div>
       <div className={cn(surface.panel, 'p-4')}>
-        {installer.sourceType === 'direct' && (
+        {installer.sourceType === 'directUrl' && (
           <div className="space-y-2">
             <label className={text.labelSm} htmlFor="installer-direct-url">
-              ダウンロードURL
+              {t('installer.directUrl')}
             </label>
             <input
               id="installer-direct-url"
@@ -79,44 +81,44 @@ export default function InstallerSourceSection({
         {installer.sourceType === 'booth' && (
           <div className="space-y-2">
             <label className={text.labelSm} htmlFor="installer-booth-url">
-              BOOTH URL
+              {t('installer.boothUrl')}
             </label>
             <input
               id="installer-booth-url"
               value={installer.boothUrl}
               onChange={(e) => updateInstallerField('boothUrl', e.target.value)}
-              placeholder="https://booth.pm/downloadables/...で始まるパス"
+              placeholder={t('installer.boothPlaceholder')}
             />
           </div>
         )}
-        {installer.sourceType === 'github' && (
+        {installer.sourceType === 'githubRelease' && (
           <div className="space-y-4">
             <div className={grid.twoCol}>
               <div className="space-y-2">
                 <label className={text.labelSm} htmlFor="installer-github-owner">
-                  GitHub ID (Owner)
+                  {t('installer.githubOwner')}
                 </label>
                 <input
                   id="installer-github-owner"
                   value={installer.githubOwner}
                   onChange={(e) => updateInstallerField('githubOwner', e.target.value)}
-                  placeholder="例: neosku"
+                  placeholder={t('installer.githubOwnerPlaceholder')}
                 />
               </div>
               <div className="space-y-2">
                 <label className={text.labelSm} htmlFor="installer-github-repo">
-                  レポジトリ名 (Repo)
+                  {t('installer.githubRepo')}
                 </label>
                 <input
                   id="installer-github-repo"
                   value={installer.githubRepo}
                   onChange={(e) => updateInstallerField('githubRepo', e.target.value)}
-                  placeholder="例: aviutl2-catalog"
+                  placeholder={t('installer.githubRepoPlaceholder')}
                 />
               </div>
               <div className="space-y-2 md:col-span-2">
                 <label className={text.labelSm} htmlFor="installer-github-pattern">
-                  正規表現パターン
+                  {t('installer.githubPattern')}
                 </label>
                 <input
                   id="installer-github-pattern"
@@ -124,17 +126,12 @@ export default function InstallerSourceSection({
                   onChange={(e) => updateInstallerField('githubPattern', e.target.value)}
                   placeholder="^aviutl_plugin_.*\.zip$"
                 />
-                <p className={text.mutedXs}>リリースファイル名に一致する正規表現を指定してください。</p>
+                <p className={text.mutedXs}>{t('installer.githubPatternHint')}</p>
               </div>
             </div>
 
             <div className={cn(surface.panelRoundedSubtle, 'space-y-3 p-3')}>
-              <p className={text.bodySmMuted}>
-                GitHub Release を利用しているパッケージは、`.exe`
-                形式など一部の配布形態を除き、管理側で自動更新プログラムの対象に追加いたします。自動更新プログラムでは
-                30
-                分ごとに更新を確認し、更新があればカタログデータを更新します。対象への追加は管理側で順次手動対応しています。
-              </p>
+              <p className={text.bodySmMuted}>{t('installer.githubAutoUpdateHint')}</p>
               <a
                 className={cn(buttonVariants({ variant: 'secondary', size: 'sm' }), 'w-fit')}
                 href={autoUpdateStatusUrl}
@@ -142,32 +139,29 @@ export default function InstallerSourceSection({
                 rel="noreferrer noopener"
               >
                 <ExternalLink size={14} />
-                自動更新対応状況
+                {t('installer.githubAutoUpdateLink')}
               </a>
             </div>
           </div>
         )}
-        {installer.sourceType === 'GoogleDrive' && (
+        {installer.sourceType === 'googleDrive' && (
           <div className="space-y-2">
             <label className={text.labelSm} htmlFor="installer-google-drive-id">
-              ファイルID
+              {t('installer.googleDriveId')}
             </label>
             <input
               id="installer-google-drive-id"
               value={installer.googleDriveId}
               onChange={(e) => updateInstallerField('googleDriveId', e.target.value)}
-              placeholder="Google Drive の共有リンクに含まれるID（…/drive/folders/{フォルダID}）"
+              placeholder={t('installer.googleDrivePlaceholder')}
             />
           </div>
         )}
       </div>
       <div className={cn(surface.panelSubtle, 'space-y-3 p-4')}>
         <div className="space-y-1">
-          <div className={text.labelSm}>パッケージファイル ( .au2pkg.zip )</div>
-          <p className={text.bodySmMuted}>
-            '.au2pkg.zip'形式のファイルからインストール手順を生成します。
-            該当しない場合は、以下の手順欄に手動で入力してください。
-          </p>
+          <div className={text.labelSm}>{t('installer.packageFileTitle')}</div>
+          <p className={text.bodySmMuted}>{t('installer.packageFileDescription')}</p>
         </div>
         <div className={layout.wrapItemsGap2}>
           <Button
@@ -177,15 +171,15 @@ export default function InstallerSourceSection({
             onClick={onSelectPackageFile}
             disabled={packageFileImporting}
           >
-            {packageFileImporting ? '解析中...' : 'ファイルを選択'}
+            {packageFileImporting ? t('installer.packageFileAnalyzing') : t('installer.packageFileSelect')}
           </Button>
           {packageFileName && <span className={text.bodySmMuted}>{packageFileName}</span>}
         </div>
         {packageFileSummary && (
           <div className={cn(surface.panelRoundedSubtle, 'space-y-1 p-3')}>
-            <div className={text.labelXsSemibold}>生成対象</div>
+            <div className={text.labelXsSemibold}>{t('installer.packageFileGeneratedTitle')}</div>
             <p className={text.bodySmMuted}>
-              {packageFileSummary.totalFiles}件のファイルから手順を生成しました
+              {t('installer.packageFileGeneratedSummary', { count: packageFileSummary.totalFiles })}
               {packageFileSummaryText ? ` (${packageFileSummaryText})` : ''}
             </p>
           </div>

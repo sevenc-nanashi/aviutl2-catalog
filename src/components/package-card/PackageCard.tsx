@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
+import PackageNoticeModal from '@/components/PackageNoticeModal';
 import { buildPackageDetailHref } from '@/features/package/model/helpers';
-import { hasInstaller } from '@/utils/installer';
 import { formatDate } from '@/utils/text';
 import ErrorDialog from '../ErrorDialog';
 import { pickThumbnail } from './helpers';
@@ -16,14 +16,25 @@ export default function PackageCard({
   onBeforeOpenDetail,
 }: PackageCardProps) {
   const navigate = useNavigate();
-  const { error, setError, busyAction, isBusy, progress, onDownload, onUpdate, onRemove } = usePackageCardActions(item);
+  const {
+    error,
+    setError,
+    busyAction,
+    isBusy,
+    progress,
+    noticeModal,
+    closeNoticeModal,
+    confirmNoticeModal,
+    onDownload,
+    onUpdate,
+    onRemove,
+  } = usePackageCardActions(item);
 
   const thumbnail = pickThumbnail(item);
-  const category = typeof item.type === 'string' ? item.type : 'その他';
   const isInstalled = Boolean(item.installed);
   const hasUpdate = isInstalled && !item.isLatest;
   const showPausedUpdateState = isPauseStateLoaded && hasUpdate && isUpdatePaused;
-  const canInstall = hasInstaller(item);
+  const canInstall = Boolean(item.id);
   const lastUpdated = item.updatedAt ? formatDate(item.updatedAt).replace(/-/g, '/') : '?';
 
   const openDetail = () => {
@@ -36,7 +47,7 @@ export default function PackageCard({
       <PackageCardView
         item={item}
         thumbnail={thumbnail}
-        category={category}
+        category={item.packageType}
         lastUpdated={lastUpdated}
         isInstalled={isInstalled}
         hasUpdate={hasUpdate}
@@ -52,6 +63,15 @@ export default function PackageCard({
         onRemove={onRemove}
       />
       <ErrorDialog open={Boolean(error)} message={error} onClose={() => setError('')} />
+      <PackageNoticeModal
+        open={noticeModal.open}
+        title={noticeModal.title}
+        html={noticeModal.html}
+        onConfirm={() => {
+          void confirmNoticeModal();
+        }}
+        onClose={closeNoticeModal}
+      />
     </>
   );
 }

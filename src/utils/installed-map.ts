@@ -1,5 +1,11 @@
 import * as tauriFs from '@tauri-apps/plugin-fs';
 import * as z from 'zod';
+import {
+  getDetectedVersion,
+  isInstalledDetectResult,
+  normalizeDetectResultMap,
+  type DetectResultMap,
+} from './detectResult';
 import { formatUnknownError } from './errors';
 import { ipc } from './invokeIpc';
 import { logError } from './logging';
@@ -64,21 +70,20 @@ export async function removeInstalledId(id: string): Promise<void> {
   }
 }
 
-export async function saveInstalledSnapshot(detectedMap: Record<string, string>): Promise<Record<string, string>> {
+export async function saveInstalledSnapshot(detectedMap: DetectResultMap): Promise<Record<string, string>> {
   const snapshot: Record<string, string> = {};
-  for (const [id, ver] of Object.entries(detectedMap)) {
-    if (ver) snapshot[id] = String(ver);
+  for (const [id, result] of Object.entries(detectedMap)) {
+    if (!isInstalledDetectResult(result)) continue;
+    snapshot[id] = getDetectedVersion(result);
   }
   return await writeInstalledMap(snapshot);
 }
 
-export async function detectInstalledVersionsMap(items: InstallerRunnableItem[]): Promise<Record<string, string>> {
+export async function detectInstalledVersionsMap(items: InstallerRunnableItem[]): Promise<DetectResultMap> {
   const list = Array.isArray(items) ? items : [];
   const res = await ipc.detectVersionsMap({ items: list });
-  const parsed = stringMapSchema.safeParse(res);
-  if (parsed.success) {
-    return parsed.data;
-  }
+  const parsed = normalizeDetectResultMap(res);
+  if (Object.keys(parsed).length > 0 || (res && typeof res === 'object')) return parsed;
   try {
     await logError('[detectInstalledVersionsMap] invalid response shape from detect_versions_map');
   } catch {}

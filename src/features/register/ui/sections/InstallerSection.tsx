@@ -1,6 +1,7 @@
 /**
  * インストーラーのコンテナセクション。
  */
+import { useTranslation } from 'react-i18next';
 import { memo } from 'react';
 import type { PackageInstallerSectionProps } from '../types';
 import InstallStepsSection from './InstallStepsSection';
@@ -10,6 +11,7 @@ import { layout, surface, text } from '@/components/ui/_styles';
 
 const PackageInstallerSection = memo(
   function PackageInstallerSection(props: PackageInstallerSectionProps) {
+    const { t } = useTranslation('register');
     const {
       installer,
       installListRef,
@@ -32,7 +34,7 @@ const PackageInstallerSection = memo(
     return (
       <section className={surface.cardSection}>
         <div className={layout.rowBetweenWrapGap2}>
-          <h2 className={text.titleLg}>インストーラ</h2>
+          <h2 className={text.titleLg}>{t('installer.title')}</h2>
         </div>
 
         <InstallerSourceSection

@@ -1,4 +1,5 @@
 import { Download, FolderOpen } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { InstallStatusSectionProps } from '../types';
 import { cn } from '@/lib/cn';
 import { action, state, text } from '@/components/ui/_styles';
@@ -11,11 +12,13 @@ const statusTitleClass =
   'text-lg font-bold text-slate-800 dark:text-slate-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors';
 
 export default function InstallStatusSection({ onSelectInstalled, onBack }: InstallStatusSectionProps) {
+  const { t } = useTranslation(['initSetup', 'common']);
+
   return (
     <div className={cn(state.enterSlideRight500, 'flex-1 flex flex-col justify-center')}>
       <div className="text-center mb-8">
-        <h2 className={text.title2xl}>インストールの状況</h2>
-        <p className={text.mutedSmMt2}>AviUtl2 の導入状況に合わせて選択してください</p>
+        <h2 className={text.title2xl}>{t('installStatus.title')}</h2>
+        <p className={text.mutedSmMt2}>{t('installStatus.description')}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-6 mb-8 max-w-2xl mx-auto w-full">
@@ -23,26 +26,22 @@ export default function InstallStatusSection({ onSelectInstalled, onBack }: Inst
           <div className={statusIconClass}>
             <FolderOpen size={28} />
           </div>
-          <div className={statusTitleClass}>インストール済み</div>
-          <p className={text.mutedXsRelaxed}>すでに AviUtl2 をインストール済みの場合</p>
+          <div className={statusTitleClass}>{t('installStatus.installedTitle')}</div>
+          <p className={text.mutedXsRelaxed}>{t('installStatus.installedDescription')}</p>
         </button>
 
         <button onClick={() => onSelectInstalled(false)} className={statusCardClass}>
           <div className={statusIconClass}>
             <Download size={28} />
           </div>
-          <div className={statusTitleClass}>新規インストール</div>
-          <p className={text.mutedXsRelaxed}>
-            AviUtl2 を導入していない場合
-            <br />
-            最新版を自動でダウンロードして導入します
-          </p>
+          <div className={statusTitleClass}>{t('installStatus.freshTitle')}</div>
+          <p className={text.mutedXsRelaxed}>{t('installStatus.freshDescription')}</p>
         </button>
       </div>
 
       <div className="text-center mt-auto">
         <button className={cn(action.initSecondary, 'h-10')} onClick={onBack}>
-          戻る
+          {t('common:actions.back')}
         </button>
       </div>
     </div>

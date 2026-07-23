@@ -1,5 +1,6 @@
 import PackageNameLink from '@/components/PackageNameLink';
 import Checkbox from '@/components/ui/Checkbox';
+import { useTranslation } from 'react-i18next';
 import type { TableSectionProps } from '../types';
 import { layout, state, surface, table, text } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
@@ -14,6 +15,7 @@ export default function TableSection({
   onToggleItem,
   onCopyCommonsId,
 }: TableSectionProps) {
+  const { t } = useTranslation(['niconiCommons', 'common', 'nav']);
   const selectedVisibleCount = filteredItems.reduce((count, item) => count + (selectedMap[item.id] ? 1 : 0), 0);
   const indeterminateVisibleSelection = selectedVisibleCount > 0 && selectedVisibleCount < visibleCount;
 
@@ -21,7 +23,7 @@ export default function TableSection({
     <div className={surface.panel}>
       {visibleCount === 0 ? (
         <div className={text.emptyStateMuted}>
-          {totalEligible === 0 ? '対象となるパッケージがありません' : '該当なし'}
+          {totalEligible === 0 ? t('table.emptyEligible') : t('common:labels.noMatches')}
         </div>
       ) : (
         <div className={table.scrollX}>
@@ -32,14 +34,19 @@ export default function TableSection({
                   checked={allVisibleSelected}
                   indeterminate={indeterminateVisibleSelection}
                   onChange={onToggleAllVisible}
-                  ariaLabel="表示中をすべて選択"
+                  ariaLabel={t('table.selectAllVisible')}
                 />
               </div>
-              <span>パッケージ名</span>
-              <span>作者名</span>
-              <span>ニコニ・コモンズID</span>
+              <span>{t('table.package')}</span>
+              <span>{t('table.author')}</span>
+              <span>{t('common:labels.niconiCommonsId')}</span>
             </div>
-            <div className={surface.divideMuted} role="listbox" aria-label="パッケージ一覧" aria-multiselectable="true">
+            <div
+              className={surface.divideMuted}
+              role="listbox"
+              aria-label={t('nav:navigation.home')}
+              aria-multiselectable="true"
+            >
               {filteredItems.map((item) => (
                 <div
                   key={item.id}
@@ -50,7 +57,7 @@ export default function TableSection({
                   )}
                   role="option"
                   aria-selected={Boolean(selectedMap[item.id])}
-                  aria-label={`${item.name || item.id} を選択`}
+                  aria-label={t('table.selectItem', { name: item.name || item.id })}
                   tabIndex={0}
                   onClick={() => onToggleItem(item.id)}
                   onKeyDown={(event) => {
@@ -65,7 +72,7 @@ export default function TableSection({
                     <Checkbox
                       checked={Boolean(selectedMap[item.id])}
                       onChange={() => onToggleItem(item.id)}
-                      ariaLabel={`${item.name || item.id} を選択`}
+                      ariaLabel={t('table.selectItem', { name: item.name || item.id })}
                     />
                   </div>
                   <div className="min-w-0">

@@ -1,3 +1,4 @@
+import { Trans, useTranslation } from 'react-i18next';
 import { BUG_FIELDS } from '../../model/fieldNames';
 import FeedbackVisibilityBadge from '../components/FeedbackVisibilityBadge';
 import FeedbackAttachmentSection from './FeedbackAttachmentSection';
@@ -7,6 +8,8 @@ import FeedbackLogSection from './FeedbackLogSection';
 import type { BugReportFormSectionProps } from '../types';
 import { layout, surface, text } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
+
+const publicVisibilityTransComponents = { strong: <strong /> };
 
 export default function BugReportFormSection({
   bug,
@@ -20,6 +23,7 @@ export default function BugReportFormSection({
   onFilesChange,
   onRemoveAttachment,
 }: BugReportFormSectionProps) {
+  const { t } = useTranslation('feedback');
   return (
     <>
       <div
@@ -30,11 +34,10 @@ export default function BugReportFormSection({
       >
         <div className={layout.headerInlineStrong}>
           <FeedbackVisibilityBadge type="public" />
-          <span>公開設定</span>
+          <span>{t('visibility.publicTitle')}</span>
         </div>
         <div className={text.mutedXsRelaxedFaded}>
-          <strong>タイトル</strong> と <strong>詳細</strong>{' '}
-          は公開されます。連絡先、添付ファイル、デバイス情報などのメタデータは公開されません
+          <Trans i18nKey="visibility.publicDescription" ns="feedback" components={publicVisibilityTransComponents} />
         </div>
       </div>
 
@@ -43,9 +46,9 @@ export default function BugReportFormSection({
         names={BUG_FIELDS}
         values={bug}
         onChange={onBugChange}
-        titlePlaceholder="不具合の概要を入力してください"
-        detailPlaceholder="発生状況、再現手順、期待する動作などを詳しく入力してください"
-        contactPlaceholder="メールアドレスやXアカウント（開発者から連絡する場合があります）"
+        titlePlaceholder={t('fields.bugTitlePlaceholder')}
+        detailPlaceholder={t('fields.bugDetailPlaceholder')}
+        contactPlaceholder={t('fields.bugContactPlaceholder')}
       />
 
       <div className={surface.sectionTopBorder}>
@@ -53,7 +56,7 @@ export default function BugReportFormSection({
           attachments={attachments}
           onFilesChange={onFilesChange}
           onRemoveAttachment={onRemoveAttachment}
-          label="添付ファイル"
+          label={t('attachments.label')}
         />
         <FeedbackEnvironmentSection
           bug={bug}

@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import * as tauriApp from '@tauri-apps/api/app';
+import { useTranslation } from 'react-i18next';
 import type { Dispatch, SetStateAction } from 'react';
+import { changeUiLocale, getCurrentUiLocale } from '@/i18n';
 import { logError } from '@/utils/logging';
 import { getSettings } from '@/utils/settings';
 import { toErrorMessage, toSettingsForm } from '../../model/helpers';
@@ -11,6 +13,7 @@ interface UseSettingsInitializationParams {
   setInitialPackageStateOptOut: Dispatch<SetStateAction<boolean>>;
   setAppVersion: Dispatch<SetStateAction<string>>;
   setError: Dispatch<SetStateAction<string>>;
+  setInitialized: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function useSettingsInitialization({
@@ -18,18 +21,25 @@ export default function useSettingsInitialization({
   setInitialPackageStateOptOut,
   setAppVersion,
   setError,
+  setInitialized,
 }: UseSettingsInitializationParams) {
+  const { i18n } = useTranslation();
+
   useEffect(() => {
     let mounted = true;
     (async () => {
       setError('');
       try {
-        const nextForm = toSettingsForm(await getSettings());
+        const currentLocale = getCurrentUiLocale(i18n);
+        const nextForm = toSettingsForm(await getSettings(), currentLocale);
         if (mounted) {
           setForm(nextForm);
           setInitialPackageStateOptOut(nextForm.packageStateOptOut);
+          setInitialized(true);
         }
+        await changeUiLocale(nextForm.locale);
       } catch (settingsError) {
+        if (mounted) setInitialized(true);
         try {
           await logError(`[settings] getSettings failed: ${toErrorMessage(settingsError, 'unknown')}`);
         } catch {}
@@ -48,5 +58,5 @@ export default function useSettingsInitialization({
     return () => {
       mounted = false;
     };
-  }, [setAppVersion, setError, setForm, setInitialPackageStateOptOut]);
+  }, [i18n, setAppVersion, setError, setForm, setInitialPackageStateOptOut, setInitialized]);
 }

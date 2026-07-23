@@ -1,4 +1,3 @@
-import type { Copyright, License } from './catalogSchema';
 import apache20TextRaw from '@/assets/licenses/Apache-2.0.txt?raw';
 import bsd2ClauseTextRaw from '@/assets/licenses/BSD-2-Clause.txt?raw';
 import bsd3ClauseTextRaw from '@/assets/licenses/BSD-3-Clause.txt?raw';
@@ -19,8 +18,21 @@ export const LICENSE_TEMPLATES = {
   Unlicense: unlicenseTextRaw.trim(),
 } as const;
 
-type LicenseTemplateType = keyof typeof LICENSE_TEMPLATES;
-type LicenseTypeOptionValue = LicenseTemplateType | 'その他' | '不明';
+export type LicenseTemplateType = keyof typeof LICENSE_TEMPLATES;
+export type RegisterLicenseType = LicenseTemplateType | 'other' | 'unknown';
+type LicenseTypeOptionValue = RegisterLicenseType;
+
+type CopyrightEntry = {
+  years: string;
+  holder: string;
+};
+
+type LicenseBodyInput = {
+  type: unknown;
+  isCustom?: boolean;
+  copyrights?: CopyrightEntry[];
+  licenseBody?: string | null;
+};
 
 interface LicenseTypeOption {
   value: LicenseTypeOptionValue;
@@ -32,8 +44,8 @@ const COPYRIGHT_PLACEHOLDER_RE = /<years>|<holder>/i;
 
 export const LICENSE_TYPE_OPTIONS: ReadonlyArray<LicenseTypeOption> = [
   ...LICENSE_TEMPLATE_TYPE_VALUES.map((value) => ({ value, label: value })),
-  { value: 'その他', label: 'その他' },
-  { value: '不明', label: '不明' },
+  { value: 'other', label: 'other' },
+  { value: 'unknown', label: 'unknown' },
 ];
 
 function toTrimmedString(value: unknown): string {
@@ -44,11 +56,34 @@ function isLicenseTemplateType(value: unknown): value is LicenseTemplateType {
   return typeof value === 'string' && Object.prototype.hasOwnProperty.call(LICENSE_TEMPLATES, value);
 }
 
-function normalizeCopyrightEntries(copyrights: Copyright[]): Copyright[] {
-  return copyrights;
+export function normalizeRegisterLicenseType(value: unknown): RegisterLicenseType | '' {
+  const normalized = toTrimmedString(value);
+  if (!normalized) return '';
+  if (isLicenseTemplateType(normalized)) return normalized;
+  if (normalized === 'other' || normalized === 'その他') return 'other';
+  if (normalized === 'unknown' || normalized === '不明') return 'unknown';
+  return '';
 }
 
-function resolvePrimaryCopyright(entries: Copyright[]): { years: string; holder: string } {
+export function isOtherRegisterLicenseType(value: unknown): boolean {
+  return normalizeRegisterLicenseType(value) === 'other';
+}
+
+export function isUnknownRegisterLicenseType(value: unknown): boolean {
+  return normalizeRegisterLicenseType(value) === 'unknown';
+}
+
+export function resolveCatalogLicenseTypeLabel(value: unknown): string {
+  const normalized = normalizeRegisterLicenseType(value);
+  if (normalized === 'unknown' || normalized === 'other') return '';
+  return toTrimmedString(value);
+}
+
+function normalizeCopyrightEntries(copyrights: CopyrightEntry[] | undefined): CopyrightEntry[] {
+  return Array.isArray(copyrights) ? copyrights : [];
+}
+
+function resolvePrimaryCopyright(entries: CopyrightEntry[]): { years: string; holder: string } {
   const primary =
     entries.find((entry) => toTrimmedString(entry.years) || toTrimmedString(entry.holder)) || entries[0] || {};
   return {
@@ -74,7 +109,7 @@ export function requiresTemplateCopyrightFields(type: unknown): boolean {
   return COPYRIGHT_PLACEHOLDER_RE.test(LICENSE_TEMPLATES[type]);
 }
 
-export function buildLicenseBody(license: License | null | undefined): string {
+export function buildLicenseBody(license: LicenseBodyInput | null | undefined): string {
   if (!license || typeof license !== 'object') return '';
 
   const customBody = toTrimmedString(license.licenseBody);

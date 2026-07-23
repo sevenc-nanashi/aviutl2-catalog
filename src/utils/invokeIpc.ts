@@ -1,5 +1,6 @@
 import * as tauriCore from '@tauri-apps/api/core';
 import type { DeviceInfo } from './diagnostics/types';
+import type { DetectResultMap } from './detectResult';
 
 type CommandSpec<Args = void, Result = unknown> = {
   args: Args;
@@ -10,10 +11,11 @@ type InvokeIpcMap = {
   logCmd: CommandSpec<{ level: string; msg: string }, void>;
   collectDeviceInfo: CommandSpec<void, DeviceInfo>;
   setCatalogIndex: CommandSpec<{ items: unknown[] }, void>;
+  writeNiconiCommonsIds: CommandSpec<{ payload: unknown }, void>;
   getInstalledMapCmd: CommandSpec<void, unknown>;
   addInstalledIdCmd: CommandSpec<{ id: string; version: string }, void>;
   removeInstalledIdCmd: CommandSpec<{ id: string }, void>;
-  detectVersionsMap: CommandSpec<{ items: unknown[] }, Record<string, string> | null>;
+  detectVersionsMap: CommandSpec<{ items: unknown[] }, DetectResultMap | null>;
   downloadFileToPath: CommandSpec<{ url: string; destPath: string; taskId: string }, string>;
   driveDownloadToFile: CommandSpec<{ fileId: string; destPath: string }, string>;
   ensureBoothAuthWindow: CommandSpec<void, void>;
@@ -46,13 +48,18 @@ type InvokeIpcMap = {
       aviutl2Root: string;
       isPortableMode: boolean;
       theme: string;
+      locale: string;
       packageStateOptOut: boolean;
+      localModeEnabled: boolean;
+      localManifestPath: string;
     },
     void
   >;
   setPackageUpdatePaused: CommandSpec<{ packageId: string; paused: boolean }, string[]>;
+  dismissDeprecatedPackageNotice: CommandSpec<{ packageIds: string[] }, string[]>;
   completeInitialSetup: CommandSpec<void, void>;
   calcXxh3Hex: CommandSpec<{ path: string }, string>;
+  decompressZstdToUtf8: CommandSpec<{ bytes: number[] }, string>;
 };
 
 type InvokeIpc = {

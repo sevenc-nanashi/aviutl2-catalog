@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ipc } from '@/utils/invokeIpc';
+import { detectInstalledVersionsMap } from '@/utils/installed-map';
 import { safeLog } from '../../model/helpers';
 import type { InitSetupStep, PackageItemsMap, PackageVersionsMap } from '../../model/types';
 
@@ -7,7 +7,7 @@ interface UseInitSetupVersionDetectionParams {
   step: InitSetupStep;
   requiredPluginIds: string[];
   packageItems: PackageItemsMap;
-  onDetected: (versions: Record<string, string>) => void;
+  onDetected: (versions: PackageVersionsMap) => void;
 }
 
 export default function useInitSetupVersionDetection({
@@ -35,13 +35,13 @@ export default function useInitSetupVersionDetection({
       if (step !== 'packages') return;
       if (versionsDetected) return;
       try {
-        const itemsForDetect = requiredPluginIds.map((id) => packageItems[id]).filter(Boolean);
-        if (itemsForDetect.length === 0) return;
-        const result = await ipc.detectVersionsMap({
-          items: itemsForDetect,
+        const itemsForDetect = requiredPluginIds.flatMap((id) => {
+          const item = packageItems[id];
+          return item ? [item] : [];
         });
+        if (itemsForDetect.length === 0) return;
+        const versions = await detectInstalledVersionsMap(itemsForDetect);
         if (cancelled) return;
-        const versions = result && typeof result === 'object' ? result : {};
         setPackageVersions(versions);
         onDetected(versions);
         setVersionsDetected(true);

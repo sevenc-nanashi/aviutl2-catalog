@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { CatalogDispatch, PackageItem } from '@/utils/catalogStore';
 import type { UsePackageInstallActionsResult } from '../types';
 import usePackageInstallerActions from '@/utils/usePackageInstallerActions';
@@ -8,33 +8,47 @@ interface UsePackageInstallActionsParams {
   dispatch: CatalogDispatch;
 }
 
-const IDLE_PROGRESS_VIEW = { ratio: 0, percent: 0, label: '準備中…' };
-
 export default function usePackageInstallActions({
   item,
   dispatch,
 }: UsePackageInstallActionsParams): UsePackageInstallActionsResult {
-  const { error, setError, busyAction, isBusy, progress, onDownload, onUpdate, onRemove } = usePackageInstallerActions({
+  const { t } = useTranslation(['package', 'common']);
+  const idleLabel = t('common:status.preparing');
+  const {
+    error,
+    setError,
+    busyAction,
+    isBusy,
+    progress,
+    noticeModal,
+    closeNoticeModal,
+    confirmNoticeModal,
+    onDownload,
+    onUpdate,
+    onRemove,
+  } = usePackageInstallerActions({
     item,
     dispatch,
-    missingInstallerMessage: 'インストールが未実装です',
+    missingInstallerMessage: t('actions.missingInstaller'),
   });
-
-  const activeProgressView = useMemo(
-    () => ({
-      ratio: progress.ratio ?? 0,
-      percent: progress.percent ?? Math.round((progress.ratio ?? 0) * 100),
-      label: progress.label ?? '準備中…',
-    }),
-    [progress.label, progress.percent, progress.ratio],
-  );
+  const progressView =
+    busyAction === 'download' || busyAction === 'update'
+      ? {
+          ratio: progress.ratio ?? 0,
+          percent: progress.percent ?? Math.round((progress.ratio ?? 0) * 100),
+          label: progress.label ?? idleLabel,
+        }
+      : { ratio: 0, percent: 0, label: idleLabel };
 
   return {
     error,
     setError,
     busyAction,
     isBusy,
-    progressView: busyAction === 'download' || busyAction === 'update' ? activeProgressView : IDLE_PROGRESS_VIEW,
+    progressView,
+    noticeModal,
+    closeNoticeModal,
+    confirmNoticeModal,
     onDownload,
     onUpdate,
     onRemove,

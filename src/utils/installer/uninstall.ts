@@ -1,3 +1,4 @@
+import { i18n } from '@/i18n';
 import { assertNever, formatUnknownError } from '../errors';
 import { removeInstalledId } from '../installed-map';
 import { bestEffortLogError, logInfo } from '../logging';
@@ -13,7 +14,7 @@ export async function runUninstallerForItem(
   onOperation?: (operation: Record<string, unknown>) => void,
 ): Promise<void> {
   await ensureAviutlClosed();
-  const version = typeof item['latest-version'] === 'string' ? item['latest-version'] : '';
+  const version = typeof item.latestVersion === 'string' ? item.latestVersion : '';
   const idVersion = `${item.id}-${version || 'latest'}`.replace(/[^A-Za-z0-9._-]/g, '_');
   const tmpDir = await ensureTmpDir(idVersion);
   const installer = normalizeInstallerConfig(item.installer);
@@ -21,7 +22,7 @@ export async function runUninstallerForItem(
     tmpDir: tmpDir,
     downloadPath: '',
   };
-  const uninstallSteps = installer.uninstall || [];
+  const uninstallSteps = installer.uninstallSteps;
   try {
     await logInfo(`[uninstall ${item.id}] start steps=${uninstallSteps.length}`);
     for (let i = 0; i < uninstallSteps.length; i++) {
@@ -59,19 +60,6 @@ export async function runUninstallerForItem(
             });
             break;
           }
-          case 'download':
-          case 'extract':
-          case 'extract_sfx':
-          case 'copy':
-          case 'run_auo_setup':
-            await logInfo(`[uninstall ${item.id}] skip unsupported action=${stepAction}`);
-            emitTestOperation(onOperation, {
-              kind: 'error',
-              status: 'skip',
-              summary: '未対応アクション',
-              detail: stepAction,
-            });
-            break;
           default:
             assertNever(stepAction);
         }
@@ -80,7 +68,7 @@ export async function runUninstallerForItem(
         emitTestOperation(onOperation, {
           kind: stepOperation.kind,
           status: 'error',
-          summary: `${toTestOperationLabel(stepAction)} 失敗`,
+          summary: i18n.t('register:tests.operationFailed', { action: toTestOperationLabel(stepAction) }),
           detail: formatUnknownError(e),
           targetPath: stepOperation.targetPath,
         });

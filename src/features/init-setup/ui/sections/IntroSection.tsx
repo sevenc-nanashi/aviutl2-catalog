@@ -1,10 +1,13 @@
 import AppIcon from '../../../../../src-tauri/icons/icon.svg';
+import { useTranslation } from 'react-i18next';
 import type { IntroSectionProps } from '../types';
 import Button from '@/components/ui/Button';
 import { cn } from '@/lib/cn';
 import { layout, media, state, text } from '@/components/ui/_styles';
 
 export default function IntroSection({ canStart, onStart }: IntroSectionProps) {
+  const { t } = useTranslation('initSetup');
+
   return (
     <div className={cn(layout.centerCol, state.enterZoomIn95, 'flex-1 text-center duration-700')}>
       <div className="relative mb-10 group cursor-default">
@@ -18,11 +21,9 @@ export default function IntroSection({ canStart, onStart }: IntroSectionProps) {
         </div>
       </div>
 
-      <h1 className={text.heroTitle}>AviUtl2 カタログ</h1>
+      <h1 className={text.heroTitle}>{t('intro.title')}</h1>
 
-      <p className="text-slate-500 dark:text-slate-400 text-base leading-7 max-w-md mb-10">
-        AviUtl2 カタログの初期設定を行います
-      </p>
+      <p className="text-slate-500 dark:text-slate-400 text-base leading-7 max-w-md mb-10">{t('intro.description')}</p>
 
       <Button
         variant="primary"
@@ -35,7 +36,7 @@ export default function IntroSection({ canStart, onStart }: IntroSectionProps) {
         onClick={onStart}
         disabled={!canStart}
       >
-        セットアップを開始
+        {t('intro.start')}
       </Button>
     </div>
   );

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   isRegisterDraftPending,
   listRegisterDraftRecords,
@@ -6,11 +7,10 @@ import {
   type RegisterDraftRecord,
 } from '../../model/draft';
 import { resolveRegisterDraftTestState } from '../../model/registerTestRequirement';
-import type { CatalogEntry } from '@/utils/catalogSchema';
-import type { RegisterPackageForm } from '../../model/types';
+import type { RegisterCatalogItem, RegisterPackageForm } from '../../model/types';
 import type { RegisterDraftListItemView } from '../types';
 
-function toDraftListItem(record: RegisterDraftRecord, catalogItems: CatalogEntry[]): RegisterDraftListItemView {
+function toDraftListItem(record: RegisterDraftRecord, catalogItems: RegisterCatalogItem[]): RegisterDraftListItemView {
   const testStatus = resolveRegisterDraftTestState({
     catalogItems,
     packageId: record.packageId,
@@ -40,7 +40,7 @@ interface UseRegisterDraftPersistenceArgs {
   currentTags: string[];
   userEditToken: number;
   draftPackageId: string;
-  catalogItems: CatalogEntry[];
+  catalogItems: RegisterCatalogItem[];
   setError: React.Dispatch<React.SetStateAction<string>>;
 }
 
@@ -53,6 +53,7 @@ export default function useRegisterDraftPersistence({
   catalogItems,
   setError,
 }: UseRegisterDraftPersistenceArgs) {
+  const { t } = useTranslation('register');
   const [draftPackages, setDraftPackages] = useState<RegisterDraftListItemView[]>(() =>
     listRegisterDraftRecords().map((record) => toDraftListItem(record, catalogItems)),
   );
@@ -145,7 +146,7 @@ export default function useRegisterDraftPersistence({
       try {
         persistCurrentDraft();
       } catch (err) {
-        const message = err instanceof Error ? err.message : '一時保存に失敗しました。';
+        const message = err instanceof Error ? err.message : t('errors.draftSaveFailed');
         setError(message);
       }
     }, waitMs);
@@ -168,11 +169,11 @@ export default function useRegisterDraftPersistence({
       persistCurrentDraft();
       return true;
     } catch (err) {
-      const message = err instanceof Error ? err.message : '一時保存に失敗しました。';
+      const message = err instanceof Error ? err.message : t('errors.draftSaveFailed');
       setError(message);
       return false;
     }
-  }, [clearPendingAutoSave, hasUnsavedUserEdits, persistCurrentDraft, setError]);
+  }, [clearPendingAutoSave, hasUnsavedUserEdits, persistCurrentDraft, setError, t]);
 
   const pendingDraftPackages = useMemo(() => draftPackages.filter((item) => item.pending), [draftPackages]);
   const pendingSubmitCount = useMemo(

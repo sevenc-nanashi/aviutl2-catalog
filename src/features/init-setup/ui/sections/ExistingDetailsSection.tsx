@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import DetailsSectionBase from '../components/DetailsSectionBase';
 import type { ExistingDetailsSectionProps } from '../types';
 import { action, layout } from '@/components/ui/_styles';
@@ -14,35 +15,36 @@ export default function ExistingDetailsSection({
   onBack,
   onNext,
 }: ExistingDetailsSectionProps) {
+  const { t } = useTranslation(['initSetup', 'common']);
   const header = useMemo(
     () => ({
-      title: 'フォルダの指定',
-      description: 'インストール済みの AviUtl2 フォルダを選択してください',
+      title: t('details.existing.title'),
+      description: t('details.existing.description'),
     }),
-    [],
+    [t],
   );
   const input = useMemo(
     () => ({
       inputId: 'setup-aviutl2-root',
-      inputLabel: 'AviUtl2 フォルダパス',
+      inputLabel: t('details.existing.label'),
       inputLabelClassName: 'text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 ml-1',
       inputValue: aviutlRoot,
       inputPlaceholder: 'C:\\path\\to\\aviutl',
-      pickButtonTitle: '参照',
-      inputHint: 'aviutl2.exe が含まれているフォルダを選択してください',
+      pickButtonTitle: t('common:actions.browse'),
+      inputHint: t('details.existing.hint'),
       onInputChange: onAviutlRootChange,
       onPickDir: onPickExistingDir,
     }),
-    [aviutlRoot, onAviutlRootChange, onPickExistingDir],
+    [aviutlRoot, onAviutlRootChange, onPickExistingDir, t],
   );
   const portableOptions = useMemo(
     () => ({
       portable,
-      standardLabel: '標準（推奨）',
+      standardLabel: t('details.standard'),
       portableActiveClassName: 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 ring-1 ring-blue-500',
       onPortableChange,
     }),
-    [onPortableChange, portable],
+    [onPortableChange, portable, t],
   );
   const actions = useMemo(
     () => ({
@@ -52,12 +54,12 @@ export default function ExistingDetailsSection({
       onNext,
       savingContent: (
         <span className={layout.inlineGap2}>
-          <div className={action.spinnerWhite} /> 処理中…
+          <div className={action.spinnerWhite} /> {t('common:status.processing')}
         </span>
       ),
-      idleContent: '次へ',
+      idleContent: t('common:actions.next'),
     }),
-    [canProceed, onBack, onNext, savingInstallDetails],
+    [canProceed, onBack, onNext, savingInstallDetails, t],
   );
 
   return <DetailsSectionBase header={header} input={input} portable={portableOptions} actions={actions} />;

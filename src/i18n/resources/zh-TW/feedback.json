@@ -1,0 +1,69 @@
+{
+  "header": {
+    "title": "回饋",
+    "description": "傳送錯誤回報與意見回饋。",
+    "issuesLink": "已回報的問題"
+  },
+  "shared": {
+    "optional": "（選填）",
+    "loading": "正在蒐集資訊..."
+  },
+  "modes": {
+    "bug": "錯誤回報",
+    "inquiry": "回饋 / 詢問"
+  },
+  "visibility": {
+    "public": "公開",
+    "private": "私人",
+    "publicTitle": "公開範圍",
+    "privateTitle": "私人範圍",
+    "publicDescription": "<strong>標題</strong>與<strong>詳細內容</strong>會公開。聯絡方式、附件、裝置資訊與其他中繼資料仍會保持私人。",
+    "privateDescription": "回饋與詢問不會公開，只有開發者可以查看。"
+  },
+  "fields": {
+    "title": "標題",
+    "detail": "詳細內容",
+    "contact": "聯絡方式",
+    "bugTitlePlaceholder": "請簡要描述錯誤",
+    "bugDetailPlaceholder": "請說明發生了什麼、如何重現，以及你原本預期的結果",
+    "bugContactPlaceholder": "電子郵件地址或 X 帳號（僅在開發者需要聯絡你時使用）",
+    "inquiryTitlePlaceholder": "請輸入主題",
+    "inquiryDetailPlaceholder": "請詳細描述你的回饋或問題",
+    "inquiryContactPlaceholder": "電子郵件地址或 X 帳號（僅在開發者需要聯絡你時使用）"
+  },
+  "attachments": {
+    "label": "附件",
+    "remove": "移除附件"
+  },
+  "environment": {
+    "title": "環境資訊",
+    "includeApp": "附加應用資訊",
+    "includeDevice": "附加裝置資訊",
+    "packages": "已安裝的套件：{{count}}",
+    "unknownVersion": "未知",
+    "driver": "驅動程式",
+    "cores": "核心數",
+    "logical": "邏輯",
+    "maxClock": "最大時脈",
+    "unavailable": "無法蒐集裝置資訊。"
+  },
+  "log": {
+    "title": "日誌檔",
+    "include": "附加 app.log",
+    "unavailable": "無法取得日誌。"
+  },
+  "submit": {
+    "sending": "傳送中..."
+  },
+  "messages": {
+    "bugSuccess": "錯誤回報已送出。謝謝。",
+    "inquirySuccess": "回饋已送出。謝謝。"
+  },
+  "errors": {
+    "requiredFields": "標題與詳細內容為必填項目。"
+  },
+  "payload": {
+    "bugTitlePrefix": "錯誤回報",
+    "inquiryTitlePrefix": "詢問"
+  }
+}

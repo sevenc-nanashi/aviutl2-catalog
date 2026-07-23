@@ -1,0 +1,46 @@
+{
+  "shared": {
+    "all": "All"
+  },
+  "searchPlaceholder": "Search by package name, author, or keyword...",
+  "filters": {
+    "label": "Filters",
+    "tagFilter": "Tag filter",
+    "closeInstallMenu": "Close install status menu",
+    "closeDeprecationMenu": "Close deprecation menu",
+    "closeSortMenu": "Close sort menu",
+    "category": "Category",
+    "sort": "Sort",
+    "count": "items",
+    "selected": "Selected:",
+    "clearAll": "Clear all",
+    "allTags": "All tags",
+    "clearSelection": "Clear selection"
+  },
+  "empty": {
+    "title": "No packages match the current filters",
+    "clear": "Clear filters"
+  },
+  "categories": {},
+  "installStatus": {
+    "installed": "Installed",
+    "not_installed": "Not installed"
+  },
+  "deprecationStatus": {
+    "active": "Hide deprecated",
+    "deprecated": "Deprecated only"
+  },
+  "sortOptions": {
+    "popularity_desc": "Popularity",
+    "trend_desc": "Trending",
+    "added_desc": "Recently added",
+    "updated_desc": "Recently updated"
+  },
+  "errors": {
+    "dataDirUnavailable": "Could not determine the data folder. Check the AviUtl2 folder in Settings.",
+    "dataDirOpenFailed": "Could not open the data folder. Check your settings.",
+    "launchFailed": "Failed to launch AviUtl2.",
+    "catalogUnavailable": "Failed to load the catalog (no network connection or cache available).",
+    "catalogLoadFailed": "Failed to load the catalog."
+  }
+}

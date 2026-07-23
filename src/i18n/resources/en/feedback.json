@@ -1,0 +1,69 @@
+{
+  "header": {
+    "title": "Feedback",
+    "description": "Send bug reports and feedback.",
+    "issuesLink": "Issues Page (GitHub)"
+  },
+  "shared": {
+    "optional": "(Optional)",
+    "loading": "Collecting information..."
+  },
+  "modes": {
+    "bug": "Bug Report",
+    "inquiry": "Feedback / Inquiry"
+  },
+  "visibility": {
+    "public": "Public",
+    "private": "Private",
+    "publicTitle": "Public Report",
+    "privateTitle": "Private Report",
+    "publicDescription": "The <strong>title</strong> and <strong>description</strong> of your report will be public.\nOther information such as contact details, attachments, and device info will remain private.",
+    "privateDescription": "Feedback and inquiries are not published. Only the developer can review them."
+  },
+  "fields": {
+    "title": "Title",
+    "detail": "Description",
+    "contact": "Contact",
+    "bugTitlePlaceholder": "Describe the bug briefly",
+    "bugDetailPlaceholder": "Explain what happened, how to reproduce it, and what you expected",
+    "bugContactPlaceholder": "Email address or X account (used only if the developer needs to contact you)",
+    "inquiryTitlePlaceholder": "Enter a subject",
+    "inquiryDetailPlaceholder": "Describe your feedback or question in detail",
+    "inquiryContactPlaceholder": "Email address or X account (used only when the developer needs to contact you)"
+  },
+  "attachments": {
+    "label": "Attachments",
+    "remove": "Remove attachment"
+  },
+  "environment": {
+    "title": "Environment",
+    "includeApp": "Attach app information",
+    "includeDevice": "Attach device information",
+    "packages": "Installed packages: {{count}}",
+    "unknownVersion": "Unknown",
+    "driver": "Driver",
+    "cores": "Cores",
+    "logical": "Logical processors",
+    "maxClock": "Max clock",
+    "unavailable": "Device information could not be collected."
+  },
+  "log": {
+    "title": "Log file",
+    "include": "Attach app.log",
+    "unavailable": "Log could not be retrieved."
+  },
+  "submit": {
+    "sending": "Sending..."
+  },
+  "messages": {
+    "bugSuccess": "Your bug report has been sent. Thank you!",
+    "inquirySuccess": "Your feedback has been sent. Thank you!"
+  },
+  "errors": {
+    "requiredFields": "Please provide the title and description of your report."
+  },
+  "payload": {
+    "bugTitlePrefix": "Bug Report",
+    "inquiryTitlePrefix": "Inquiry"
+  }
+}

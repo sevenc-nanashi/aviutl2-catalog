@@ -1,14 +1,14 @@
-import type { InstallerAction } from '../catalogSchema';
-import type { DownloadProgress, InstallProgressPayload, InstallProgressPhase } from './types';
+import { i18n } from '@/i18n';
+import type { DownloadProgress, InstallerAction, InstallProgressPayload, InstallProgressPhase } from './types';
 
 const STEP_PROGRESS_LABELS: Record<string, string> = {
-  download: 'ダウンロード',
-  extract: '展開中',
-  extract_sfx: '展開中',
-  copy: '配置中',
-  delete: '削除中',
-  run: '実行中',
-  run_auo_setup: '実行中',
+  download: 'common:installerActions.download',
+  extract: 'common:installerActions.extract',
+  extractSfx: 'common:installerActions.extract',
+  copy: 'common:installerActions.copy',
+  delete: 'common:installerActions.delete',
+  run: 'common:installerActions.run',
+  runAuoSetup: 'common:installerActions.run',
 };
 
 type ProgressCallback = ((progress: InstallProgressPayload) => void) | undefined;
@@ -23,11 +23,11 @@ export function createInstallProgressTools(totalSteps: number, onProgress: Progr
     const safeUnits = Number.isFinite(completedUnits) ? completedUnits : 0;
     const ratio = totalSteps <= 0 ? (phase === 'done' ? 1 : 0) : Math.min(1, Math.max(0, safeUnits / totalSteps));
     const label = (() => {
-      if (phase === 'done') return '完了';
-      if (phase === 'init') return '準備中…';
-      if (phase === 'error') return 'エラーが発生しました';
+      if (phase === 'done') return i18n.t('common:status.done');
+      if (phase === 'init') return i18n.t('common:status.preparing');
+      if (phase === 'error') return i18n.t('common:status.error');
       const action = step?.action;
-      return STEP_PROGRESS_LABELS[String(action || '')] || '処理中…';
+      return i18n.t(STEP_PROGRESS_LABELS[String(action || '')] || 'common:status.processing');
     })();
     return {
       ratio,

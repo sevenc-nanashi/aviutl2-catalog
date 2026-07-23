@@ -1,5 +1,6 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 import { Check, X } from 'lucide-react';
 import { normalizeArrayText } from '../../model/helpers';
@@ -32,7 +33,7 @@ const SelectableChipInput = memo(function SelectableChipInput({
   inputName,
   values,
   suggestions = [],
-  suggestionsLabel = '候補',
+  suggestionsLabel,
   onChange,
   inputAriaLabel,
   placeholder,
@@ -41,6 +42,7 @@ const SelectableChipInput = memo(function SelectableChipInput({
   commitOnBlur = false,
   helperText,
 }: SelectableChipInputProps) {
+  const { t } = useTranslation('register');
   const [selectedValues, setSelectedValues] = useState(() => normalizeArrayText(values));
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -153,7 +155,7 @@ const SelectableChipInput = memo(function SelectableChipInput({
                 event.stopPropagation();
                 handleRemoveValue(value);
               }}
-              aria-label={`${value} を削除`}
+              aria-label={t('actions.removeValue', { value })}
             >
               <X size={12} />
             </Button>
@@ -168,7 +170,7 @@ const SelectableChipInput = memo(function SelectableChipInput({
           onChange={(event) => setInputValue(event.target.value)}
           onKeyDown={handleInputKeyDown}
           onBlur={handleInputBlur}
-          aria-label={inputAriaLabel || `${label}を入力`}
+          aria-label={inputAriaLabel || t('actions.inputValue', { label })}
           placeholder={selectedValues.length === 0 ? placeholder : ''}
           required={required && selectedValues.length === 0}
         />

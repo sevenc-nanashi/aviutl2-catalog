@@ -1,13 +1,14 @@
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { hasInstaller, runInstallerForItem } from '@/utils/installer';
-import type { CatalogEntry } from '@/utils/catalogSchema';
+import type { InstallableCatalogItem } from '@/utils/catalogInstallItem';
 import type { InstallProgressPayload } from '@/utils/installer/types';
 import { getErrorMessage } from '../../model/helpers';
 import type { PackageItemsMap, PackageState } from '../../model/types';
 
 interface UseInitSetupPackageInstallerParams {
   packageItems: PackageItemsMap;
-  ensurePackageItem: (id: string) => Promise<CatalogEntry | null>;
+  ensurePackageItem: (id: string) => Promise<InstallableCatalogItem | null>;
   updatePackageState: (
     id: string,
     updater: Partial<PackageState> | ((current: PackageState) => Partial<PackageState>),
@@ -21,6 +22,7 @@ export default function useInitSetupPackageInstaller({
   updatePackageState,
   markVersionsDirty,
 }: UseInitSetupPackageInstallerParams) {
+  const { t } = useTranslation(['common', 'initSetup']);
   const downloadRequiredPackage = useCallback(
     async (id: string) => {
       if (!id) return false;
@@ -30,7 +32,7 @@ export default function useInitSetupPackageInstaller({
         try {
           pkg = await ensurePackageItem(id);
         } catch (fetchError) {
-          const detail = getErrorMessage(fetchError) || 'パッケージ情報を取得できませんでした。';
+          const detail = getErrorMessage(fetchError) || t('initSetup:errors.packageInfoUnavailable');
           updatePackageState(id, () => ({ downloading: false, error: detail, progress: null }));
           return false;
         }
@@ -38,7 +40,7 @@ export default function useInitSetupPackageInstaller({
       if (!pkg || !hasInstaller(pkg)) {
         updatePackageState(id, () => ({
           downloading: false,
-          error: 'インストールできないパッケージです。',
+          error: t('initSetup:errors.packageNotInstallable'),
           progress: null,
         }));
         return false;
@@ -47,7 +49,7 @@ export default function useInitSetupPackageInstaller({
       const initialProgress: InstallProgressPayload = {
         ratio: 0,
         percent: 0,
-        label: '準備中…',
+        label: t('common:status.preparing'),
         phase: 'init',
         step: null,
         stepIndex: null,
@@ -68,12 +70,12 @@ export default function useInitSetupPackageInstaller({
         markVersionsDirty();
         return true;
       } catch (installError) {
-        const detail = getErrorMessage(installError) || 'エラーが発生しました。';
+        const detail = getErrorMessage(installError) || t('initSetup:errors.generic');
         updatePackageState(id, () => ({ downloading: false, error: detail, progress: null }));
         return false;
       }
     },
-    [ensurePackageItem, markVersionsDirty, packageItems, updatePackageState],
+    [ensurePackageItem, markVersionsDirty, packageItems, t, updatePackageState],
   );
 
   return {

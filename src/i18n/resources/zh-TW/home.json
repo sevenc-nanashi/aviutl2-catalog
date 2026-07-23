@@ -1,0 +1,46 @@
+{
+  "shared": {
+    "all": "全部"
+  },
+  "searchPlaceholder": "依套件名稱、作者或關鍵字搜尋...",
+  "filters": {
+    "label": "篩選",
+    "tagFilter": "標籤篩選",
+    "closeInstallMenu": "關閉安裝狀態選單",
+    "closeDeprecationMenu": "關閉棄用選單",
+    "closeSortMenu": "關閉排序選單",
+    "category": "分類",
+    "sort": "排序",
+    "count": "項",
+    "selected": "已選擇：",
+    "clearAll": "全部清除",
+    "allTags": "全部標籤",
+    "clearSelection": "清除選擇"
+  },
+  "empty": {
+    "title": "目前的篩選條件下沒有符合的套件",
+    "clear": "清除篩選"
+  },
+  "categories": {},
+  "installStatus": {
+    "installed": "已安裝",
+    "not_installed": "未安裝"
+  },
+  "deprecationStatus": {
+    "active": "隱藏已棄用",
+    "deprecated": "僅顯示已棄用"
+  },
+  "sortOptions": {
+    "popularity_desc": "人氣",
+    "trend_desc": "熱門",
+    "added_desc": "最近新增",
+    "updated_desc": "最近更新"
+  },
+  "errors": {
+    "dataDirUnavailable": "無法判定資料夾。請在設定中確認 AviUtl2 資料夾。",
+    "dataDirOpenFailed": "無法開啟資料夾。請檢查設定。",
+    "launchFailed": "啟動 AviUtl2 失敗。",
+    "catalogUnavailable": "無法載入目錄（沒有網路連線且沒有可用快取）。",
+    "catalogLoadFailed": "載入目錄失敗。"
+  }
+}

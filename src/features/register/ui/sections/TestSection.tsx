@@ -2,6 +2,8 @@
  * インストーラーテストセクションのコンポーネント
  */
 import { useMemo } from 'react';
+import type { ParseKeys } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import { AlertCircle, Download, Trash2 } from 'lucide-react';
@@ -9,22 +11,6 @@ import ProgressCircle from '@/components/ProgressCircle';
 import type { RegisterTestOperation, RegisterTestSectionProps } from '../types';
 import { layout, surface, text } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
-
-const KIND_LABELS: Record<RegisterTestOperation['kind'], string> = {
-  download: 'ダウンロード',
-  extract: '展開',
-  extract_sfx: 'SFX展開',
-  copy: 'コピー',
-  delete: '削除',
-  run: '実行',
-  error: 'エラー',
-};
-
-const STATUS_LABELS: Record<RegisterTestOperation['status'], string> = {
-  done: '完了',
-  skip: 'スキップ',
-  error: '失敗',
-};
 
 const operationPathBoxClass = `min-w-0 ${surface.panelRoundedSubtle} p-1`;
 const operationPathTextClass = 'break-all font-mono text-[11px] text-slate-700 dark:text-slate-200';
@@ -37,6 +23,8 @@ const operationMetaPanelClass = `${surface.panelRounded} p-1.5`;
 const operationTargetPanelClass = `space-y-1 ${surface.panelRounded} px-1.5 py-1 text-[11px] font-mono text-slate-600 dark:text-slate-300`;
 const operationDetailPanelClass = `whitespace-pre-wrap break-all ${surface.panelRounded} px-1.5 py-1 text-[11px] text-slate-600 dark:text-slate-300`;
 const progressFillClass = 'h-full rounded-full transition-all';
+type RegisterTestTranslationKey = ParseKeys<['register', 'common']>;
+type RegisterTestTranslator = (key: RegisterTestTranslationKey) => string;
 
 function operationStatusClass(status: RegisterTestOperation['status']): string {
   switch (status) {
@@ -53,14 +41,44 @@ function operationStatusClass(status: RegisterTestOperation['status']): string {
   }
 }
 
-function OperationList({ operations }: { operations: RegisterTestOperation[] }) {
+function operationKindLabel(t: RegisterTestTranslator, kind: RegisterTestOperation['kind']): string {
+  switch (kind) {
+    case 'download':
+      return t('installer.actions.download');
+    case 'copy':
+      return t('installer.actions.copy');
+    case 'delete':
+      return t('installer.actions.delete');
+    case 'extract':
+      return t('tests.kind.extract');
+    case 'extractSfx':
+      return t('tests.kind.extractSfx');
+    case 'run':
+      return t('tests.kind.run');
+    case 'error':
+      return t('tests.kind.error');
+  }
+}
+
+function operationStatusLabel(t: RegisterTestTranslator, status: RegisterTestOperation['status']): string {
+  switch (status) {
+    case 'done':
+      return t('common:status.done');
+    case 'skip':
+      return t('tests.status.skip');
+    case 'error':
+      return t('tests.status.error');
+  }
+}
+
+function OperationList({ operations, t }: { operations: RegisterTestOperation[]; t: RegisterTestTranslator }) {
   return (
     <div className="space-y-2">
-      <div className={text.labelXsSemibold}>実行ログ</div>
+      <div className={text.labelXsSemibold}>{t('tests.logTitle')}</div>
       {operations.length ? (
         <div className={operationLogPanelClass}>
           {operations.map((operation) => {
-            const kindLabel = KIND_LABELS[operation.kind];
+            const kindLabel = operationKindLabel(t, operation.kind);
             const showSummary = !!operation.summary && operation.summary !== kindLabel;
             const hasFromTo = !!operation.fromPath || !!operation.toPath;
             return (
@@ -77,7 +95,7 @@ function OperationList({ operations }: { operations: RegisterTestOperation[] }) 
                     {kindLabel}
                   </Badge>
                   <Badge shape="rounded" size="xxs" className={operationStatusClass(operation.status)}>
-                    {STATUS_LABELS[operation.status]}
+                    {operationStatusLabel(t, operation.status)}
                   </Badge>
                 </div>
                 {showSummary && <div className={text.bodyXsStrong}>{operation.summary}</div>}
@@ -85,12 +103,12 @@ function OperationList({ operations }: { operations: RegisterTestOperation[] }) 
                   <div className={operationMetaPanelClass}>
                     <div className="space-y-1">
                       <div className={operationPathBoxClass}>
-                        <div className={text.tinyMutedStrong}>元のパス</div>
+                        <div className={text.tinyMutedStrong}>{t('tests.fromPath')}</div>
                         <div className={operationPathTextClass}>{operation.fromPath || '-'}</div>
                       </div>
                       <div className="text-center text-xs text-slate-400 dark:text-slate-500">↓</div>
                       <div className={operationPathBoxClass}>
-                        <div className={text.tinyMutedStrong}>先のパス</div>
+                        <div className={text.tinyMutedStrong}>{t('tests.toPath')}</div>
                         <div className={operationPathTextClass}>{operation.toPath || '-'}</div>
                       </div>
                     </div>
@@ -100,7 +118,7 @@ function OperationList({ operations }: { operations: RegisterTestOperation[] }) 
                   <div className={operationTargetPanelClass}>
                     <div className="break-all">
                       <span className="mr-1 font-sans text-[10px] font-semibold text-slate-500 dark:text-slate-400">
-                        対象パス:
+                        {t('common:labels.targetPath')}:
                       </span>
                       {operation.targetPath}
                     </div>
@@ -113,7 +131,7 @@ function OperationList({ operations }: { operations: RegisterTestOperation[] }) 
         </div>
       ) : (
         <div className="rounded-lg border border-dashed border-slate-300 bg-slate-100/70 px-3 py-2 text-xs text-slate-500 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-400">
-          実行ログはありません。
+          {t('tests.noLogs')}
         </div>
       )}
     </div>
@@ -144,6 +162,7 @@ export default function RegisterTestSection({
   onInstallerTest,
   onUninstallerTest,
 }: RegisterTestSectionProps) {
+  const { t } = useTranslation(['register', 'common']);
   const installerProgressStyle = useMemo(() => ({ width: `${installerTestPercent}%` }), [installerTestPercent]);
   const uninstallerProgressStyle = useMemo(() => ({ width: `${uninstallerTestPercent}%` }), [uninstallerTestPercent]);
 
@@ -151,10 +170,8 @@ export default function RegisterTestSection({
     <section className={surface.cardSection}>
       <div className={layout.rowBetweenWrapGap3}>
         <div className="space-y-1">
-          <h2 className={text.titleLg}>インストーラー / 削除テスト</h2>
-          <p className={text.mutedXs}>
-            {testsRequired ? '現在の設定でインストールと削除の動作を確認します。' : '現在の差分ではテスト不要です。'}
-          </p>
+          <h2 className={text.titleLg}>{t('tests.title')}</h2>
+          <p className={text.mutedXs}>{testsRequired ? t('tests.required') : t('tests.notRequired')}</p>
         </div>
         <div className={layout.wrapItemsGap2}>
           <Button
@@ -172,12 +189,12 @@ export default function RegisterTestSection({
                 size={16}
                 strokeWidth={3}
                 className="text-white"
-                ariaLabel="インストーラーテストの進行度"
+                ariaLabel={t('tests.installerProgressAria')}
               />
             ) : (
               <Download size={14} />
             )}
-            <span>{installerTestRunning ? '実行中…' : 'インストールテスト'}</span>
+            <span>{installerTestRunning ? t('tests.run') : t('tests.installer')}</span>
           </Button>
           <Button
             variant="danger"
@@ -189,20 +206,20 @@ export default function RegisterTestSection({
             title={uninstallerTestValidation || ''}
           >
             <Trash2 size={14} />
-            <span>{uninstallerTestRunning ? '実行中…' : '削除テスト'}</span>
+            <span>{uninstallerTestRunning ? t('tests.run') : t('tests.uninstaller')}</span>
           </Button>
         </div>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <div className={testStatusCardClass}>
-          <div className={text.labelXsSemibold}>インストールテスト</div>
+          <div className={text.labelXsSemibold}>{t('tests.installer')}</div>
           <div className={layout.wrapItemsGap3}>
             <ProgressCircle
               value={installerTestRatio}
               size={32}
               strokeWidth={3}
               className={installerTestTone}
-              ariaLabel="インストーラーテストの進行度"
+              ariaLabel={t('tests.installerProgressAria')}
               showComplete={installerTestPhase === 'done'}
             />
             <div className="space-y-1">
@@ -228,9 +245,9 @@ export default function RegisterTestSection({
           </div>
           {installerTestPhase === 'done' && (
             <div className={text.mutedXs}>
-              検出バージョン:
+              {t('tests.detectedVersion')}:
               <span className="ml-1 font-mono text-slate-700 dark:text-slate-200">
-                {installerTestDetectedVersion || '未検出'}
+                {installerTestDetectedVersion || t('tests.notDetected')}
               </span>
             </div>
           )}
@@ -242,21 +259,21 @@ export default function RegisterTestSection({
           )}
           {installerTestError && (
             <div className={surface.dangerBox}>
-              <div className="text-xs font-semibold">エラー</div>
+              <div className="text-xs font-semibold">{t('tests.errorTitle')}</div>
               <div className="whitespace-pre-line text-xs">{installerTestError}</div>
             </div>
           )}
-          <OperationList operations={installerTestOperations} />
+          <OperationList operations={installerTestOperations} t={t} />
         </div>
         <div className={testStatusCardClass}>
-          <div className={text.labelXsSemibold}>削除テスト</div>
+          <div className={text.labelXsSemibold}>{t('tests.uninstaller')}</div>
           <div className={layout.wrapItemsGap3}>
             <ProgressCircle
               value={uninstallerTestRatio}
               size={32}
               strokeWidth={3}
               className={uninstallerTestTone}
-              ariaLabel="削除テストの進行度"
+              ariaLabel={t('tests.uninstallerProgressAria')}
               showComplete={uninstallerTestPhase === 'done'}
             />
             <div className="space-y-1">
@@ -288,11 +305,11 @@ export default function RegisterTestSection({
           )}
           {uninstallerTestError && (
             <div className={surface.dangerBox}>
-              <div className="text-xs font-semibold">エラー</div>
+              <div className="text-xs font-semibold">{t('tests.errorTitle')}</div>
               <div className="whitespace-pre-line text-xs">{uninstallerTestError}</div>
             </div>
           )}
-          <OperationList operations={uninstallerTestOperations} />
+          <OperationList operations={uninstallerTestOperations} t={t} />
         </div>
       </div>
     </section>

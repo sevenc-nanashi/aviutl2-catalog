@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as z from 'zod';
 import { safeLog } from '../../model/helpers';
 import type { SetupConfig } from '../../model/types';
@@ -10,6 +11,7 @@ const setupConfigResponseSchema = z.object({
 });
 
 export default function useInitSetupConfig() {
+  const { t } = useTranslation('initSetup');
   const [setupConfig, setSetupConfig] = useState<SetupConfig | null>(null);
   const [setupError, setSetupError] = useState('');
 
@@ -31,7 +33,7 @@ export default function useInitSetupConfig() {
       } catch (fetchError) {
         if (!cancelled) {
           setSetupConfig(null);
-          setSetupError('インターネットに接続してください。');
+          setSetupError(t('errors.networkRequired'));
         }
         await safeLog('[init-window] setup config load failed', fetchError);
       }
@@ -39,7 +41,7 @@ export default function useInitSetupConfig() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [t]);
 
   const requiredPluginIds = setupConfig?.requiredPluginIds ?? [];
   const corePackageId = setupConfig?.corePackageId ?? '';

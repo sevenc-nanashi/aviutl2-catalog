@@ -1,0 +1,79 @@
+{
+  "intro": {
+    "title": "AviUtl2 카탈로그",
+    "description": "처음 사용할 수 있도록 AviUtl2 카탈로그를 설정합니다",
+    "start": "설정 시작"
+  },
+  "steps": {
+    "intro": "시작",
+    "installStatus": "설치 상태",
+    "detailsExisting": "설정 확인",
+    "detailsInstall": "설치",
+    "packages": "추천 패키지"
+  },
+  "installStatus": {
+    "title": "설치 상태",
+    "description": "현재 AviUtl2 환경에 맞는 항목을 선택해 주세요",
+    "installedTitle": "이미 설치됨",
+    "installedDescription": "AviUtl2가 이미 설치되어 있다면 이 항목을 사용하세요",
+    "freshTitle": "새로 설치",
+    "freshDescription": "AviUtl2가 아직 설치되지 않았다면 이 항목을 사용하세요.\n최신 버전을 자동으로 다운로드하여 설치합니다."
+  },
+  "details": {
+    "portableMode": "포터블 모드",
+    "standard": "표준(권장)",
+    "portable": "포터블",
+    "standardDescription": "플러그인과 스크립트를 ProgramData에 설치합니다.",
+    "portableDescription": "플러그인과 스크립트를 aviutl2.exe 옆의 data 폴더에 설치합니다.",
+    "existing": {
+      "title": "폴더 선택",
+      "description": "AviUtl2가 이미 설치된 폴더를 선택해 주세요",
+      "label": "AviUtl2 폴더 경로",
+      "hint": "aviutl2.exe가 들어 있는 폴더를 선택해 주세요"
+    },
+    "install": {
+      "title": "설치 위치 선택",
+      "description": "AviUtl2를 설치할 폴더를 선택해 주세요",
+      "label": "설치 폴더",
+      "next": "설치 후 계속",
+      "installing": "설치 중...",
+      "progressAria": "설치 진행률"
+    }
+  },
+  "packages": {
+    "title": "추천 패키지",
+    "allInstalled": "추천 패키지가 모두 이미 설치되어 있습니다",
+    "description": "일반적인 사용에 필요한 핵심 플러그인을 설치합니다",
+    "loading": "패키지 정보를 불러오는 중...",
+    "missingSummary": "상세 정보를 불러오지 못했습니다",
+    "progressAria": "{{name}} 진행률",
+    "installed": "설치됨",
+    "notInstalled": "설치되지 않음",
+    "skip": "설치하지 않고 계속",
+    "installAndNext": "모두 설치하고 계속"
+  },
+  "done": {
+    "title": "설정 완료",
+    "description": "모든 설정이 준비되었습니다",
+    "openApp": "AviUtl2 카탈로그 열기"
+  },
+  "errors": {
+    "aviutlRootRequired": "AviUtl2 폴더를 입력해 주세요.",
+    "saveFailed": "설정을 저장하지 못했습니다.",
+    "installDirRequired": "설치 폴더를 입력해 주세요.",
+    "setupFailed": "설정에 실패했습니다.",
+    "installFailed": "설치에 실패했습니다.",
+    "bulkInstallPartialFailed": "일부 설치에 실패했습니다.",
+    "generic": "오류가 발생했습니다.",
+    "packageInfoPartialFailed": "일부 패키지 정보를 불러오지 못했습니다: {{ids}}",
+    "requiredPackagesLoadFailed": "필수 패키지 정보를 불러오지 못했습니다.",
+    "packageInfoMissing": "패키지 정보를 찾을 수 없습니다: {{id}}",
+    "networkRequired": "인터넷에 연결해 주세요.",
+    "packageInfoUnavailable": "패키지 정보를 가져오지 못했습니다.",
+    "packageNotInstallable": "이 패키지는 설치할 수 없습니다.",
+    "pickInstallDir": "설치 폴더 선택",
+    "pickExistingDir": "AviUtl2 폴더 선택",
+    "pickDirFailed": "폴더를 선택하지 못했습니다.",
+    "finalizeFailed": "초기 설정을 완료하지 못했습니다."
+  }
+}

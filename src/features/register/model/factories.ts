@@ -11,9 +11,30 @@ import type {
   RegisterVersionFile,
 } from './types';
 
+function getTodayInTokyoISO(): string {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: 'Asia/Tokyo',
+  }).formatToParts(new Date());
+
+  let year = '';
+  let month = '';
+  let day = '';
+
+  for (const part of parts) {
+    if (part.type === 'year') year = part.value;
+    if (part.type === 'month') month = part.value;
+    if (part.type === 'day') day = part.value;
+  }
+
+  return `${year}-${month}-${day}`;
+}
+
 export function createEmptyInstaller(): RegisterInstallerState {
   return {
-    sourceType: 'direct',
+    sourceType: 'directUrl',
     directUrl: '',
     boothUrl: '',
     githubOwner: '',
@@ -29,25 +50,16 @@ export function createEmptyVersionFile(): RegisterVersionFile {
   return {
     key: generateKey(),
     path: '',
-    hash: '',
+    xxh128: '',
     fileName: '',
   };
 }
 
 export function createEmptyVersion(): RegisterVersion {
-  const now = new Date();
-  const today = new Intl.DateTimeFormat('ja-JP', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    timeZone: 'Asia/Tokyo',
-  })
-    .format(now)
-    .replace(/\//g, '-');
   return {
     key: generateKey(),
     version: '',
-    release_date: today,
+    releaseDate: getTodayInTokyoISO(),
     files: [createEmptyVersionFile()],
   };
 }
@@ -74,9 +86,15 @@ export function createEmptyLicense(): RegisterLicense {
 export function createEmptyPackageForm(): RegisterPackageForm {
   return {
     id: '',
+    legacyId: '',
+    packageRole: 'primaryPackage',
+    addedAt: getTodayInTokyoISO(),
+    sourceLocale: 'ja',
     name: '',
     author: '',
     originalAuthor: '',
+    deprecationEnabled: false,
+    deprecationMessage: '',
     type: '',
     summary: '',
     niconiCommonsId: '',
@@ -84,10 +102,22 @@ export function createEmptyPackageForm(): RegisterPackageForm {
     descriptionPath: '',
     descriptionMode: 'inline',
     descriptionUrl: '',
-    repoURL: '',
+    changelogMode: 'inline',
+    changelogUrl: '',
+    changelogPath: '',
+    changelogText: '',
+    noticePath: '',
+    noticeText: '',
+    packagePageUrl: '',
     licenses: [createEmptyLicense()],
     tagsText: '',
-    dependenciesText: '',
+    relationRequiresText: '',
+    relationRecommendsText: '',
+    relationConflictsText: '',
+    relationSimilarText: '',
+    relationReplacesText: '',
+    relationForkOfText: '',
+    localizedContents: {},
     installer: createEmptyInstaller(),
     versions: [],
     images: {

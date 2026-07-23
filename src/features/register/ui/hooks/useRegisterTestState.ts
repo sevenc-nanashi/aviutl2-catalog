@@ -2,34 +2,24 @@
  * インストール／削除テストの進行状態を管理する hook
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { getDetectedVersion, isDetectedResult } from '@/utils/detectResult';
 import { detectInstalledVersionsMap } from '@/utils/installed-map';
 import { runInstallerForItem, runUninstallerForItem } from '@/utils/installer';
 import { buildInstallerTestItem, validateInstallerForTest, validateUninstallerForTest } from '../../model/form';
 import { computeRegisterRelevantHash, resolveRegisterCatalogRelevantHash } from '../../model/registerTestRequirement';
-import type { CatalogEntry } from '@/utils/catalogSchema';
-import type { RegisterPackageForm } from '../../model/types';
+import type { RegisterCatalogItem, RegisterPackageForm } from '../../model/types';
 import type { InstallerTestItem, InstallerTestProgress, RegisterTestOperation } from '../types';
 
 interface UseRegisterTestStateArgs {
   packageForm: RegisterPackageForm;
   selectedPackageId: string;
-  catalogItems: CatalogEntry[];
+  catalogItems: RegisterCatalogItem[];
   flushDraftBeforeTest?: () => void;
   onTestPassed?: (kind: 'installer' | 'uninstaller') => void;
 }
 
 type RegisterTestOperationPayload = Omit<RegisterTestOperation, 'key'>;
-
-const OPERATION_KINDS: RegisterTestOperation['kind'][] = [
-  'download',
-  'extract',
-  'extract_sfx',
-  'copy',
-  'delete',
-  'run',
-  'error',
-];
-const OPERATION_STATUSES: RegisterTestOperation['status'][] = ['done', 'skip', 'error'];
 
 function toOptionalText(value: unknown): string | undefined {
   if (typeof value !== 'string') return undefined;
@@ -38,19 +28,32 @@ function toOptionalText(value: unknown): string | undefined {
 }
 
 function normalizeOperationKind(value: unknown): RegisterTestOperation['kind'] {
-  return OPERATION_KINDS.includes(value as RegisterTestOperation['kind'])
-    ? (value as RegisterTestOperation['kind'])
-    : 'error';
+  switch (value) {
+    case 'download':
+    case 'extract':
+    case 'extractSfx':
+    case 'copy':
+    case 'delete':
+    case 'run':
+    case 'error':
+      return value;
+    default:
+      return 'error';
+  }
 }
 
 function normalizeOperationStatus(
   value: unknown,
   kind: RegisterTestOperation['kind'],
 ): RegisterTestOperation['status'] {
-  if (OPERATION_STATUSES.includes(value as RegisterTestOperation['status'])) {
-    return value as RegisterTestOperation['status'];
+  switch (value) {
+    case 'done':
+    case 'skip':
+    case 'error':
+      return value;
+    default:
+      return kind === 'error' ? 'error' : 'done';
   }
-  return kind === 'error' ? 'error' : 'done';
 }
 
 function normalizeOperation(
@@ -75,6 +78,7 @@ export default function useRegisterTestState({
   flushDraftBeforeTest,
   onTestPassed,
 }: UseRegisterTestStateArgs) {
+  const { t } = useTranslation(['register', 'common']);
   const [installerTestRunning, setInstallerTestRunning] = useState(false);
   const [installerTestProgress, setInstallerTestProgress] = useState<InstallerTestProgress | null>(null);
   const [installerTestError, setInstallerTestError] = useState('');
@@ -154,7 +158,11 @@ export default function useRegisterTestState({
   const uninstallerTestRatio = uninstallerTestPhase === 'done' ? 1 : uninstallerTestPhase === 'running' ? 0.4 : 0;
   const uninstallerTestPercent = Math.round(uninstallerTestRatio * 100);
   const uninstallerTestLabel =
-    uninstallerTestPhase === 'running' ? '実行中…' : uninstallerTestPhase === 'done' ? '完了' : '';
+    uninstallerTestPhase === 'running'
+      ? t('register:tests.run')
+      : uninstallerTestPhase === 'done'
+        ? t('common:status.done')
+        : '';
 
   useEffect(() => {
     installerTestTokenRef.current += 1;
@@ -190,7 +198,7 @@ export default function useRegisterTestState({
     installerTestTokenRef.current = token;
     installerTestBusyRef.current = true;
     setInstallerTestRunning(true);
-    setInstallerTestProgress({ ratio: 0, percent: 0, label: '準備中…', phase: 'init' });
+    setInstallerTestProgress({ ratio: 0, percent: 0, label: t('common:status.preparing'), phase: 'init' });
     try {
       await runInstallerForItem(
         testItem,
@@ -205,33 +213,35 @@ export default function useRegisterTestState({
         },
       );
       if (installerTestTokenRef.current !== token) return;
-      let detected = '';
+      let detectedVersion = '';
+      let detectedSuccessfully = false;
       try {
-        const map = (await detectInstalledVersionsMap([testItem])) as Record<string, unknown>;
+        const map = await detectInstalledVersionsMap([testItem]);
         if (installerTestTokenRef.current !== token) return;
-        const detectedValue = map?.[testItem.id];
-        detected = typeof detectedValue === 'string' ? detectedValue : String(detectedValue || '');
+        const detectedResult = map[testItem.id];
+        detectedVersion = getDetectedVersion(detectedResult);
+        detectedSuccessfully = isDetectedResult(detectedResult);
       } catch {
         if (installerTestTokenRef.current !== token) return;
-        detected = '';
+        detectedVersion = '';
+        detectedSuccessfully = false;
       }
       if (installerTestTokenRef.current !== token) return;
-      setInstallerTestDetectedVersion(detected);
-      const normalizedDetected = detected.trim();
-      if (!normalizedDetected || normalizedDetected === '不明') {
-        throw new Error('検出バージョンが未検出または 不明 のため、完了として扱えません。');
+      setInstallerTestDetectedVersion(detectedVersion);
+      if (!detectedSuccessfully || !detectedVersion.trim()) {
+        throw new Error(t('errors.installerDetectIncomplete'));
       }
       if (installerTestTokenRef.current === token) {
         onTestPassed?.('installer');
       }
     } catch (err) {
       if (installerTestTokenRef.current !== token) return;
-      const detail = err instanceof Error ? err.message : String(err) || '原因不明のエラー';
-      setInstallerTestError(`インストーラーテストに失敗しました。\n\n${detail}`);
+      const detail = err instanceof Error ? err.message : String(err) || t('common:errors.unknown');
+      setInstallerTestError(t('register:errors.installerTestFailed', { detail }));
       setInstallerTestProgress((prev) => ({
         ratio: prev?.ratio ?? 1,
         percent: prev?.percent ?? 100,
-        label: 'エラー',
+        label: t('register:errors.installerError'),
         phase: 'error',
       }));
     } finally {
@@ -247,6 +257,7 @@ export default function useRegisterTestState({
     onTestPassed,
     packageForm,
     pushInstallerOperation,
+    t,
   ]);
 
   const handleUninstallerTest = useCallback(async () => {
@@ -265,23 +276,31 @@ export default function useRegisterTestState({
     uninstallerTestTokenRef.current = token;
     uninstallerTestBusyRef.current = true;
     setUninstallerTestRunning(true);
+    let hasNonSkipOperation = false;
     try {
       await runUninstallerForItem(
         testItem,
         null,
         (operation: Partial<RegisterTestOperationPayload> | null | undefined) => {
           if (uninstallerTestTokenRef.current !== token) return;
-          pushUninstallerOperation(operation);
+          const normalized = normalizeOperation(operation);
+          if (normalized.status !== 'skip') {
+            hasNonSkipOperation = true;
+          }
+          pushUninstallerOperation(normalized);
         },
       );
+      if (!hasNonSkipOperation) {
+        throw new Error(t('errors.uninstallerMissingTarget'));
+      }
       if (uninstallerTestTokenRef.current === token) {
         setUninstallerTestDone(true);
         onTestPassed?.('uninstaller');
       }
     } catch (err) {
       if (uninstallerTestTokenRef.current !== token) return;
-      const detail = err instanceof Error ? err.message : String(err) || '原因不明のエラー';
-      setUninstallerTestError(`削除テストに失敗しました。\n\n${detail}`);
+      const detail = err instanceof Error ? err.message : String(err) || t('common:errors.unknown');
+      setUninstallerTestError(t('register:errors.uninstallerTestFailed', { detail }));
     } finally {
       if (uninstallerTestTokenRef.current === token) {
         setUninstallerTestRunning(false);
@@ -294,6 +313,7 @@ export default function useRegisterTestState({
     packageForm,
     pushUninstallerOperation,
     uninstallerTestRunning,
+    t,
     uninstallerTestValidation,
   ]);
 

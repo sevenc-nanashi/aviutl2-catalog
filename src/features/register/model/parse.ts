@@ -1,61 +1,21 @@
 /**
  * カタログデータをフォーム状態へ変換するパーサーモジュール
  */
-import type { CatalogEntry } from '@/utils/catalogSchema';
-import { arrayToCommaList, buildPreviewUrl, isHttpsUrl, isMarkdownPath } from './helpers';
+import type { Installation } from '@/utils/catalog-schema/shared/installationSchema';
+import type { SourcePackage } from '@/utils/catalog-schema/source/sourceSchema';
+import { arrayToCommaList, buildPreviewUrl, isHttpsUrl } from './helpers';
 import { LICENSE_TEMPLATE_TYPES } from './constants';
-import {
-  createEmptyCopyright,
-  createEmptyInstaller,
-  createEmptyLicense,
-  createEmptyPackageForm,
-  createEmptyVersionFile,
-} from './factories';
+import { createEmptyCopyright, createEmptyInstaller, createEmptyLicense, createEmptyPackageForm } from './factories';
 import { generateKey } from './helpers';
-import type {
-  RegisterImageEntry,
-  RegisterImageState,
-  RegisterLicense,
-  RegisterPackageForm,
-  RegisterVersion,
-} from './types';
+import type { RegisterImageEntry, RegisterImageState, RegisterLicense, RegisterPackageForm } from './types';
+import {
+  isOtherRegisterLicenseType,
+  isUnknownRegisterLicenseType,
+  normalizeRegisterLicenseType,
+} from '@/utils/licenseTemplates';
+import { captureLocalizedContent } from './localizedContent';
 
 type UnknownRecord = Record<string, unknown>;
-
-interface ParsedInstallerStepInput {
-  action: string;
-  path: string;
-  args: string[];
-  from: string;
-  to: string;
-  elevate: boolean;
-}
-
-interface ParsedInstallerSourceInput {
-  booth: string;
-  direct: string;
-  githubOwner: string;
-  githubRepo: string;
-  githubPattern: string;
-  googleDriveId: string;
-}
-
-interface ParsedInstallerInput {
-  source: ParsedInstallerSourceInput;
-  install: ParsedInstallerStepInput[];
-  uninstall: ParsedInstallerStepInput[];
-}
-
-interface ParsedVersionFileInput {
-  path: string;
-  hash: string;
-}
-
-interface ParsedVersionInput {
-  version: string;
-  releaseDate: string;
-  files: ParsedVersionFileInput[];
-}
 
 interface ParsedLicenseCopyrightInput {
   years: string;
@@ -64,6 +24,7 @@ interface ParsedLicenseCopyrightInput {
 
 interface ParsedLicenseInput {
   type: string;
+  name: string;
   isCustom: boolean;
   licenseBody: string;
   copyrights: ParsedLicenseCopyrightInput[];
@@ -85,58 +46,16 @@ function asArray(value: unknown): unknown[] {
   return Array.isArray(value) ? value : [];
 }
 
-function toStringArray(value: unknown): string[] {
-  return asArray(value)
-    .map((item) => String(item || ''))
-    .filter(Boolean);
-}
-
-function parseInstallerStepInput(value: unknown): ParsedInstallerStepInput {
-  const row = asRecord(value);
+function sourceInstallerStepToRegisterState(
+  step: Installation['installSteps'][number] | Installation['uninstallSteps'][number],
+): Omit<RegisterPackageForm['installer']['installSteps'][number], 'key'> {
   return {
-    action: asString(row?.action),
-    path: asString(row?.path),
-    args: toStringArray(row?.args),
-    from: asString(row?.from),
-    to: asString(row?.to),
-    elevate: asBoolean(row?.elevate),
-  };
-}
-
-function parseInstallerInput(raw: unknown): ParsedInstallerInput {
-  const installer = asRecord(raw);
-  const sourceRaw = asRecord(installer?.source);
-  const github = asRecord(sourceRaw?.github);
-  const googleDrive = asRecord(sourceRaw?.GoogleDrive);
-
-  return {
-    source: {
-      booth: asString(sourceRaw?.booth),
-      direct: asString(sourceRaw?.direct),
-      githubOwner: asString(github?.owner),
-      githubRepo: asString(github?.repo),
-      githubPattern: asString(github?.pattern),
-      googleDriveId: asString(googleDrive?.id),
-    },
-    install: asArray(installer?.install).map(parseInstallerStepInput),
-    uninstall: asArray(installer?.uninstall).map(parseInstallerStepInput),
-  };
-}
-
-function parseVersionInput(value: unknown): ParsedVersionInput {
-  const version = asRecord(value);
-  const files = asArray(version?.file).map((item) => {
-    const file = asRecord(item);
-    return {
-      path: asString(file?.path),
-      hash: asString(file?.XXH3_128) || asString(file?.xxh3_128),
-    };
-  });
-
-  return {
-    version: asString(version?.version),
-    releaseDate: asString(version?.release_date),
-    files,
+    action: step.action,
+    path: 'path' in step ? step.path : '',
+    argsText: 'args' in step ? (step.args ?? []).join(', ') : '',
+    from: 'from' in step ? (step.from ?? '') : '',
+    to: 'to' in step ? (step.to ?? '') : '',
+    elevate: 'elevate' in step ? step.elevate === true : false,
   };
 }
 
@@ -153,86 +72,52 @@ function parseLicenseInput(value: unknown): ParsedLicenseInput | null {
 
   return {
     type: asString(target.type),
+    name: asString(target.name),
     isCustom: asBoolean(target.isCustom),
     licenseBody: asString(target.licenseBody),
     copyrights,
   };
 }
 
-function parseImagesInput(raw: unknown): { thumbnail: string; info: string[] } {
-  const first = asRecord(asArray(raw)[0]);
-  return {
-    thumbnail: asString(first?.thumbnail),
-    info: toStringArray(first?.infoImg),
-  };
-}
-
-export function parseInstallerSource(installer: unknown = {}) {
-  const parsed = parseInstallerInput(installer);
+export function parseSourceInstallation(installation: Installation) {
   const next = createEmptyInstaller();
-  if (parsed.source.booth) {
-    next.sourceType = 'booth';
-    next.boothUrl = parsed.source.booth;
-  } else if (parsed.source.direct) {
-    next.sourceType = 'direct';
-    next.directUrl = parsed.source.direct;
-  } else if (parsed.source.githubOwner || parsed.source.githubRepo || parsed.source.githubPattern) {
-    next.sourceType = 'github';
-    next.githubOwner = parsed.source.githubOwner;
-    next.githubRepo = parsed.source.githubRepo;
-    next.githubPattern = parsed.source.githubPattern;
-  } else if (parsed.source.googleDriveId) {
-    next.sourceType = 'GoogleDrive';
-    next.googleDriveId = parsed.source.googleDriveId;
+  const source = installation.source;
+  switch (source.type) {
+    case 'booth':
+      next.sourceType = 'booth';
+      next.boothUrl = source.url;
+      break;
+    case 'directUrl':
+      next.sourceType = 'directUrl';
+      next.directUrl = source.url;
+      break;
+    case 'githubRelease':
+      next.sourceType = 'githubRelease';
+      next.githubOwner = source.owner;
+      next.githubRepo = source.repo;
+      next.githubPattern = source.pattern;
+      break;
+    case 'googleDrive':
+      next.sourceType = 'googleDrive';
+      next.googleDriveId = source.id;
+      break;
   }
-  next.installSteps = parsed.install.map((step) => {
+  next.installSteps = installation.installSteps.map((step) => ({
+    key: generateKey(),
+    ...sourceInstallerStepToRegisterState(step),
+  }));
+  next.uninstallSteps = installation.uninstallSteps.map((step) => {
+    const { from: _from, to: _to, ...state } = sourceInstallerStepToRegisterState(step);
     return {
       key: generateKey(),
-      action: step.action,
-      path: step.path,
-      argsText: step.args.join(', '),
-      from: step.from,
-      to: step.to,
-      elevate: step.elevate,
+      ...state,
     };
   });
-  next.uninstallSteps = parsed.uninstall.map((step) => ({
-    key: generateKey(),
-    action: step.action,
-    path: step.path,
-    argsText: step.args.join(', '),
-    elevate: step.elevate,
-  }));
   return next;
 }
 
-export function parseVersions(rawVersions: unknown): RegisterVersion[] {
-  const arr = asArray(rawVersions).map(parseVersionInput);
-  if (!arr.length) return [];
-  return arr.map((ver) => {
-    const files = ver.files;
-    return {
-      key: generateKey(),
-      version: ver.version,
-      release_date: ver.releaseDate,
-      files: files.length
-        ? files.map((f) => ({
-            key: generateKey(),
-            path: f.path,
-            hash: f.hash,
-            fileName: '',
-          }))
-        : [createEmptyVersionFile()],
-    };
-  });
-}
-
-export function parseImages(rawImages: unknown, baseUrl = ''): RegisterImageState {
-  const parsed = parseImagesInput(rawImages);
-  if (!parsed.thumbnail && !parsed.info.length) {
-    return { thumbnail: null, info: [] };
-  }
-  const thumbnailPath = parsed.thumbnail;
+export function parseSourceImages(rawImages: SourcePackage['content']['images'], baseUrl = ''): RegisterImageState {
+  const thumbnailPath = rawImages?.thumbnail ?? '';
   const thumbnail = thumbnailPath
     ? {
         existingPath: thumbnailPath,
@@ -242,7 +127,7 @@ export function parseImages(rawImages: unknown, baseUrl = ''): RegisterImageStat
         key: generateKey(),
       }
     : null;
-  const info: RegisterImageEntry[] = parsed.info.map((src) => ({
+  const info: RegisterImageEntry[] = (rawImages?.detailImages ?? []).map((src) => ({
     existingPath: src,
     sourcePath: '',
     file: null,
@@ -259,12 +144,19 @@ export function parseLicenses(rawLicenses: unknown, legacyLicense = ''): Registe
     .map((target) => {
       // 旧スキーマ／新スキーマの両方を吸収し、UI では一貫した編集モデルに正規化する。
       const rawType = target.type;
-      const isUnknown = rawType === '不明';
+      const sourceName = target.name.trim();
+      const normalizedType = normalizeRegisterLicenseType(rawType);
+      const isUnknown = isUnknownRegisterLicenseType(normalizedType);
       const isTemplateType = LICENSE_TEMPLATE_TYPES.has(rawType);
-      const type = isUnknown || isTemplateType ? rawType : 'その他';
-      const licenseName = !isUnknown && !isTemplateType ? rawType : '';
+      const type: RegisterLicense['type'] =
+        normalizedType || (isTemplateType ? (rawType as RegisterLicense['type']) : 'other');
+      const licenseName = sourceName || (!isUnknown && !isTemplateType ? rawType : '');
       const licenseBody = target.licenseBody;
-      const isCustom = target.isCustom || type === '不明' || type === 'その他' || !!licenseBody.trim();
+      const isCustom =
+        target.isCustom ||
+        isUnknownRegisterLicenseType(type) ||
+        isOtherRegisterLicenseType(type) ||
+        !!licenseBody.trim();
       const copyrights = target.copyrights.length
         ? target.copyrights.map((c) => ({
             key: generateKey(),
@@ -286,9 +178,11 @@ export function parseLicenses(rawLicenses: unknown, legacyLicense = ''): Registe
   }
   if (legacyLicense) {
     const rawType = String(legacyLicense || '');
-    const isUnknown = rawType === '不明';
+    const normalizedType = normalizeRegisterLicenseType(rawType);
+    const isUnknown = isUnknownRegisterLicenseType(normalizedType);
     const isTemplateType = LICENSE_TEMPLATE_TYPES.has(rawType);
-    const type = isUnknown || isTemplateType ? rawType : 'その他';
+    const type: RegisterLicense['type'] =
+      normalizedType || (isTemplateType ? (rawType as RegisterLicense['type']) : 'other');
     const licenseName = !isUnknown && !isTemplateType ? rawType : '';
     return [
       {
@@ -302,32 +196,68 @@ export function parseLicenses(rawLicenses: unknown, legacyLicense = ''): Registe
   return [createEmptyLicense()];
 }
 
-export function entryToForm(item: CatalogEntry | null | undefined, baseUrl = ''): RegisterPackageForm {
-  if (!item || typeof item !== 'object') return createEmptyPackageForm();
+export function sourcePackageToForm(args: {
+  sourcePackage: SourcePackage;
+  packageBasePath?: string;
+  descriptionMarkdown?: string;
+  changelogMarkdown?: string;
+  noticeMarkdown?: string;
+  locale?: string;
+}): RegisterPackageForm {
+  const { meta, content, install, versions } = args.sourcePackage;
   const form = createEmptyPackageForm();
-  const rawDescription = typeof item.description === 'string' ? item.description : '';
-  const descriptionValue = String(rawDescription || '');
-  const isExternalDescription = isHttpsUrl(descriptionValue);
-  form.id = String(item.id || '');
-  form.name = String(item.name || '');
-  form.author = String(item.author || '');
-  form.originalAuthor = String(item.originalAuthor || '');
-  form.type = String(item.type || '');
-  form.summary = String(item.summary || '');
-  form.niconiCommonsId = String(item.niconiCommonsId || '');
-  form.descriptionPath = descriptionValue;
+  form.id = meta.id;
+  form.legacyId = meta.legacyId;
+  form.packageRole = meta.packageRole;
+  form.addedAt = meta.addedAt;
+  form.sourceLocale = args.locale || 'ja';
+  form.name = content.name;
+  form.author = content.author;
+  form.originalAuthor = content.originalAuthor ?? '';
+  form.deprecationEnabled = Boolean(content.deprecation);
+  form.deprecationMessage = content.deprecation?.message ?? '';
+  form.type = content.typeLabel || meta.packageType;
+  form.summary = content.description.summary;
+  form.niconiCommonsId = meta.niconiCommonsId ?? '';
+  const descriptionMarkdownSource = content.description.markdownSource;
+  const isExternalDescription = isHttpsUrl(descriptionMarkdownSource);
+  form.descriptionPath = descriptionMarkdownSource;
   form.descriptionMode = isExternalDescription ? 'external' : 'inline';
-  form.descriptionUrl = isExternalDescription ? descriptionValue : '';
-  // markdown パス形式なら本文は外部取得に任せ、直書き文字列のみ初期本文として保持する。
-  form.descriptionText =
-    !isExternalDescription && descriptionValue && !isMarkdownPath(descriptionValue) ? descriptionValue : '';
-  form.repoURL = String(item.repoURL || '');
-  form.licenses = parseLicenses(item.licenses, '');
-  form.tagsText = arrayToCommaList(item.tags);
-  form.dependenciesText = arrayToCommaList(item.dependencies);
-  form.installer = parseInstallerSource(item.installer);
-  form.versions = parseVersions(item.version);
-  form.images = parseImages(item.images, baseUrl);
+  form.descriptionUrl = isExternalDescription ? descriptionMarkdownSource : '';
+  form.descriptionText = isExternalDescription ? '' : (args.descriptionMarkdown ?? '');
+  const changelogMarkdownSource = content.changelog?.markdownSource ?? '';
+  const isExternalChangelog = isHttpsUrl(changelogMarkdownSource);
+  form.changelogPath = changelogMarkdownSource;
+  form.changelogMode = isExternalChangelog ? 'external' : 'inline';
+  form.changelogUrl = isExternalChangelog ? changelogMarkdownSource : '';
+  form.changelogText = isExternalChangelog ? '' : (args.changelogMarkdown ?? '');
+  form.noticePath = content.notice?.markdownSource ?? '';
+  form.noticeText = args.noticeMarkdown ?? '';
+  form.packagePageUrl = meta.packagePageUrl;
+  form.licenses = parseLicenses(content.licenses, '');
+  form.tagsText = arrayToCommaList(content.tags);
+  form.relationRequiresText = arrayToCommaList(install.relations?.requires ?? []);
+  form.relationRecommendsText = arrayToCommaList(install.relations?.recommends ?? []);
+  form.relationConflictsText = arrayToCommaList(install.relations?.conflicts ?? []);
+  form.relationSimilarText = arrayToCommaList(install.relations?.similar ?? []);
+  form.relationReplacesText = arrayToCommaList(install.relations?.replaces ?? []);
+  form.relationForkOfText = install.relations?.forkOf ?? '';
+  form.installer = parseSourceInstallation(install.installation);
+  form.versions = versions.versions.map((version) => ({
+    key: generateKey(),
+    version: version.version,
+    releaseDate: version.releaseDate,
+    files: version.files.map((file) => ({
+      key: generateKey(),
+      path: file.path,
+      xxh128: file.xxh128,
+      fileName: '',
+    })),
+  }));
+  form.images = parseSourceImages(content.images, args.packageBasePath ?? '');
+  form.localizedContents = {
+    [form.sourceLocale]: captureLocalizedContent(form),
+  };
   return form;
 }
 

@@ -1,19 +1,21 @@
 import { useMemo } from 'react';
 import { Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { StepIndicatorProps } from '../types';
 import { cn } from '@/lib/cn';
 import { layout } from '@/components/ui/_styles';
 
 export default function StepIndicator({ step, installed }: StepIndicatorProps) {
+  const { t } = useTranslation('initSetup');
   const steps = useMemo(
     () => [
-      { id: 'intro', label: '開始' },
-      { id: 'installStatus', label: 'インストールの状況' },
-      { id: 'details', label: installed ? 'フォルダの指定' : 'インストール' },
-      { id: 'packages', label: '推奨パッケージ' },
-      { id: 'done', label: '完了' },
+      { id: 'intro', label: t('steps.intro') },
+      { id: 'installStatus', label: t('steps.installStatus') },
+      { id: 'details', label: installed ? t('steps.detailsExisting') : t('steps.detailsInstall') },
+      { id: 'packages', label: t('steps.packages') },
+      { id: 'done', label: t('common:status.done') },
     ],
-    [installed],
+    [installed, t],
   );
 
   const currentIndex = steps.findIndex((item) => item.id === step);

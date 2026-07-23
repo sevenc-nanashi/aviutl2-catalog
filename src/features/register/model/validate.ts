@@ -4,30 +4,40 @@
 import { isHttpsUrl } from './helpers';
 import { getInstallStepIssue, getInstallerSourceIssue, getUninstallStepIssue } from './installerRules';
 import { getFileExtension } from './parse';
+import { storeCurrentLocalizedContent } from './localizedContent';
 import { ID_PATTERN, INSTALL_ACTIONS, SPECIAL_INSTALL_ACTIONS, UNINSTALL_ACTIONS } from './constants';
-import { requiresTemplateCopyrightFields } from '@/utils/licenseTemplates';
-import type { RegisterPackageForm } from './types';
+import {
+  isOtherRegisterLicenseType,
+  isUnknownRegisterLicenseType,
+  requiresTemplateCopyrightFields,
+} from '@/utils/licenseTemplates';
+import { i18n } from '@/i18n';
+import type { RegisterLicense, RegisterLocalizedContentForm, RegisterPackageForm } from './types';
 
 function getInstallerSourceMessage(form: RegisterPackageForm, mode: 'test' | 'submit'): string {
   const issue = getInstallerSourceIssue(form.installer);
-  if (issue === 'direct') {
+  if (issue === 'directUrl') {
     return mode === 'test'
-      ? 'ダウンロード URL を入力してください'
-      : 'installer.source の direct URL を入力してください';
+      ? i18n.t('register:validation.installerSourceDirectTest')
+      : i18n.t('register:validation.installerSourceDirectSubmit');
   }
   if (issue === 'booth') {
-    return mode === 'test' ? 'BOOTH URL を入力してください' : 'installer.source の booth URL を入力してください';
-  }
-  if (issue === 'github') {
     return mode === 'test'
-      ? 'GitHub ID/レポジトリ名/正規表現パターンすべてを入力してください'
-      : 'installer.source github の owner/repo/pattern は全て必須です';
+      ? i18n.t('register:validation.installerSourceBoothTest')
+      : i18n.t('register:validation.installerSourceBoothSubmit');
   }
-  if (issue === 'GoogleDrive') {
-    return mode === 'test' ? 'ファイル ID を入力してください' : 'GoogleDrive のファイル ID を入力してください';
+  if (issue === 'githubRelease') {
+    return mode === 'test'
+      ? i18n.t('register:validation.installerSourceGithubTest')
+      : i18n.t('register:validation.installerSourceGithubSubmit');
+  }
+  if (issue === 'googleDrive') {
+    return mode === 'test'
+      ? i18n.t('register:validation.installerSourceGDriveTest')
+      : i18n.t('register:validation.installerSourceGDriveSubmit');
   }
   if (issue === 'missing') {
-    return 'installer.source を選択してください';
+    return i18n.t('register:validation.installerSourceMissing');
   }
   return '';
 }
@@ -37,22 +47,28 @@ function getInstallStepMessage(form: RegisterPackageForm, mode: 'test' | 'submit
     const issue = getInstallStepIssue(step);
     if (!issue) continue;
     if (issue === 'unsupported') {
-      if (mode === 'test') return '未対応のインストール手順が含まれています';
+      if (mode === 'test') return i18n.t('register:validation.installUnsupportedTest');
       const allowed = [...INSTALL_ACTIONS, ...SPECIAL_INSTALL_ACTIONS].join(', ');
-      return `install の action は ${allowed} のみ使用できます`;
+      return i18n.t('register:validation.installUnsupportedSubmit', { allowed });
     }
     if (issue === 'path') {
       if (step.action === 'run')
-        return mode === 'test' ? 'EXE実行の実行パスを指定してください' : 'run の path は必須です';
-      if (step.action === 'run_auo_setup') return 'run_auo_setup の path は必須です';
+        return mode === 'test'
+          ? i18n.t('register:validation.installRunPathTest')
+          : i18n.t('register:validation.installRunPathSubmit');
+      if (step.action === 'runAuoSetup') return i18n.t('register:validation.installRunAuoSetupPath');
       if (step.action === 'delete')
-        return mode === 'test' ? '削除するパスを指定してください' : 'delete の path は必須です';
-      return '対象パスを入力してください';
+        return mode === 'test'
+          ? i18n.t('register:validation.installDeletePathTest')
+          : i18n.t('register:validation.installDeletePathSubmit');
+      return i18n.t('register:validation.installTargetPath');
     }
     if (issue === 'from_to') {
-      return mode === 'test' ? 'コピー元/コピー先のパスを指定してください' : 'copy の from / to は必須です';
+      return mode === 'test'
+        ? i18n.t('register:validation.installCopyPathsTest')
+        : i18n.t('register:validation.installCopyPathsSubmit');
     }
-    return 'elevate は action: run のときのみ指定できます';
+    return i18n.t('register:validation.installElevate');
   }
   return '';
 }
@@ -63,66 +79,100 @@ function getUninstallStepMessage(form: RegisterPackageForm, mode: 'test' | 'subm
     if (!issue) continue;
     if (issue === 'unsupported') {
       return mode === 'test'
-        ? '未対応のアンインストール手順が含まれています'
-        : `uninstall の action は ${UNINSTALL_ACTIONS.join(', ')} のみ使用できます`;
+        ? i18n.t('register:validation.uninstallUnsupportedTest')
+        : i18n.t('register:validation.uninstallUnsupportedSubmit', { allowed: UNINSTALL_ACTIONS.join(', ') });
     }
     if (issue === 'path') {
       if (step.action === 'run')
-        return mode === 'test' ? 'EXE実行の実行パスを指定してください' : 'uninstall run の path は必須です';
-      return mode === 'test' ? '削除するパスを指定してください' : 'delete の path は必須です';
+        return mode === 'test'
+          ? i18n.t('register:validation.installRunPathTest')
+          : i18n.t('register:validation.uninstallRunPathSubmit');
+      return mode === 'test'
+        ? i18n.t('register:validation.installDeletePathTest')
+        : i18n.t('register:validation.installDeletePathSubmit');
     }
     return mode === 'test'
-      ? '管理者権限の指定は実行ステップでのみ使用できます'
-      : 'uninstall の elevate は action: run のときのみ指定できます';
+      ? i18n.t('register:validation.uninstallElevateTest')
+      : i18n.t('register:validation.uninstallElevateSubmit');
   }
   return '';
 }
 
 export function validateInstallerForTest(form: RegisterPackageForm): string {
-  if (!form.installer.installSteps.length) return 'インストール手順を追加してください';
+  if (!form.installer.installSteps.length) return i18n.t('register:validation.installerStepsRequired');
   return getInstallerSourceMessage(form, 'test') || getInstallStepMessage(form, 'test');
 }
 
 export function validateUninstallerForTest(form: RegisterPackageForm): string {
-  if (!form.installer.uninstallSteps.length) return 'アンインストール手順を追加してください';
+  if (!form.installer.uninstallSteps.length) return i18n.t('register:validation.uninstallerStepsRequired');
   return getUninstallStepMessage(form, 'test');
 }
 
-export function validatePackageForm(form: RegisterPackageForm): string {
-  if (!form.id.trim()) return 'ID は必須です';
-  if (!ID_PATTERN.test(form.id.trim())) return 'ID は英数字・ドット・アンダーバー・ハイフンのみ使用できます';
-  if (!form.id.trim().includes('.')) return 'ID は 作者名.パッケージ名 の形式で、ドットを1つ以上含めてください';
-  if (!form.name.trim()) return 'パッケージ名は必須です';
-  if (!form.author.trim()) return '作者名は必須です';
-  if (!form.type.trim()) return '種類は必須です';
-  if (!form.summary.trim()) return '概要は必須です';
-  if (form.summary.trim().length > 35) return '概要は35文字以内で入力してください';
-  if (!form.repoURL.trim()) return 'パッケージのサイトは必須です';
-  const descriptionMode = form.descriptionMode === 'external' ? 'external' : 'inline';
-  if (descriptionMode === 'external') {
-    const externalUrl = String(form.descriptionUrl || '').trim();
-    if (!isHttpsUrl(externalUrl)) return '外部Markdown のURLは https:// で始まる形式で入力してください';
-  } else if (!form.descriptionText.trim()) {
-    return '詳細を入力してください';
-  }
-  if (!form.licenses.length) return 'ライセンスを1件以上追加してください';
+function withLocaleValidationPrefix(locale: string, message: string): string {
+  return `${locale}: ${message}`;
+}
+
+function validateLicenseList(licenses: RegisterLicense[]): string {
+  if (!licenses.length) return i18n.t('register:validation.licenseRequired');
   // ライセンスは UI 表示都合ではなく、最終 payload の成立条件で検証する。
-  for (const license of form.licenses) {
+  for (const license of licenses) {
     const type = String(license.type || '').trim();
-    if (!type) return 'ライセンスの種類を選択してください';
-    if (type === 'その他' && !String(license.licenseName || '').trim()) return 'ライセンス名を入力してください';
+    if (!type) return i18n.t('register:validation.licenseTypeRequired');
+    if (isOtherRegisterLicenseType(type) && !String(license.licenseName || '').trim())
+      return i18n.t('register:validation.licenseNameRequired');
     const needsCustomBody =
-      type === 'その他' ||
-      (type !== '不明' && (license.isCustom || (license.licenseBody && license.licenseBody.trim().length > 0)));
-    if (needsCustomBody && !String(license.licenseBody || '').trim()) return 'ライセンス本文を入力してください';
-    const usesTemplate = type !== '不明' && type !== 'その他' && !license.isCustom;
+      isOtherRegisterLicenseType(type) ||
+      (!isUnknownRegisterLicenseType(type) &&
+        (license.isCustom || (license.licenseBody && license.licenseBody.trim().length > 0)));
+    if (needsCustomBody && !String(license.licenseBody || '').trim())
+      return i18n.t('register:validation.licenseBodyRequired');
+    const usesTemplate = !isUnknownRegisterLicenseType(type) && !isOtherRegisterLicenseType(type) && !license.isCustom;
     const requiresCopyright = usesTemplate && requiresTemplateCopyrightFields(type);
     if (requiresCopyright) {
-      const entries = Array.isArray(license.copyrights) ? license.copyrights : [];
-      const hasCopyright = entries.some((c) => String(c?.years || '').trim() && String(c?.holder || '').trim());
-      if (!hasCopyright) return '標準ライセンスを使用する場合は著作権者を入力してください';
+      const hasCopyright = license.copyrights.some((c) => c.years.trim() && c.holder.trim());
+      if (!hasCopyright) return i18n.t('register:validation.licenseCopyrightRequired');
     }
   }
+  return '';
+}
+
+function validateLocalizedContent(content: RegisterLocalizedContentForm): string {
+  if (!content.name.trim()) return i18n.t('register:validation.nameRequired');
+  if (!content.author.trim()) return i18n.t('register:validation.authorRequired');
+  if (!content.summary.trim()) return i18n.t('register:validation.summaryRequired');
+  if (content.summary.trim().length > 35) return i18n.t('register:validation.summaryTooLong');
+  const descriptionMode = content.descriptionMode === 'external' ? 'external' : 'inline';
+  if (descriptionMode === 'external') {
+    const externalUrl = String(content.descriptionUrl || '').trim();
+    if (!isHttpsUrl(externalUrl)) return i18n.t('register:validation.descriptionUrlInvalid');
+  } else if (!content.descriptionText.trim()) {
+    return i18n.t('register:validation.descriptionRequired');
+  }
+  const changelogMode = content.changelogMode === 'external' ? 'external' : 'inline';
+  if (changelogMode === 'external') {
+    const externalUrl = String(content.changelogUrl || '').trim();
+    if (!isHttpsUrl(externalUrl)) return i18n.t('register:validation.changelogUrlInvalid');
+  }
+  return validateLicenseList(content.licenses);
+}
+
+function validateLocalizedContents(form: RegisterPackageForm): string {
+  const localizedContents = storeCurrentLocalizedContent(form).localizedContents;
+  for (const [locale, content] of Object.entries(localizedContents)) {
+    const message = validateLocalizedContent(content);
+    if (message) return withLocaleValidationPrefix(locale, message);
+  }
+  return '';
+}
+
+export function validatePackageForm(form: RegisterPackageForm): string {
+  if (!form.id.trim()) return i18n.t('register:validation.idRequired');
+  if (!ID_PATTERN.test(form.id.trim())) return i18n.t('register:validation.idInvalid');
+  if (!form.id.trim().includes('.')) return i18n.t('register:validation.idFormat');
+  if (!form.type.trim()) return i18n.t('register:validation.typeRequired');
+  if (!form.packagePageUrl.trim()) return i18n.t('register:validation.repoRequired');
+  const localizedMessage = validateLocalizedContents(form);
+  if (localizedMessage) return localizedMessage;
   const sourceMessage = getInstallerSourceMessage(form, 'submit');
   if (sourceMessage) return sourceMessage;
   // install/uninstall の action 制約は送信先スキーマに合わせて厳密に制限する。
@@ -132,28 +182,28 @@ export function validatePackageForm(form: RegisterPackageForm): string {
   if (uninstallStepMessage) return uninstallStepMessage;
   for (const step of form.installer.installSteps) {
     if (step.action === 'run' && step.elevate && typeof step.elevate !== 'boolean') {
-      return 'run の elevate は true/false で指定してください';
+      return i18n.t('register:validation.installRunElevateBoolean');
     }
   }
   for (const step of form.installer.uninstallSteps) {
     if (step.action === 'run' && step.elevate && typeof step.elevate !== 'boolean') {
-      return 'uninstall run の elevate は true/false で指定してください';
+      return i18n.t('register:validation.uninstallRunElevateBoolean');
     }
   }
-  if (!form.versions.length) return 'バージョン情報を最低1件追加してください';
+  if (!form.versions.length) return i18n.t('register:validation.versionsRequired');
   // バージョンごとの file は配布実体に直結するため、欠落を許可しない。
   for (const ver of form.versions) {
-    if (!ver.version.trim()) return 'version の version を入力してください';
-    if (!ver.release_date.trim()) return 'version の release_date を入力してください';
-    if (!ver.files.length) return 'version の file を1件以上追加してください';
+    if (!ver.version.trim()) return i18n.t('register:validation.versionNameRequired');
+    if (!ver.releaseDate.trim()) return i18n.t('register:validation.versionDateRequired');
+    if (!ver.files.length) return i18n.t('register:validation.versionFilesRequired');
     for (const file of ver.files) {
-      if (!file.path.trim()) return 'version.file の path を入力してください';
-      if (!file.hash.trim()) return 'version.file の XXH3_128 を計算してください';
-      if (file.hash.trim().length !== 32) return 'XXH3_128 は32桁の16進数で入力してください';
+      if (!file.path.trim()) return i18n.t('register:validation.versionFilePathRequired');
+      if (!file.xxh128.trim()) return i18n.t('register:validation.versionFileHashRequired');
+      if (file.xxh128.trim().length !== 32) return i18n.t('register:validation.versionFileHashLength');
     }
   }
   if (form.images.thumbnail?.file && !getFileExtension(form.images.thumbnail.file.name)) {
-    return 'サムネイルのファイル拡張子を確認してください';
+    return i18n.t('register:validation.thumbnailExtension');
   }
   return '';
 }

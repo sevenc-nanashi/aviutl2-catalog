@@ -1,0 +1,97 @@
+{
+  "page": {
+    "successActionBatch": "まとめて送信完了",
+    "submitActionUpdate": "パッケージ更新",
+    "submitActionCreate": "パッケージ追加",
+    "successPrimary": "{{action}}: {{name}}",
+    "jsonNoChanges": "変更がありませんでした。",
+    "unsupportedValue": "未対応: {{value}}"
+  },
+  "actions": {
+    "removeValue": "{{value}} を削除",
+    "inputValue": "{{label}}を入力"
+  },
+  "notice": {
+    "body": "このフォームに入力するプラグイン情報はすべて公開されます。\nパッケージ登録は作者本人でなくてもどなたでも行えます。"
+  },
+  "sidebar": {
+    "newPackage": "新規パッケージ作成",
+    "pendingList": "送信予定一覧",
+    "pendingReady": "送信可能",
+    "draftStatusNotRequired": "テスト不要",
+    "draftStatusReady": "テスト完了",
+    "draftStatusPending": "テスト未完了",
+    "deleteDraftAria": "{{id}} の一時保存を削除",
+    "noDrafts": "送信予定のパッケージはありません",
+    "searchPlaceholder": "パッケージを検索...",
+    "unknownAuthor": "作者不明"
+  },
+  "submitBar": {
+    "guide": "説明サイト",
+    "jsonImport": "JSON入力",
+    "authorHint": "作者の方はできる限りご入力ください",
+    "submitting": "送信中…",
+    "blocked": "テスト未完了 ({{count}}件)",
+    "submitMany": "{{count}}件まとめて送信"
+  },
+  "preview": {
+    "title": "プレビュー",
+    "switchToLight": "ライトモードに切り替え",
+    "switchToDark": "ダークモードに切り替え",
+    "fallbackName": "パッケージ名",
+    "fallbackAuthor": "作者名",
+    "fallbackSummary": "概要がここに表示されます"
+  },
+  "jsonImport": {
+    "title": "JSON 入力",
+    "description": "template.json と同じ形式の JSON を貼り付けてください。一致する項目は部分上書きし、未一致の id は新規追加します。複数パッケージをまとめて追加することもできます。",
+    "placeholder": "",
+    "cancel": "キャンセル",
+    "apply": "適用"
+  },
+  "errors": {
+    "catalogInvalid": "source package の形式が不正です。",
+    "jsonInvalidInput": "入力形式が不正です。",
+    "jsonNoTargets": "上書き対象の要素がありません。",
+    "jsonParseFailed": "JSON の解析に失敗しました: {{detail}}",
+    "catalogFetch": "source package の取得に失敗しました: {{detail}}",
+    "attachmentsRequired": "Markdown と画像ファイルを添付してください",
+    "submitProcessFailed": "送信処理に失敗しました。",
+    "packageFileUnavailable": "パッケージファイル取込機能を利用できません。",
+    "packageFileParseFailed": "パッケージファイルの解析に失敗しました。",
+    "packageFileExtension": "`.au2pkg.zip` 形式のファイルを選択してください。該当しない場合は手順を手入力してください。",
+    "packageFileNoCopyTargets": "対応ディレクトリ配下にコピー対象ファイルがありませんでした。",
+    "versionHashPickTitle": "xxh128 を計算するファイルを選択",
+    "versionHashFailed": "xxh128 の計算に失敗しました",
+    "versionHashUnavailable": "ファイル選択機能を利用できません。Tauri 環境で実行してください。",
+    "draftNotFound": "対象の一時保存が見つかりませんでした。",
+    "draftSaveFailed": "一時保存に失敗しました。",
+    "draftUnavailable": "一時保存を利用できません。",
+    "draftIdRequired": "一時保存には ID の入力が必要です。",
+    "restoreImageSourceMissing": "{{label}} の元ファイルを再読み込みできませんでした: {{sourcePath}}",
+    "infoImageLabel": "説明画像{{index}}",
+    "batchBlocked": "テスト未完了のため送信できません: {{preview}}",
+    "batchSuffix": " ほか{{count}}件",
+    "batchCompleted": "{{success}}件の送信が完了しました。",
+    "batchCompletedWithFailure": "{{success}}件の送信が完了しました。{{failure}}件は失敗しました。",
+    "batchFailed": "{{count}}件の送信に失敗しました。",
+    "batchCountLabel": "{{count}}件",
+    "installerError": "エラー",
+    "packageIdInvalidDetail": "パッケージIDの形式が不正です: {{packageId}}",
+    "installerSourceDirectRequired": "installer.source.url が必要です。",
+    "installerSourceBoothRequired": "installer.source.booth が必要です。",
+    "installerSourceGithubRequired": "installer.source.githubRelease の owner/repo/pattern が必要です。",
+    "installerSourceGoogleDriveRequired": "installer.source.googleDrive.id が必要です。",
+    "installerSourceRequired": "installer.source を選択してください。",
+    "installActionUnsupported": "未対応の install action です: {{action}}",
+    "uninstallActionUnsupported": "未対応の uninstall action です: {{action}}",
+    "actionRequiresPath": "{{action}} action には path が必要です。",
+    "copyActionRequiresFromTo": "copy action には from/to が必要です。",
+    "elevateRunOnly": "elevate は run action でのみ利用できます。",
+    "emptyAction": "(空)",
+    "installerDetectIncomplete": "検出バージョンが未検出または 不明 のため、完了として扱えません。",
+    "installerTestFailed": "インストーラーテストに失敗しました。\n\n{{detail}}",
+    "uninstallerMissingTarget": "削除対象が見つからないため、テストを完了できませんでした。",
+    "uninstallerTestFailed": "削除テストに失敗しました。\n\n{{detail}}"
+  }
+}

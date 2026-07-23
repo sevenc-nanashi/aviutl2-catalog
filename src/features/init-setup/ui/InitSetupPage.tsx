@@ -1,5 +1,6 @@
 import { AlertCircle } from 'lucide-react';
 import UpdateDialog from '@/features/app-update/UpdateDialog';
+import LocaleToggleFab from './components/LocaleToggleFab';
 import StepIndicator from './components/StepIndicator';
 import useInitSetupState from './hooks/useInitSetupState';
 import { layout } from '@/components/ui/_styles';
@@ -32,6 +33,12 @@ export default function InitSetupPage() {
         )}
 
         <StepIndicator step={state.step} installed={state.installed} />
+        <LocaleToggleFab
+          busy={state.localeBusy}
+          onSelectLocale={(locale) => {
+            void state.changeLocale(locale);
+          }}
+        />
 
         <main className="flex-1 overflow-hidden relative flex flex-col z-0">
           <div className="flex-1 w-full max-w-3xl mx-auto px-10 pb-8 flex flex-col h-full overflow-y-auto">

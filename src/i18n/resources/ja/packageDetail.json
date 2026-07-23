@@ -1,0 +1,100 @@
+{
+  "actions": {
+    "latest": "最新",
+    "installed": "導入済",
+    "paused": "停止中",
+    "update": "更新",
+    "removing": "削除中…",
+    "remove": "削除",
+    "install": "インストール",
+    "download": "ダウンロード",
+    "openInCatalog": "カタログで開く",
+    "missingInstaller": "インストールが未実装です"
+  },
+  "card": {
+    "openDetails": "{{name}} の詳細を開く",
+    "details": "詳細"
+  },
+  "carousel": {
+    "region": "スクリーンショットカルーセル",
+    "previous": "前の画像へ",
+    "next": "次の画像へ",
+    "slide": "スライド {{current}}/{{total}}"
+  },
+  "deprecationDialog": {
+    "title": "非推奨パッケージ",
+    "description": "以下のパッケージは現在非推奨です。\n非推奨となった理由をご確認のうえ、必要に応じてアンインストールしてください。",
+    "dismissNextTime": "再通知しない"
+  },
+  "content": {
+    "screenshots": "スクリーンショット",
+    "deprecated": "非推奨",
+    "deprecatedReason": "このパッケージは以下の理由で非推奨となっています。",
+    "deprecatedSimple": "このパッケージは非推奨となっています。",
+    "descriptionLoading": "詳細説明を読み込み中です…",
+    "notice": "注意事項",
+    "noticeLoading": "注意事項を読み込み中です…",
+    "changelog": "更新履歴",
+    "changelogLoading": "更新履歴を読み込み中です…",
+    "changelogEmpty": "更新履歴は記載されていません。",
+    "relations": "関連パッケージ",
+    "relationsLoading": "関連情報を読み込み中です…"
+  },
+  "descriptionErrors": {
+    "loadFailed": "詳細説明を読み込めませんでした。"
+  },
+  "noticeErrors": {
+    "loadFailed": "注意事項を読み込めませんでした。"
+  },
+  "changelogErrors": {
+    "loadFailed": "更新履歴を読み込めませんでした。"
+  },
+  "errors": {
+    "actionFailed": "{{action}}に失敗しました\n\n{{detail}}",
+    "detailLoadFailed": "詳細データを読み込めませんでした。",
+    "relationsLoadFailed": "関連情報を読み込めませんでした。"
+  },
+  "header": {
+    "uncategorized": "未分類"
+  },
+  "licenseModal": {
+    "title": "ライセンス: {{type}}",
+    "bodyMissing": "ライセンス本文がありません。"
+  },
+  "noticeModal": {
+    "title": "注意事項：{{name}}",
+    "cancel": "キャンセル",
+    "continue": "同意してインストール"
+  },
+  "list": {
+    "backToList": "{{label}}に戻る"
+  },
+  "meta": {
+    "deprecatedAria": "非推奨の詳細を表示",
+    "deprecatedPrefix": "非推奨："
+  },
+  "page": {
+    "notFound": "パッケージが見つかりませんでした。"
+  },
+  "sidebar": {
+    "updatedAt": "更新日",
+    "latestVersion": "最新バージョン",
+    "currentVersion": "現在のバージョン",
+    "originalAuthor": "原作者",
+    "packagePage": "配布元ページを開く",
+    "versionUnknown": "不明",
+    "licenseUnknown": "不明",
+    "openNotice": "表示",
+    "openNoticeAria": "注意事項を表示",
+    "openLicenseAria": "ライセンス {{type}} の本文を表示"
+  },
+  "relations": {
+    "requires": "必須",
+    "recommends": "推奨",
+    "conflicts": "競合",
+    "similar": "類似",
+    "replaces": "置き換え",
+    "forkOf": "fork 元",
+    "missingPackages": "カタログに見つからないID: {{ids}}"
+  }
+}

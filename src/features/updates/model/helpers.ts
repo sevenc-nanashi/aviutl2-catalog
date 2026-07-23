@@ -1,9 +1,10 @@
+import { i18n } from '@/i18n';
 import type { InstallerProgressPayload } from './types';
 
 export function toErrorMessage(error: unknown): string {
   if (error instanceof Error && error.message) return error.message;
   if (typeof error === 'string' && error.trim()) return error;
-  return '不明なエラー';
+  return i18n.t('common:errors.unknown');
 }
 
 export function toProgressRatio(progress: InstallerProgressPayload | null | undefined): number {
@@ -13,7 +14,7 @@ export function toProgressRatio(progress: InstallerProgressPayload | null | unde
 
 export function toProgressLabel(progress: InstallerProgressPayload | null | undefined): string {
   if (!progress || typeof progress.label !== 'string' || !progress.label.trim()) {
-    return '処理中…';
+    return i18n.t('common:status.processing');
   }
   return progress.label;
 }

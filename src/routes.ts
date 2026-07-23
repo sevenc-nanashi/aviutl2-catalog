@@ -10,7 +10,10 @@ export default [
     layout('./layouts/init-setup/layout.tsx', [route('/init-setup', 'features/init-setup/ui/InitSetupPage.tsx')]),
   layout('./layouts/app-shell/layout.tsx', [
     isDesktop ? route('/home', './features/home/ui/HomePage.tsx') : index('./features/home/ui/HomePage.tsx'),
-    route('/package/:id', './features/package/ui/PackagePage.tsx'),
+    route(
+      '/package/:id',
+      isDesktop ? './features/package/ui/PackagePage.tsx' : './features/package/ui/WebPackagePage.tsx',
+    ),
     route('/links', './features/links/ui/LinksPage.tsx'),
     route('/updates', './features/updates/ui/UpdatesPage.tsx'),
     route('/settings', './features/settings/ui/SettingsPage.tsx'),
@@ -18,5 +21,5 @@ export default [
     route('/feedback', './features/feedback/ui/FeedbackPage.tsx'),
     route('/niconi-commons', './features/niconi-commons/ui/NiconiCommonsPage.tsx'),
   ]),
-  route('*?', './features/not-found/NotFoundPage.tsx'),
+  route('*?', isDesktop ? './features/not-found/NotFoundPage.tsx' : './features/not-found/WebNotFoundPage.tsx'),
 ].filter((r): r is RouteConfigEntry => Boolean(r)) satisfies RouteConfig;

@@ -2,17 +2,21 @@
  * 送信 payload の構築と POST 実行を担当する hook
  */
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as z from 'zod';
-import { catalogEntrySchema, catalogIndexSchema, type CatalogEntry } from '@/utils/catalogSchema';
-import { SUBMIT_ACTIONS, buildPackageEntry, getFileExtension, validatePackageForm } from '../../model/form';
-import { isHttpsUrl } from '../../model/helpers';
-import type { RegisterPackageForm } from '../../model/types';
+import {
+  SUBMIT_ACTIONS,
+  buildRegisterCatalogItem,
+  buildSourceSubmitPayload,
+  validatePackageForm,
+} from '../../model/form';
+import type { RegisterCatalogItem, RegisterPackageForm } from '../../model/types';
 import type { RegisterSuccessDialogState, SubmitPackagePayload } from '../types';
 import { SubmitEndpointResponse } from '@/lib/submitEndpoint';
 
 interface UseRegisterSubmitHandlerArgs {
   submitEndpoint: string;
-  setCatalogItems: React.Dispatch<React.SetStateAction<CatalogEntry[]>>;
+  setCatalogItems: React.Dispatch<React.SetStateAction<RegisterCatalogItem[]>>;
   setSelectedPackageId: React.Dispatch<React.SetStateAction<string>>;
   setSuccessDialog: React.Dispatch<React.SetStateAction<RegisterSuccessDialogState>>;
 }
@@ -28,7 +32,7 @@ const submitEndpointResponseSchema = z.object({
 
 export interface SubmitSinglePackageInput {
   packageForm: RegisterPackageForm;
-  catalogItems: CatalogEntry[];
+  catalogItems: RegisterCatalogItem[];
   tags: string[];
   packageSender: string;
   syncCatalogState?: boolean;
@@ -36,7 +40,7 @@ export interface SubmitSinglePackageInput {
 }
 
 export interface SubmitSinglePackageResult {
-  nextCatalog: CatalogEntry[];
+  nextCatalog: RegisterCatalogItem[];
   packageName: string;
   url: string;
 }
@@ -47,6 +51,7 @@ export default function useRegisterSubmitHandler({
   setSelectedPackageId,
   setSuccessDialog,
 }: UseRegisterSubmitHandlerArgs) {
+  const { t, i18n } = useTranslation(['register', 'common']);
   const submitPackage = useCallback(
     async ({
       packageForm: targetForm,
@@ -57,10 +62,10 @@ export default function useRegisterSubmitHandler({
       openSuccessDialog = true,
     }: SubmitSinglePackageInput): Promise<SubmitSinglePackageResult> => {
       if (!submitEndpoint) {
-        throw new Error('VITE_SUBMIT_ENDPOINT が設定されていません。');
+        throw new Error(t('common:errors.submitEndpointRequired'));
       }
       if (!/^https:\/\//i.test(submitEndpoint)) {
-        throw new Error('VITE_SUBMIT_ENDPOINT には https:// で始まるURLを設定してください。');
+        throw new Error(t('common:errors.submitEndpointHttps'));
       }
       const validation = validatePackageForm(targetForm);
       if (validation) {
@@ -68,7 +73,7 @@ export default function useRegisterSubmitHandler({
       }
       const entryId = targetForm.id.trim();
       const existingIndex = targetCatalogItems.findIndex((item) => item.id === entryId);
-      const inherited: Partial<Pick<CatalogEntry, 'popularity' | 'trend'>> = {};
+      const inherited: Partial<Pick<RegisterCatalogItem, 'popularity' | 'trend'>> = {};
       if (existingIndex >= 0) {
         // popularity/trend はクライアントで再計算しないため、既存値を保持する。
         const existingItem = targetCatalogItems[existingIndex];
@@ -77,42 +82,20 @@ export default function useRegisterSubmitHandler({
           inherited.trend = existingItem.trend;
         }
       }
-      const entry: CatalogEntry = catalogEntrySchema.parse(buildPackageEntry(targetForm, tags, inherited));
-      const useExternalDescription = targetForm.descriptionMode === 'external' && isHttpsUrl(targetForm.descriptionUrl);
+      const entry = buildRegisterCatalogItem(targetForm, tags, inherited);
       const mergedCatalog =
         existingIndex >= 0
           ? targetCatalogItems.map((item, idx) => (idx === existingIndex ? entry : item))
           : [...targetCatalogItems, entry];
-      const nextCatalog: CatalogEntry[] = catalogIndexSchema.parse(mergedCatalog);
+      const nextCatalog: RegisterCatalogItem[] = mergedCatalog;
+      const sourceSubmitPayload = buildSourceSubmitPayload(targetForm, tags, { locale: i18n.language });
 
       const formData = new FormData();
-      let packageAttachmentCount = 0;
-      const appendAsset = (file: Blob | File, filename: string, countTowardsLimit = true) => {
-        formData.append('files[]', file, filename);
-        if (countTowardsLimit) packageAttachmentCount += 1;
-      };
-      if (!useExternalDescription) {
-        const mdBlob = new Blob([targetForm.descriptionText || ''], { type: 'text/markdown' });
-        appendAsset(mdBlob, `${entry.id || 'package'}.md`);
+      for (const sourceFile of sourceSubmitPayload.sourceFiles) {
+        formData.append('files[]', sourceFile.file, sourceFile.path);
       }
-      if (targetForm.images.thumbnail?.file) {
-        const ext = getFileExtension(targetForm.images.thumbnail.file.name) || 'png';
-        appendAsset(targetForm.images.thumbnail.file, `${entry.id}_thumbnail.${ext}`);
-      }
-      targetForm.images.info.forEach((entryInfo, idx) => {
-        if (entryInfo.file) {
-          const ext = getFileExtension(entryInfo.file.name) || 'png';
-          appendAsset(entryInfo.file, `${entry.id}_${idx + 1}.${ext}`);
-        }
-      });
-      // 外部 description 利用時のみ、md 添付ゼロを許可する。
-      if (packageAttachmentCount === 0 && !useExternalDescription) {
-        throw new Error('Markdown と画像ファイルを添付してください');
-      }
-      const indexJsonBlob = new Blob([JSON.stringify(nextCatalog, null, 2)], { type: 'application/json' });
-      appendAsset(indexJsonBlob, 'index.json', false);
 
-      const actionLabel = existingIndex >= 0 ? 'パッケージ更新' : 'パッケージ追加';
+      const actionLabel = existingIndex >= 0 ? t('page.submitActionUpdate') : t('page.submitActionCreate');
       const packageName = String(entry.name || entry.id || '');
       const packageId = String(entry.id || '');
       const senderName = targetPackageSender.trim();
@@ -123,6 +106,7 @@ export default function useRegisterSubmitHandler({
         packageName: String(entry.name || ''),
         packageAuthor: String(entry.author || ''),
         labels: ['package', 'from-client'],
+        sourcePaths: sourceSubmitPayload.sourcePaths,
       };
       if (senderName) {
         payload.sender = senderName;
@@ -157,7 +141,7 @@ export default function useRegisterSubmitHandler({
         (typeof responseJson?.public_issue_url === 'string' && responseJson.public_issue_url) ||
         (typeof responseJson?.url === 'string' && responseJson.url) ||
         '';
-      const defaultMessage = '送信が完了しました。';
+      const defaultMessage = t('common:submit.successDefault');
       const friendlyMessage =
         (typeof responseJson?.message === 'string' ? responseJson.message : '') || responseText || defaultMessage;
 
@@ -176,7 +160,7 @@ export default function useRegisterSubmitHandler({
         url: successUrl,
       };
     },
-    [setCatalogItems, setSelectedPackageId, setSuccessDialog, submitEndpoint],
+    [i18n.language, setCatalogItems, setSelectedPackageId, setSuccessDialog, submitEndpoint, t],
   );
 
   return { submitPackage };

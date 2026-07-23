@@ -1,0 +1,79 @@
+{
+  "intro": {
+    "title": "AviUtl2 カタログ",
+    "description": "AviUtl2 カタログの初期設定を行います",
+    "start": "セットアップを開始"
+  },
+  "steps": {
+    "intro": "開始",
+    "installStatus": "導入状況",
+    "detailsExisting": "設定確認",
+    "detailsInstall": "インストール",
+    "packages": "推奨パッケージ"
+  },
+  "installStatus": {
+    "title": "インストールの状況",
+    "description": "AviUtl2 の導入状況に合わせて選択してください",
+    "installedTitle": "インストール済み",
+    "installedDescription": "すでに AviUtl2 をインストール済みの場合",
+    "freshTitle": "新規インストール",
+    "freshDescription": "AviUtl2 を導入していない場合\n最新版を自動でダウンロードして導入します"
+  },
+  "details": {
+    "portableMode": "ポータブルモード設定",
+    "standard": "標準（推奨）",
+    "portable": "ポータブル",
+    "standardDescription": "プラグインやスクリプトを ProgramData に導入します",
+    "portableDescription": "プラグインやスクリプトを aviutl2.exe と同じ階層にある data フォルダに導入します",
+    "existing": {
+      "title": "フォルダの指定",
+      "description": "インストール済みの AviUtl2 フォルダを選択してください",
+      "label": "AviUtl2 フォルダパス",
+      "hint": "aviutl2.exe が含まれているフォルダを選択してください"
+    },
+    "install": {
+      "title": "インストール先の指定",
+      "description": "AviUtl2 をインストールするフォルダを指定してください",
+      "label": "インストール先フォルダ",
+      "next": "インストールして次へ",
+      "installing": "インストール中…",
+      "progressAria": "インストール進捗"
+    }
+  },
+  "packages": {
+    "title": "推奨パッケージの導入",
+    "allInstalled": "すべての推奨パッケージが導入済みです",
+    "description": "標準的な利用に必要となる基本プラグインをインストールします",
+    "loading": "パッケージ情報を取得中…",
+    "missingSummary": "詳細情報を取得できませんでした",
+    "progressAria": "{{name}} の進捗",
+    "installed": "インストール済",
+    "notInstalled": "未インストール",
+    "skip": "インストールせずに次へ",
+    "installAndNext": "まとめてインストールして次へ"
+  },
+  "done": {
+    "title": "セットアップ完了",
+    "description": "すべての設定が完了しました",
+    "openApp": "AviUtl2 カタログを開く"
+  },
+  "errors": {
+    "aviutlRootRequired": "AviUtl2 のフォルダを入力してください。",
+    "saveFailed": "設定に失敗しました。",
+    "installDirRequired": "インストール先を入力してください。",
+    "setupFailed": "セットアップに失敗しました。",
+    "installFailed": "インストールに失敗しました。",
+    "bulkInstallPartialFailed": "一部のインストールに失敗しました。",
+    "generic": "エラーが発生しました。",
+    "packageInfoPartialFailed": "一部のパッケージ情報を取得できませんでした: {{ids}}",
+    "requiredPackagesLoadFailed": "必須パッケージの情報を読み込めませんでした。",
+    "packageInfoMissing": "パッケージ情報が見つかりません: {{id}}",
+    "networkRequired": "インターネットに接続してください。",
+    "packageInfoUnavailable": "パッケージ情報を取得できませんでした。",
+    "packageNotInstallable": "インストールできないパッケージです。",
+    "pickInstallDir": "インストール先を選択",
+    "pickExistingDir": "AviUtl2 フォルダを選択",
+    "pickDirFailed": "フォルダ選択に失敗しました。",
+    "finalizeFailed": "初期設定に失敗しました。"
+  }
+}

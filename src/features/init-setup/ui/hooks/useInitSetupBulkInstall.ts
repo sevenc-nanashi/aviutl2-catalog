@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { safeLog } from '../../model/helpers';
 import type { RequiredPackageRow } from '../../model/types';
 
@@ -15,6 +16,7 @@ export default function useInitSetupBulkInstall({
   downloadRequiredPackage,
   onDone,
 }: UseInitSetupBulkInstallParams) {
+  const { t } = useTranslation('initSetup');
   const [bulkDownloading, setBulkDownloading] = useState(false);
   const [packagesDownloadError, setPackagesDownloadError] = useState('');
 
@@ -33,17 +35,17 @@ export default function useInitSetupBulkInstall({
         if (!success) hasFailure = true;
       }
       if (hasFailure) {
-        setPackagesDownloadError('一部のインストールに失敗しました。');
+        setPackagesDownloadError(t('errors.bulkInstallPartialFailed'));
       } else {
         onDone();
       }
     } catch (bulkInstallError) {
-      setPackagesDownloadError('エラーが発生しました。');
+      setPackagesDownloadError(t('errors.generic'));
       await safeLog('[init-window] bulk install and next failed', bulkInstallError);
     } finally {
       setBulkDownloading(false);
     }
-  }, [allRequiredInstalled, downloadRequiredPackage, onDone, requiredPackages]);
+  }, [allRequiredInstalled, downloadRequiredPackage, onDone, requiredPackages, t]);
 
   return {
     bulkDownloading,

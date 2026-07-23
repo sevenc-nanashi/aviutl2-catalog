@@ -3,6 +3,7 @@
  * ハッシュ計算やパス入力を行う
  */
 import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import { FileSearch } from 'lucide-react';
@@ -22,6 +23,7 @@ const VersionFileCard = memo(
     updateVersionFile,
     chooseFileForHash,
   }: VersionFileCardProps) {
+    const { t } = useTranslation('register');
     const order = index + 1;
     return (
       <div
@@ -37,13 +39,16 @@ const VersionFileCard = memo(
             size="sm"
             className="bg-white px-2 py-1 font-bold text-slate-600 shadow-sm dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
           >
-            File {order}
+            {t('versions.fileLabel', { count: order })}
           </Badge>
-          <DeleteButton onClick={() => removeVersionFile(versionKey, file.key)} ariaLabel={`ファイル${order}を削除`} />
+          <DeleteButton
+            onClick={() => removeVersionFile(versionKey, file.key)}
+            ariaLabel={t('versions.deleteFile', { count: order })}
+          />
         </div>
         <div className="space-y-1">
           <label className={text.labelXs} htmlFor={`version-${versionKey}-file-${file.key}-path`}>
-            保存先パス (インストール時)
+            {t('versions.pathLabel')}
           </label>
           <input
             id={`version-${versionKey}-file-${file.key}-path`}
@@ -57,19 +62,19 @@ const VersionFileCard = memo(
           <div className="flex flex-wrap items-start justify-between gap-3">
             <dl className="grid gap-1 text-xs">
               <div>
-                <dt className={hashMetaLabelClass}>ハッシュ値 (XXH3_128)</dt>
+                <dt className={hashMetaLabelClass}>{t('versions.hashLabel')}</dt>
                 <dd
                   className={cn(
                     'font-mono',
-                    file.hash ? 'text-slate-700 dark:text-slate-300' : 'text-amber-600 dark:text-amber-500',
+                    file.xxh128 ? 'text-slate-700 dark:text-slate-300' : 'text-amber-600 dark:text-amber-500',
                   )}
                 >
-                  {file.hash ? file.hash : '未計算'}
+                  {file.xxh128 ? file.xxh128 : t('versions.hashMissing')}
                 </dd>
               </div>
               {file.fileName && (
                 <div className="mt-1">
-                  <dt className={hashMetaLabelClass}>元ファイル名</dt>
+                  <dt className={hashMetaLabelClass}>{t('versions.sourceFile')}</dt>
                   <dd className="text-slate-600 dark:text-slate-300">{file.fileName}</dd>
                 </div>
               )}
@@ -81,7 +86,7 @@ const VersionFileCard = memo(
               onClick={() => chooseFileForHash(versionKey, file.key)}
             >
               <FileSearch size={14} />
-              <span>ファイルを選択して計算</span>
+              <span>{t('versions.chooseAndHash')}</span>
             </Button>
           </div>
         </div>

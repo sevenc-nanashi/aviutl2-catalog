@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { Calendar, User } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
+import DeprecatedPackageChip from '@/components/DeprecatedPackageChip';
 import type { PackageCardItem } from '../types';
 import { cn } from '@/lib/cn';
 import { text } from '@/components/ui/_styles';
@@ -12,15 +13,27 @@ interface PackageCardMetaSectionProps {
 }
 
 function PackageCardMetaSection({ item, lastUpdated, tags }: PackageCardMetaSectionProps) {
+  const deprecatedNameClass = item.deprecation
+    ? 'text-yellow-600 dark:text-yellow-300 group-hover:text-yellow-500 dark:group-hover:text-yellow-200'
+    : '';
+
   return (
     <>
       <div className="mb-1">
         <h3
-          className="font-bold text-xl text-slate-800 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate pr-2 tracking-tight"
+          className={cn(
+            'min-w-0 truncate pr-2 font-bold text-xl tracking-tight text-slate-800 transition-colors group-hover:text-blue-600 dark:text-slate-100 dark:group-hover:text-blue-400',
+            deprecatedNameClass,
+          )}
           title={item.name}
         >
           {item.name}
         </h3>
+        {item.deprecation ? (
+          <div className="mt-1 mb-1">
+            <DeprecatedPackageChip message={item.deprecation.message} />
+          </div>
+        ) : null}
 
         <div className={cn(text.mutedSm, 'flex items-center gap-3 mt-0.5 mb-1 font-medium')}>
           <div className="flex items-center gap-1 min-w-0">
@@ -35,7 +48,7 @@ function PackageCardMetaSection({ item, lastUpdated, tags }: PackageCardMetaSect
       </div>
 
       <p className="text-[15px] text-slate-500 dark:text-slate-400/90 line-clamp-3 leading-normal mb-auto">
-        {item.summary || item.description || ''}
+        {item.summary || ''}
       </p>
 
       <div className="flex flex-wrap gap-1 mt-1.5 mb-1">

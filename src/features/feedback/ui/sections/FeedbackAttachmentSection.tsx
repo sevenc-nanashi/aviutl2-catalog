@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Paperclip } from 'lucide-react';
 import { FILE_INPUT_CLASS } from '../constants';
 import FeedbackDeleteButton from '../components/FeedbackDeleteButton';
@@ -9,14 +10,16 @@ export default function FeedbackAttachmentSection({
   attachments,
   onFilesChange,
   onRemoveAttachment,
-  label = '添付ファイル',
+  label,
   optionalLabel = '',
 }: FeedbackAttachmentSectionProps) {
+  const { t } = useTranslation('feedback');
+  const resolvedLabel = label || t('attachments.label');
   return (
     <div className="space-y-3">
       <div className={text.inlineHeadingSm}>
         <Paperclip size={16} className="text-slate-500" />
-        {label}
+        {resolvedLabel}
         {optionalLabel ? <span className={text.optionalMuted}>{optionalLabel}</span> : null}
       </div>
       <div className="space-y-3">
@@ -34,7 +37,7 @@ export default function FeedbackAttachmentSection({
                   </div>
                   <div className="text-[10px] text-slate-400">{(attachment.size / 1024).toFixed(1)} KB</div>
                 </div>
-                <FeedbackDeleteButton onClick={() => onRemoveAttachment(index)} ariaLabel="添付ファイルを削除" />
+                <FeedbackDeleteButton onClick={() => onRemoveAttachment(index)} ariaLabel={t('attachments.remove')} />
               </div>
             ))}
           </div>

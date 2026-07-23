@@ -1,11 +1,4 @@
-import {
-  BUG_SUCCESS_MESSAGE,
-  INQUIRY_SUCCESS_MESSAGE,
-  SUBMIT_ACTIONS,
-  SUBMIT_ENDPOINT_HTTPS_ERROR,
-  SUBMIT_ENDPOINT_REQUIRED_ERROR,
-  SUBMIT_FAILED_ERROR,
-} from './constants';
+import { SUBMIT_ACTIONS } from './constants';
 import type {
   BugFormState,
   FeedbackDiagnosticsSnapshot,
@@ -16,6 +9,7 @@ import type {
   ParsedSubmitResponse,
 } from './types';
 import * as z from 'zod';
+import { i18n } from '@/i18n';
 
 type BugPayloadDiagnostics = Pick<FeedbackDiagnosticsSnapshot, 'device' | 'installedPackages' | 'appVersion'>;
 const submitEndpointResponseSchema = z.object({
@@ -42,8 +36,8 @@ function formatGpu(device: BugPayloadDiagnostics['device']) {
 }
 
 export function validateSubmitEndpoint(submitEndpoint: string) {
-  if (!submitEndpoint) return SUBMIT_ENDPOINT_REQUIRED_ERROR;
-  if (!/^https:\/\//i.test(submitEndpoint)) return SUBMIT_ENDPOINT_HTTPS_ERROR;
+  if (!submitEndpoint) return i18n.t('common:errors.submitEndpointRequired');
+  if (!/^https:\/\//i.test(submitEndpoint)) return i18n.t('common:errors.submitEndpointHttps');
   return '';
 }
 
@@ -55,7 +49,7 @@ export function buildBugPayload(bug: BugFormState, diagnostics: BugPayloadDiagno
     bug.includeApp && diagnostics.installedPackages.length > 0 ? diagnostics.installedPackages : undefined;
   return {
     action: SUBMIT_ACTIONS.bug,
-    title: `不具合報告: ${bug.title.trim()}`,
+    title: `${i18n.t('feedback:payload.bugTitlePrefix')}: ${bug.title.trim()}`,
     body: bug.detail.trim(),
     labels: ['bug', 'from-client'],
     contact: bug.contact.trim() || undefined,
@@ -70,7 +64,7 @@ export function buildBugPayload(bug: BugFormState, diagnostics: BugPayloadDiagno
 export function buildInquiryPayload(inquiry: InquiryFormState): InquirySubmitPayload {
   return {
     action: SUBMIT_ACTIONS.inquiry,
-    title: `問い合わせ: ${inquiry.title.trim()}`,
+    title: `${i18n.t('feedback:payload.inquiryTitlePrefix')}: ${inquiry.title.trim()}`,
     body: inquiry.detail.trim(),
     labels: ['inquiry', 'from-client'],
     contact: inquiry.contact.trim() || undefined,
@@ -129,7 +123,7 @@ export function resolveSubmitErrorMessage(response: Response, parsed: ParsedSubm
 }
 
 export function resolveSubmitSuccessMessage(mode: FeedbackMode, parsed: ParsedSubmitResponse) {
-  const fallback = mode === 'bug' ? BUG_SUCCESS_MESSAGE : INQUIRY_SUCCESS_MESSAGE;
+  const fallback = mode === 'bug' ? i18n.t('feedback:messages.bugSuccess') : i18n.t('feedback:messages.inquirySuccess');
   return parsed.json?.message || parsed.text || fallback;
 }
 
@@ -137,7 +131,7 @@ export function resolveSubmitSuccessUrl(parsed: ParsedSubmitResponse) {
   return parsed.json?.pr_url || parsed.json?.public_issue_url || parsed.json?.url || '';
 }
 
-export function toErrorMessage(error: unknown, fallback = SUBMIT_FAILED_ERROR) {
+export function toErrorMessage(error: unknown, fallback = i18n.t('common:errors.submitFailed')) {
   if (error instanceof Error && error.message) return error.message;
   if (typeof error === 'string' && error.trim()) return error;
   return fallback;

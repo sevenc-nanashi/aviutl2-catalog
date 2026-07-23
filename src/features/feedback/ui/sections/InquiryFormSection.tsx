@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { INQUIRY_FIELDS } from '../../model/fieldNames';
 import FeedbackVisibilityBadge from '../components/FeedbackVisibilityBadge';
 import FeedbackAttachmentSection from './FeedbackAttachmentSection';
@@ -13,6 +14,7 @@ export default function InquiryFormSection({
   onFilesChange,
   onRemoveAttachment,
 }: InquiryFormSectionProps) {
+  const { t } = useTranslation('feedback');
   return (
     <>
       <div
@@ -23,11 +25,9 @@ export default function InquiryFormSection({
       >
         <div className={layout.headerInlineStrong}>
           <FeedbackVisibilityBadge type="private" />
-          <span>非公開設定</span>
+          <span>{t('visibility.privateTitle')}</span>
         </div>
-        <div className={text.mutedXsRelaxedFaded}>
-          ご意見・お問い合わせの内容は公開されません。開発者のみが確認します
-        </div>
+        <div className={text.mutedXsRelaxedFaded}>{t('visibility.privateDescription')}</div>
       </div>
 
       <FeedbackBasicFieldsSection
@@ -35,9 +35,9 @@ export default function InquiryFormSection({
         names={INQUIRY_FIELDS}
         values={inquiry}
         onChange={onInquiryChange}
-        titlePlaceholder="件名を入力してください"
-        detailPlaceholder="ご意見やお問い合わせ内容を詳しく入力してください"
-        contactPlaceholder="メールアドレスやXアカウント（必要に応じて開発者から連絡します）"
+        titlePlaceholder={t('fields.inquiryTitlePlaceholder')}
+        detailPlaceholder={t('fields.inquiryDetailPlaceholder')}
+        contactPlaceholder={t('fields.inquiryContactPlaceholder')}
       />
 
       <div className={surface.sectionTopBorder}>
@@ -45,8 +45,8 @@ export default function InquiryFormSection({
           attachments={attachments}
           onFilesChange={onFilesChange}
           onRemoveAttachment={onRemoveAttachment}
-          label="添付ファイル"
-          optionalLabel="(任意)"
+          label={t('attachments.label')}
+          optionalLabel={t('shared.optional')}
         />
       </div>
     </>

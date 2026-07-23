@@ -1,0 +1,138 @@
+{
+  "meta": {
+    "title": "Basic info",
+    "idPlaceholder": "Kenkun.AviUtlExEdit2",
+    "idHint": "Use the format authorName.packageName. Only letters, numbers, and the symbols . - _ are allowed.",
+    "name": "Package name",
+    "namePlaceholder": "AviUtl2",
+    "author": "Author",
+    "authorPlaceholder": "KEN-kun",
+    "originalAuthor": "Original author (optional)",
+    "originalAuthorPlaceholder": "Enter this when there is an original version",
+    "sourceLocale": "Language to edit",
+    "sourceLocaleHint": "Edit the language selected here. Supported languages are Japanese, English, Korean, Simplified Chinese, and Traditional Chinese.",
+    "sourceLocaleOptions": {
+      "ja": "Japanese",
+      "en": "English",
+      "ko": "Korean",
+      "zh-CN": "Chinese (Simplified)",
+      "zh-TW": "Chinese (Traditional)"
+    },
+    "repoUrl": "Package site",
+    "repoUrlPlaceholder": "A URL that explains the package",
+    "niconiCommonsId": "Niconi Commons ID (optional)",
+    "packageRole": "Package role",
+    "packageRoleHint": "Select \"Support package\" for packages that do not add features to AviUtl2 itself and are only required for other packages to work.",
+    "packageRoleOptions": {
+      "primaryPackage": "Primary package",
+      "supportPackage": "Support package"
+    },
+    "deprecationEnabled": "Mark as deprecated",
+    "deprecationMessage": "Deprecation message",
+    "deprecationHint": "If you want to mark this package as deprecated, explain the reason and any replacement package here.",
+    "deprecationPlaceholder": "Enter a replacement package or migration target if available"
+  },
+  "packageType": {
+    "suggestions": "Type list",
+    "inputAria": "Enter package type",
+    "placeholder": "Enter a type or choose from the list",
+    "helper": "You can choose from the list. If the type is missing, you can enter it manually."
+  },
+  "tags": {
+    "suggestions": "Existing tags",
+    "inputAria": "Enter tags",
+    "placeholder": "Enter tags (press Enter to add)",
+    "helper": "You can choose from existing tags. If a tag is missing, you can enter it manually."
+  },
+  "description": {
+    "summaryPlaceholder": "Package summary (35 characters max)",
+    "modeInline": "Inline",
+    "modeExternal": "External MD link",
+    "markdown": "Markdown",
+    "tabEdit": "Edit",
+    "tabExternalEdit": "External link",
+    "externalUrlPlaceholder": "https://example.com/description.md",
+    "externalUrlHint": "Enter a Markdown URL.",
+    "externalRawHint": "When linking Markdown from GitHub, use a URL that starts with https://raw.githubusercontent.com/.",
+    "externalLoading": "Loading linked content...",
+    "externalLoaded": "Markdown loaded",
+    "externalError": "Failed to load Markdown",
+    "bodyPlaceholder": "Enter package details. Markdown is supported. It helps to describe where it appears in the UI, how to access it, and how to use it. External images can also be embedded."
+  },
+  "changelog": {
+    "title": "Changelog",
+    "body": "Optional. When set, users can check the update details in the Update Center and detail screen.",
+    "formatTitle": "Changelog format",
+    "formatBody": "For each version, create a `## VersionName Date(YYYY-MM-DD)` heading, and make sure the version name matches the version history above.\nInside each version section, headings from `###` onward may be used.\nWe recommend writing changes as bullet points.\n\nExample:",
+    "formatExample": "# 更新履歴\n\n## 2.0.0 2025-07-07\n### New features\n- Added feature 1\n- Added feature 2\n\n### Fixes\n- Fix 1",
+    "externalUrl": "External Markdown URL"
+  },
+  "noticeMarkdown": {
+    "title": "Notice",
+    "body": "Optional. Enter notes that should be shown to users during download.",
+    "placeholder": "Enter the notice in Markdown."
+  },
+  "markdownControls": {
+    "modeInline": "Inline",
+    "modeExternal": "External MD link"
+  },
+  "relations": {
+    "title": "Related packages",
+    "description": "All fields are optional. Enter multiple package IDs separated by commas.",
+    "requires": "Required dependencies",
+    "recommends": "Recommended packages",
+    "conflicts": "Conflicting packages",
+    "similar": "Similar packages",
+    "replaces": "Replaced packages",
+    "forkOf": "Fork source package",
+    "placeholder": "Package IDs (comma-separated)",
+    "forkOfPlaceholder": "Package ID"
+  },
+  "license": {
+    "title": "License",
+    "typeAria": "Select license type",
+    "selectPlaceholder": "Select one",
+    "name": "License name",
+    "namePlaceholder": "Enter the license name",
+    "nameHint": "For a custom license, enter \"Custom License\".",
+    "useTemplate": "Use template",
+    "body": "License text",
+    "bodyPlaceholder": "Enter the license text",
+    "templateHint": "Using a template. Enter the copyright year and holder.",
+    "copyrightYears": "Copyright year",
+    "copyrightYearsPlaceholder": "(e.g. 2025)",
+    "copyrightHolder": "Copyright holder",
+    "copyrightHolderPlaceholder": "(e.g. KEN-kun)",
+    "copy": "Copy license text",
+    "copyTitle": "Copy to clipboard",
+    "copySuccess": "Copied",
+    "copyError": "Copy failed",
+    "previewHint": "The preview appears after you enter the type and copyright holder.",
+    "typeOptions": {
+      "other": "Other",
+      "unknown": "Unknown"
+    }
+  },
+  "images": {
+    "title": "Images",
+    "thumbnailTitle": "Thumbnail",
+    "thumbnailDescription": "Shown in the package list (1 image)",
+    "thumbnailHint": "Recommended: 1:1 aspect ratio (around 206×206px)\nPlease add one if possible to keep the list readable.",
+    "selectThumbnail": "Select thumbnail image",
+    "selectImage": "Choose image",
+    "dropToAdd": "Drop here to add",
+    "thumbnailPreviewEmpty": "No preview",
+    "unset": "Not set",
+    "removeThumbnail": "Remove thumbnail",
+    "thumbnailEmpty": "No thumbnail is set",
+    "dragAndDrop": "Drag and drop an image",
+    "infoTitle": "Description images",
+    "infoDescription": "Shown on the package details page (multiple allowed)",
+    "infoHint": "Recommended aspect ratio: 16:9",
+    "selectInfo": "Select description images",
+    "addImages": "Add images",
+    "infoEmpty": "No description images are set",
+    "removeImage": "Remove",
+    "defaultInfoFilename": "./image/{{packageId}}_{{index}}.(ext)"
+  }
+}

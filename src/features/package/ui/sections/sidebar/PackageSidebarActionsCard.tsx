@@ -1,13 +1,13 @@
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
-import { CheckCircle2, Download, ExternalLink, PackageSearch, RefreshCw, Trash2 } from 'lucide-react';
+import { CheckCircle2, Download, PackageSearch, RefreshCw, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import ProgressCircle from '@/components/ProgressCircle';
+import { getInstalledVersionLabel } from '@/utils/detectResult';
 import type { PackageSidebarSectionProps } from '../../types';
 import { cn } from '@/lib/cn';
 import { layout, surface } from '@/components/ui/_styles';
 import { isWeb } from '@/lib/target';
-import { checkIsDirectDownloadSupported } from '@/utils/isDirectDownloadSupported';
-import { webDownloadPackage } from '@/utils/webDownload';
 
 type PackageSidebarActionsCardProps = Pick<
   PackageSidebarSectionProps,
@@ -24,55 +24,48 @@ export default function PackageSidebarActionsCard({
   onUpdate,
   onRemove,
 }: PackageSidebarActionsCardProps) {
+  const { t } = useTranslation('package');
   const downloading = busyAction === 'download';
   const updating = busyAction === 'update';
   const removing = busyAction === 'remove';
   const primaryDisabled = isBusy || !canInstall;
-  const isDirectDownloadSupported = checkIsDirectDownloadSupported(item);
+  const installedVersionLabel = getInstalledVersionLabel(
+    item.installedVersion,
+    item.detectedResult,
+    t('sidebar.versionUnknown'),
+  );
 
   return (
     <div className={cn(surface.cardSection, 'space-y-3')}>
       {isWeb ? (
         <>
-          <button
-            className={cn(
-              layout.center,
-              'h-10 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-bold rounded-lg transition-colors gap-2 w-full cursor-pointer',
-            )}
+          <Button
+            variant="secondary"
+            size="default"
+            radius="xl"
+            className="w-full cursor-pointer"
             onClick={() => window.open(`aviutl2-catalog://package/${item.id}`, '_self')}
             type="button"
           >
-            <PackageSearch size={16} /> カタログで開く
-          </button>
-          {isDirectDownloadSupported ? (
-            <button
-              className={cn(
-                layout.center,
-                'h-10 px-4 bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold rounded-lg transition-colors gap-2 w-full cursor-pointer',
-              )}
-              onClick={() => void webDownloadPackage(item)}
-              type="button"
-            >
-              <Download size={16} /> ダウンロード
-            </button>
-          ) : item.repoURL ? (
-            <button
-              className={cn(
-                layout.center,
-                'h-10 px-4 bg-gray-600 hover:bg-gray-500 text-white text-sm font-bold rounded-lg transition-colors gap-2 w-full cursor-pointer',
-              )}
-              onClick={() => window.open(item.repoURL, '_blank', 'noopener')}
-              type="button"
-            >
-              <ExternalLink size={16} /> ホームページ
-            </button>
-          ) : null}
+            <PackageSearch size={18} /> {t('actions.openInCatalog')}
+          </Button>
+          <Button
+            variant="primary"
+            size="default"
+            radius="xl"
+            className="w-full cursor-pointer"
+            onClick={() => void onDownload()}
+            type="button"
+          >
+            <Download size={18} /> {t('actions.download')}
+          </Button>
         </>
       ) : item.installed ? (
         <>
           {item.isLatest ? (
             <Badge variant="success" shape="pill" size="sm" className={cn(layout.inlineGap2, 'font-bold')}>
-              <CheckCircle2 size={14} /> 最新{item.installedVersion ? `（${item.installedVersion}）` : ''}
+              <CheckCircle2 size={14} /> {t('actions.latest')}
+              {installedVersionLabel ? `（${installedVersionLabel}）` : ''}
             </Badge>
           ) : (
             <button
@@ -97,7 +90,7 @@ export default function PackageSidebarActionsCard({
                 </span>
               ) : (
                 <>
-                  <RefreshCw size={18} /> 更新
+                  <RefreshCw size={18} /> {t('actions.update')}
                 </>
               )}
             </button>
@@ -113,10 +106,10 @@ export default function PackageSidebarActionsCard({
               type="button"
             >
               {removing ? (
-                '削除中…'
+                t('actions.removing')
               ) : (
                 <>
-                  <Trash2 size={18} /> 削除
+                  <Trash2 size={18} /> {t('actions.remove')}
                 </>
               )}
             </Button>
@@ -144,7 +137,7 @@ export default function PackageSidebarActionsCard({
             </span>
           ) : (
             <>
-              <Download size={18} /> インストール
+              <Download size={18} /> {t('actions.install')}
             </>
           )}
         </Button>

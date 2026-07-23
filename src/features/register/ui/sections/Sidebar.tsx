@@ -1,6 +1,7 @@
 /**
  * サイドバーのコンポーネント
  */
+import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import { Plus, Search } from 'lucide-react';
@@ -12,9 +13,9 @@ import { cn } from '@/lib/cn';
 const sidebarSectionLabelClass = 'text-xs font-bold uppercase tracking-wider text-slate-400';
 const unselectedItemClass = 'border-transparent hover:bg-slate-50 dark:hover:bg-slate-800';
 
-function formatSavedAt(savedAt: number) {
+function formatSavedAt(savedAt: number, locale: string) {
   try {
-    return new Intl.DateTimeFormat('ja-JP', {
+    return new Intl.DateTimeFormat(locale, {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -38,9 +39,11 @@ export default function RegisterSidebar({
   onOpenDraftPackage,
   onDeleteDraftPackage,
 }: RegisterSidebarProps) {
+  const { t, i18n } = useTranslation(['register', 'common', 'nav']);
   const hasDraftPackages = draftPackages.length > 0;
   const blockedDraftCount = draftPackages.filter((draft) => !draft.readyForSubmit).length;
-  const submitListTestStatus = blockedDraftCount > 0 ? `${blockedDraftCount}件テスト未完了` : '送信可能';
+  const submitListTestStatus =
+    blockedDraftCount > 0 ? t('submitBar.blocked', { count: blockedDraftCount }) : t('sidebar.pendingReady');
   const headerStatusClass =
     blockedDraftCount > 0
       ? 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/50 dark:bg-amber-900/20 dark:text-amber-200'
@@ -58,11 +61,11 @@ export default function RegisterSidebar({
             onClick={onStartNewPackage}
           >
             <Plus size={18} />
-            新規パッケージ作成
+            {t('sidebar.newPackage')}
           </Button>
           <div className="space-y-2 rounded-xl border border-slate-200/80 bg-white p-3 dark:border-slate-800 dark:bg-slate-900 lg:mb-3 lg:shrink-0">
             <div className={layout.rowBetweenGap2}>
-              <div className={sidebarSectionLabelClass}>送信予定一覧</div>
+              <div className={sidebarSectionLabelClass}>{t('sidebar.pendingList')}</div>
               {hasDraftPackages && (
                 <Badge shape="rounded" size="xxs" className={headerStatusClass}>
                   {submitListTestStatus}
@@ -74,7 +77,11 @@ export default function RegisterSidebar({
                 const isSelected = selectedPackageId === draft.packageId;
                 const isTestReady = draft.testStatus === 'ready';
                 const testStatusLabel =
-                  draft.testStatus === 'not_required' ? 'テスト不要' : isTestReady ? 'テスト完了' : 'テスト未完了';
+                  draft.testStatus === 'not_required'
+                    ? t('sidebar.draftStatusNotRequired')
+                    : isTestReady
+                      ? t('sidebar.draftStatusReady')
+                      : t('sidebar.draftStatusPending');
                 const testStatusClass =
                   draft.testStatus === 'not_required'
                     ? 'border-slate-300 bg-slate-100 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200'
@@ -109,7 +116,7 @@ export default function RegisterSidebar({
                       </div>
                       <div className={cn(layout.inlineGap1_5, 'w-full min-w-0')}>
                         <div className="min-w-0 flex-1 truncate text-[11px] text-slate-500 dark:text-slate-400">
-                          {formatSavedAt(draft.savedAt)}
+                          {formatSavedAt(draft.savedAt, i18n.language)}
                         </div>
                         <Badge shape="rounded" size="xxs" className={cn('shrink-0', testStatusClass)}>
                           {testStatusLabel}
@@ -117,7 +124,7 @@ export default function RegisterSidebar({
                       </div>
                     </Button>
                     <DeleteButton
-                      ariaLabel={`${draft.packageId} の一時保存を削除`}
+                      ariaLabel={t('sidebar.deleteDraftAria', { id: draft.packageId })}
                       onClick={(event) => {
                         event.stopPropagation();
                         onDeleteDraftPackage(draft.draftId);
@@ -127,19 +134,19 @@ export default function RegisterSidebar({
                 );
               })}
               {draftPackages.length === 0 && (
-                <div className={surface.dashedSoftPlaceholder}>送信予定のパッケージはありません</div>
+                <div className={surface.dashedSoftPlaceholder}>{t('sidebar.noDrafts')}</div>
               )}
             </div>
           </div>
           <div className="space-y-2 rounded-xl border border-slate-200/80 bg-white pl-3 pr-0 py-3 dark:border-slate-800 dark:bg-slate-900 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
-            <div className={cn(sidebarSectionLabelClass, 'pr-3')}>パッケージ一覧</div>
+            <div className={cn(sidebarSectionLabelClass, 'pr-3')}>{t('nav:navigation.home')}</div>
             <div className="relative pr-3 lg:shrink-0">
               <Search size={16} className={layout.inputIconLeft} />
               <input
                 type="search"
                 value={packageSearch}
                 onChange={(e) => onPackageSearchChange(e.target.value)}
-                placeholder="パッケージを検索..."
+                placeholder={t('sidebar.searchPlaceholder')}
                 className="w-full pl-9"
               />
             </div>
@@ -147,7 +154,7 @@ export default function RegisterSidebar({
               {catalogLoadState === 'loading' || catalogLoadState === 'idle' ? (
                 <div className={cn(layout.center, 'pr-3 py-8 text-sm text-slate-500')}>
                   <span className="spinner mr-2" />
-                  読み込み中...
+                  {t('common:router.loading')}
                 </div>
               ) : (
                 filteredPackages.map((item) => {
@@ -180,16 +187,18 @@ export default function RegisterSidebar({
                           'block w-full truncate text-xs',
                           isSelected ? 'text-blue-600/80 dark:text-blue-400/80' : 'text-slate-500 dark:text-slate-400',
                         )}
-                        title={item.author || '作者不明'}
+                        title={item.author || t('sidebar.unknownAuthor')}
                       >
-                        {item.author || '作者不明'}
+                        {item.author || t('sidebar.unknownAuthor')}
                       </span>
                     </Button>
                   );
                 })
               )}
               {catalogLoadState === 'loaded' && filteredPackages.length === 0 && (
-                <div className={cn(surface.dashedSoftPlaceholder, 'mr-3 px-4 py-8 text-sm')}>該当なし</div>
+                <div className={cn(surface.dashedSoftPlaceholder, 'mr-3 px-4 py-8 text-sm')}>
+                  {t('common:labels.noMatches')}
+                </div>
               )}
             </div>
           </div>

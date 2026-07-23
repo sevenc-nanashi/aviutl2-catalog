@@ -1,3 +1,4 @@
+import { i18n } from '@/i18n';
 import { useCallback, useEffect, useRef } from 'react';
 import * as deepLink from '@tauri-apps/plugin-deep-link';
 import type { NavigateFunction } from 'react-router-dom';
@@ -10,7 +11,7 @@ const HISTORY_TTL_MS = 10000;
 
 function toErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
-  return String(error || '不明なエラー');
+  return String(error || i18n.t('common:errors.unknown'));
 }
 
 function reportDeepLinkError(context: string, error: unknown) {

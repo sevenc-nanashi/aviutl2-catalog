@@ -1,4 +1,11 @@
-import type { Installer, InstallerAction, InstallerSource } from '../catalogSchema';
+import type { Installation } from '../catalog-schema/shared/installationSchema';
+import type { DetectResult } from '../detectResult';
+
+export type Installer = Installation;
+export type InstallerSource = Installation['source'];
+export type InstallerInstallAction = Installation['installSteps'][number];
+export type InstallerUninstallAction = Installation['uninstallSteps'][number];
+export type InstallerAction = InstallerInstallAction | InstallerUninstallAction;
 
 export type InstallerMacroContext = {
   tmpDir: string;
@@ -24,19 +31,19 @@ export type DownloadEventPayload = {
 
 export type InstallerConfigLike = {
   source?: InstallerSource;
-  install: InstallerAction[];
-  uninstall: InstallerAction[];
+  installSteps: InstallerInstallAction[];
+  uninstallSteps: InstallerUninstallAction[];
 };
 
 export type InstallerRunnableItem = {
   id: string;
   installer?: Installer;
-  'latest-version'?: string;
+  latestVersion?: string;
 };
 
 export type SetDetectedOneAction = {
   type: 'SET_DETECTED_ONE';
-  payload: { id: string; version: string; forceLatest?: boolean };
+  payload: { id: string; result: DetectResult; forceLatest?: boolean };
 };
 
 export type CatalogDispatchFn = ((action: SetDetectedOneAction) => void) | null | undefined;
@@ -53,7 +60,7 @@ export type InstallProgressPayload = {
   phase: InstallProgressPhase;
 };
 
-export type TestOperationKind = 'download' | 'extract' | 'extract_sfx' | 'copy' | 'delete' | 'run' | 'error';
+export type TestOperationKind = 'download' | 'extract' | 'extractSfx' | 'copy' | 'delete' | 'run' | 'error';
 
 export type StepOperationTarget = {
   kind: TestOperationKind;

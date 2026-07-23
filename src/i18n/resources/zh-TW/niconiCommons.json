@@ -1,0 +1,28 @@
+{
+  "page": {
+    "title": "Niconi Commons ID",
+    "description": "瀏覽已登錄 Niconi Commons ID 的已安裝套件"
+  },
+  "header": {
+    "copied": "已複製 {{count}} 項",
+    "copy": "複製 Niconi Commons ID"
+  },
+  "guide": {
+    "title": "什麼是 Niconi Commons ID？",
+    "body": "Niconi Commons 是一項幫助創作者安全重複利用彼此作品並進行合作的服務。\n在 Niconico 上，你可以將製作作品時使用的 AviUtl2、外掛、腳本、素材等工具與資源登錄為父作品，以建立內容樹。\n在發佈影片時登錄父作品，可以讓這些工具與素材的創作者知道他們的作品被使用與感謝，也有助於支持他們的創作活動。\nNiconico 也提供一些可能為創作者帶來經濟支持的機制。\n請考慮為你使用過的工具與素材登錄父作品。",
+    "note": "注意：登錄父作品不會減少你自己的收益。",
+    "open": "如何登錄父作品"
+  },
+  "toolbar": {
+    "visible": "可見：{{count}}",
+    "selected": "已選擇：{{count}}",
+    "searchPlaceholder": "套件名稱 / ID / 作者 / Commons ID"
+  },
+  "table": {
+    "emptyEligible": "沒有符合條件的套件。",
+    "selectAllVisible": "選擇所有可見項目",
+    "package": "套件",
+    "author": "作者",
+    "selectItem": "選擇 {{name}}"
+  }
+}

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { getErrorMessage } from '../../model/helpers';
 import { useUpdatePrompt } from '@/features/app-update/useUpdatePrompt';
 import useInitSetupBulkInstall from './useInitSetupBulkInstall';
@@ -6,6 +7,7 @@ import useInitSetupFlow from './useInitSetupFlow';
 import useInitSetupPackageCatalog from './useInitSetupPackageCatalog';
 
 export default function useInitSetupState() {
+  const { t } = useTranslation('initSetup');
   const flow = useInitSetupFlow();
   const config = useInitSetupConfig();
   const catalog = useInitSetupPackageCatalog({
@@ -60,19 +62,19 @@ export default function useInitSetupState() {
   async function handleExistingDetailsNext() {
     await runDetailsNext({
       rootPath: flow.aviutlRoot,
-      emptyMessage: 'AviUtl2 のフォルダを入力してください。',
-      failureTitle: '設定に失敗しました。',
+      emptyMessage: t('errors.aviutlRootRequired'),
+      failureTitle: t('errors.saveFailed'),
     });
   }
 
   async function handleInstallDetailsNext() {
     await runDetailsNext({
       rootPath: flow.installDir,
-      emptyMessage: 'インストール先を入力してください。',
-      failureTitle: 'セットアップに失敗しました。',
+      emptyMessage: t('errors.installDirRequired'),
+      failureTitle: t('errors.setupFailed'),
       afterSave: async () => {
         const success = await catalog.downloadRequiredPackage(config.corePackageId);
-        if (!success) throw new Error('インストールに失敗しました。');
+        if (!success) throw new Error(t('errors.installFailed'));
       },
     });
   }
@@ -91,6 +93,7 @@ export default function useInitSetupState() {
     error: flow.error,
     busy: flow.busy,
     label: flow.label,
+    localeBusy: flow.localeBusy,
     setupConfig: config.setupConfig,
     setupError: config.setupError,
     requiredPackages: catalog.requiredPackages,
@@ -107,6 +110,7 @@ export default function useInitSetupState() {
     proceedInstalled: flow.proceedInstalled,
     pickDir: flow.pickDir,
     finalizeSetup: flow.finalizeSetup,
+    changeLocale: flow.changeLocale,
     canProceedDetails: flow.canProceedDetails,
     updateInfo,
     updateBusy,

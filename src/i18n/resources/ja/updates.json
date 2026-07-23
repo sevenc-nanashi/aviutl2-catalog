@@ -1,0 +1,37 @@
+{
+  "page": {
+    "title": "アップデートセンター",
+    "description": "更新可能なパッケージを確認します",
+    "updateAll": "すべて更新"
+  },
+  "sections": {
+    "available": "更新可能",
+    "paused": "一時停止中",
+    "changelog": "更新内容"
+  },
+  "empty": {
+    "available": "更新可能なパッケージはありません",
+    "loadingPaused": "一時停止設定を読み込み中…",
+    "paused": "一時停止中のパッケージはありません"
+  },
+  "table": {
+    "package": "パッケージ",
+    "before": "更新前",
+    "after": "更新後",
+    "resume": "再開",
+    "pause": "一時停止",
+    "update": "更新",
+    "saving": "保存中…",
+    "progressAria": "{{name}} の更新進捗"
+  },
+  "errors": {
+    "bulkFailed": "{{count}}件のプラグインで更新に失敗しました（例: {{name}}: {{detail}}）",
+    "updateFailed": "更新に失敗しました\n\n{{detail}}",
+    "pauseSaveFailed": "更新の一時停止設定を保存できませんでした\n\n{{detail}}"
+  },
+  "changelog": {
+    "loading": "更新履歴を読み込み中です…",
+    "empty": "表示できる更新履歴はありません。",
+    "loadFailed": "更新履歴を読み込めませんでした。"
+  }
+}

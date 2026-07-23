@@ -1,0 +1,66 @@
+{
+  "page": {
+    "title": "링크",
+    "description": "관련 사이트와 지원 리소스에 접근합니다"
+  },
+  "sections": {
+    "official": {
+      "title": "AviUtl2",
+      "description": "AviUtl2 공식 사이트와 관련 자료"
+    },
+    "community": {
+      "title": "커뮤니티",
+      "description": "AviUtl2 커뮤니티 링크"
+    },
+    "support": {
+      "title": "지원",
+      "description": "AviUtl2 카탈로그 지원 링크"
+    },
+    "developers": {
+      "title": "개발자용",
+      "description": "AviUtl2 카탈로그에 패키지를 게시하는 개발자를 위한 자료"
+    },
+    "catalog": {
+      "title": "GitHub 저장소",
+      "description": "AviUtl2 카탈로그 관련 GitHub 저장소"
+    }
+  },
+  "entries": {
+    "official-site": {
+      "title": "공식 사이트",
+      "description": "AviUtl2 공식 사이트"
+    },
+    "official-changelog": {
+      "title": "변경 이력(Nanashi.)",
+      "description": "AviUtl2 릴리스 기록을 확인할 수 있는 비공식 사이트"
+    },
+    "community-discord": {
+      "title": "Discord",
+      "description": "AviUtl2에 대한 토론과 질문을 위한 비공식 Discord 커뮤니티"
+    },
+    "support-feedback": {
+      "title": "피드백",
+      "description": "버그 신고, 기능 요청, 문의를 보내는 양식"
+    },
+    "support-register": {
+      "title": "패키지 등록",
+      "description": "새 패키지를 추가하거나 기존 항목을 업데이트하는 양식"
+    },
+    "developers-register-guide": {
+      "title": "패키지 게시 방법",
+      "description": "패키지 게시 방법을 설명하는 가이드"
+    },
+    "developers-update-status": {
+      "title": "자동 업데이트 지원 상태",
+      "description": "등록된 패키지의 자동 업데이트 지원 상태를 정리한 문서"
+    },
+    "catalog-github-app": {
+      "title": "AviUtl2 카탈로그 저장소",
+      "description": "AviUtl2 카탈로그 앱의 GitHub 저장소"
+    },
+    "catalog-github-data": {
+      "title": "카탈로그 데이터 저장소",
+      "description": "패키지 목록 데이터의 GitHub 저장소"
+    }
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "meta": {
+    "title": "基本信息",
+    "idPlaceholder": "Kenkun.AviUtlExEdit2",
+    "idHint": "请按照“作者名.包名称”的格式输入。仅限英文字母、数字和符号( . - _ )",
+    "name": "包名称",
+    "namePlaceholder": "AviUtl2",
+    "author": "作者",
+    "authorPlaceholder": "KENくん",
+    "originalAuthor": "原作者名（可选）",
+    "originalAuthorPlaceholder": "若存在原始版本，请填写此项",
+    "sourceLocale": "要编辑的语言",
+    "sourceLocaleHint": "编辑此处选择的语言。支持语言为日语、英语、韩语、简体中文和繁体中文。",
+    "sourceLocaleOptions": {
+      "ja": "日语",
+      "en": "英语",
+      "ko": "韩语",
+      "zh-CN": "简体中文",
+      "zh-TW": "繁体中文"
+    },
+    "repoUrl": "包网站",
+    "repoUrlPlaceholder": "用于说明该包的 URL",
+    "niconiCommonsId": "ニコニ・コモンズID（可选）",
+    "packageRole": "包角色",
+    "packageRoleHint": "若包本身不向 AviUtl2 添加功能，只是其他包运行所必需的包，请选择“辅助包”。",
+    "packageRoleOptions": {
+      "primaryPackage": "主包",
+      "supportPackage": "辅助包"
+    },
+    "deprecationEnabled": "显示为已弃用",
+    "deprecationMessage": "弃用消息",
+    "deprecationHint": "若因某些原因希望将其标记为弃用，请在此处填写原因或替代包等信息。",
+    "deprecationPlaceholder": "若有替代包或迁移目标，请填写此项"
+  },
+  "packageType": {
+    "suggestions": "类型列表",
+    "inputAria": "输入类型",
+    "placeholder": "输入或从列表中选择类型",
+    "helper": "可从列表中选择。列表中不存在的类型可手动输入添加。"
+  },
+  "tags": {
+    "suggestions": "已有标签",
+    "inputAria": "输入标签",
+    "placeholder": "输入标签（按Enter添加）",
+    "helper": "可从已有标签中选择。列表中不存在的标签可手动输入添加。"
+  },
+  "description": {
+    "summaryPlaceholder": "包摘要（最多35个字符）",
+    "modeInline": "应用内输入",
+    "modeExternal": "外部MD链接",
+    "markdown": "Markdown格式",
+    "tabEdit": "编辑",
+    "tabExternalEdit": "指定外部链接",
+    "externalUrlPlaceholder": "https://example.com/description.md",
+    "externalUrlHint": "请输入Markdown的URL。",
+    "externalRawHint": "若要注册GitHub上的MD文件，请注意链接是否以 https://raw.githubusercontent.com/ 开头。",
+    "externalLoading": "正在加载链接内容...",
+    "externalLoaded": "Markdown已加载",
+    "externalError": "无法加载Markdown",
+    "bodyPlaceholder": "请输入包的详细信息。支持Markdown格式。若能同时写明调用位置（如菜单位置等）以及UI说明，将大有帮助。也可粘贴外部网站的图片。"
+  },
+  "changelog": {
+    "title": "更新历史",
+    "body": "可选项。设置后，可在更新中心和详情页面查看更新内容。",
+    "formatTitle": "更新历史格式",
+    "formatBody": "请为每个版本创建 `## 版本名 日期(YYYY-MM-DD)` 标题，并确保版本名与上方版本历史一致。\n每个版本内部可使用 `###` 及之后级别的标题。\n建议用项目符号列表填写变更内容。\n\n示例:",
+    "formatExample": "# 更新履歴\n\n## 2.0.0 2025-07-07\n### 新功能\n- 添加功能1\n- 添加功能2\n\n### 修复\n- 修复1",
+    "externalUrl": "外部 Markdown URL"
+  },
+  "noticeMarkdown": {
+    "title": "注意事项",
+    "body": "可选项。请输入下载时向用户显示的注意事项。",
+    "placeholder": "请用 Markdown 输入注意事项。"
+  },
+  "markdownControls": {
+    "modeInline": "应用内输入",
+    "modeExternal": "外部MD链接"
+  },
+  "relations": {
+    "title": "相关包",
+    "description": "均为可选项。多个包 ID 请用逗号分隔。",
+    "requires": "必需依赖包",
+    "recommends": "推荐包",
+    "conflicts": "冲突包",
+    "similar": "相似包",
+    "replaces": "替代对象包",
+    "forkOf": "fork 来源包",
+    "placeholder": "包ID（逗号分隔）",
+    "forkOfPlaceholder": "包ID"
+  },
+  "license": {
+    "title": "许可证",
+    "typeAria": "选择许可证类型",
+    "selectPlaceholder": "请选择",
+    "name": "许可证名称",
+    "namePlaceholder": "请输入许可证名称",
+    "nameHint": "若为自定义许可证，请输入“自定义许可证”。",
+    "useTemplate": "使用模板",
+    "body": "许可证正文",
+    "bodyPlaceholder": "请输入许可证正文",
+    "templateHint": "正在使用模板。请填写版权年份和版权所有者。",
+    "copyrightYears": "版权年份",
+    "copyrightYearsPlaceholder": "（示例：2025）",
+    "copyrightHolder": "版权所有者",
+    "copyrightHolderPlaceholder": "（示例：KENくん）",
+    "copy": "复制许可证文本",
+    "copyTitle": "复制到剪贴板",
+    "copySuccess": "已复制",
+    "copyError": "复制失败",
+    "previewHint": "输入类型和版权所有者后，将显示预览。",
+    "typeOptions": {
+      "other": "其他",
+      "unknown": "未知"
+    }
+  },
+  "images": {
+    "title": "图片",
+    "thumbnailTitle": "缩略图",
+    "thumbnailDescription": "显示在包列表中（1张）",
+    "thumbnailHint": "※推荐：长宽比 1:1（约 206×206 px）\n为使列表更易浏览，请尽可能提供",
+    "selectThumbnail": "选择缩略图",
+    "selectImage": "选择图片",
+    "dropToAdd": "拖放到此处添加",
+    "thumbnailPreviewEmpty": "无预览",
+    "unset": "未设置",
+    "removeThumbnail": "删除缩略图",
+    "thumbnailEmpty": "未设置缩略图",
+    "dragAndDrop": "拖放图片",
+    "infoTitle": "说明图片",
+    "infoDescription": "显示在包详情页的说明图片（可多张）",
+    "infoHint": "※推荐长宽比 16:9",
+    "selectInfo": "选择说明图片",
+    "addImages": "添加图片",
+    "infoEmpty": "未设置说明图片",
+    "removeImage": "删除",
+    "defaultInfoFilename": "./image/{{packageId}}_{{index}}.(ext)"
+  }
+}

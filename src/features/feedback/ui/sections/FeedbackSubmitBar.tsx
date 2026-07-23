@@ -1,9 +1,11 @@
+import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 import { action } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
 import type { FeedbackSubmitBarProps } from '../types';
 
 export default function FeedbackSubmitBar({ submitting }: FeedbackSubmitBarProps) {
+  const { t } = useTranslation(['feedback', 'common']);
   return (
     <div className="flex justify-end pt-4">
       <Button
@@ -16,10 +18,10 @@ export default function FeedbackSubmitBar({ submitting }: FeedbackSubmitBarProps
         {submitting ? (
           <>
             <span className={cn(action.spinnerWhite, 'h-4 w-4 animate-spin rounded-full border-2')} />
-            送信中...
+            {t('submit.sending')}
           </>
         ) : (
-          <>送信する</>
+          <>{t('common:actions.submit')}</>
         )}
       </Button>
     </div>

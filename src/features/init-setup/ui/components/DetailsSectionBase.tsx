@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import Button from '@/components/ui/Button';
 import { FolderOpen } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { action, layout, state, surface, text } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
 
@@ -83,6 +84,7 @@ function PortableOptionCard({ active, label, description, activeClassName, onCli
 }
 
 export default function DetailsSectionBase({ header, input, portable, actions }: DetailsSectionBaseProps) {
+  const { t } = useTranslation(['initSetup', 'common']);
   const { title, description } = header;
   const {
     inputId,
@@ -144,21 +146,21 @@ export default function DetailsSectionBase({ header, input, portable, actions }:
 
         <div className={portableSectionClassName}>
           <div className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1">
-            ポータブルモード設定
+            {t('details.portableMode')}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <PortableOptionCard
               active={!portableEnabled}
               label={standardLabel}
-              description="プラグインやスクリプトを ProgramData に導入します"
+              description={t('details.standardDescription')}
               activeClassName={standardActiveClassName}
               onClick={() => onPortableChange(false)}
             />
 
             <PortableOptionCard
               active={portableEnabled}
-              label="ポータブル"
-              description="プラグインやスクリプトを aviutl2.exe と同じ階層にある data フォルダに導入します"
+              label={t('details.portable')}
+              description={t('details.portableDescription')}
               activeClassName={portableActiveClassName}
               onClick={() => onPortableChange(true)}
             />
@@ -168,7 +170,7 @@ export default function DetailsSectionBase({ header, input, portable, actions }:
 
       <div className={cn(layout.rowBetween, 'mt-8')}>
         <Button variant="secondary" size="none" radius="xl" className={action.initSecondary} onClick={onBack}>
-          戻る
+          {t('common:actions.back')}
         </Button>
         <Button
           variant="primary"

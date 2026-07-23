@@ -1,0 +1,46 @@
+{
+  "shared": {
+    "all": "전체"
+  },
+  "searchPlaceholder": "패키지 이름, 작성자 또는 키워드로 검색...",
+  "filters": {
+    "label": "필터",
+    "tagFilter": "태그 필터",
+    "closeInstallMenu": "설치 상태 메뉴 닫기",
+    "closeDeprecationMenu": "지원 종료 메뉴 닫기",
+    "closeSortMenu": "정렬 메뉴 닫기",
+    "category": "카테고리",
+    "sort": "정렬",
+    "count": "개",
+    "selected": "선택됨:",
+    "clearAll": "모두 지우기",
+    "allTags": "모든 태그",
+    "clearSelection": "선택 해제"
+  },
+  "empty": {
+    "title": "현재 필터와 일치하는 패키지가 없습니다",
+    "clear": "필터 지우기"
+  },
+  "categories": {},
+  "installStatus": {
+    "installed": "설치됨",
+    "not_installed": "설치되지 않음"
+  },
+  "deprecationStatus": {
+    "active": "지원 종료 숨기기",
+    "deprecated": "지원 종료만 표시"
+  },
+  "sortOptions": {
+    "popularity_desc": "인기순",
+    "trend_desc": "트렌드",
+    "added_desc": "최근 추가",
+    "updated_desc": "최근 업데이트"
+  },
+  "errors": {
+    "dataDirUnavailable": "데이터 폴더를 확인할 수 없습니다. 설정에서 AviUtl2 폴더를 확인해 주세요.",
+    "dataDirOpenFailed": "데이터 폴더를 열 수 없습니다. 설정을 확인해 주세요.",
+    "launchFailed": "AviUtl2 실행에 실패했습니다.",
+    "catalogUnavailable": "카탈로그를 불러오지 못했습니다(네트워크 연결이 없고 캐시도 사용할 수 없음).",
+    "catalogLoadFailed": "카탈로그를 불러오지 못했습니다."
+  }
+}

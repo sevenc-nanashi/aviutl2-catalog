@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { CarouselImage } from '../../model/types';
 import { cn } from '@/lib/cn';
 import { layout } from '@/components/ui/_styles';
@@ -10,6 +11,7 @@ interface ImageCarouselProps {
 }
 
 export default function ImageCarousel({ images = [] }: ImageCarouselProps) {
+  const { t } = useTranslation('package');
   const ref = useRef<HTMLDivElement | null>(null);
   const [index, setIndex] = useState(0);
 
@@ -49,7 +51,7 @@ export default function ImageCarousel({ images = [] }: ImageCarouselProps) {
       onKeyDown={onKey}
       tabIndex={0}
       role="region"
-      aria-label="スクリーンショットカルーセル"
+      aria-label={t('carousel.region')}
       aria-roledescription="carousel"
     >
       <div className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-4" ref={ref}>
@@ -66,7 +68,7 @@ export default function ImageCarousel({ images = [] }: ImageCarouselProps) {
         <button
           className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white/80 text-slate-700 shadow-md hover:bg-white dark:bg-slate-900/80 dark:text-slate-100"
           onClick={() => scrollTo(index - 1)}
-          aria-label="前の画像へ"
+          aria-label={t('carousel.previous')}
           type="button"
         >
           <ChevronLeft size={18} className="mx-auto" />
@@ -76,7 +78,7 @@ export default function ImageCarousel({ images = [] }: ImageCarouselProps) {
         <button
           className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white/80 text-slate-700 shadow-md hover:bg-white dark:bg-slate-900/80 dark:text-slate-100"
           onClick={() => scrollTo(index + 1)}
-          aria-label="次の画像へ"
+          aria-label={t('carousel.next')}
           type="button"
         >
           <ChevronRight size={18} className="mx-auto" />
@@ -94,7 +96,7 @@ export default function ImageCarousel({ images = [] }: ImageCarouselProps) {
             key={i}
             className={cn('h-1.5 w-1.5 rounded-full', i === index ? 'bg-white' : 'bg-white/40')}
             aria-selected={i === index}
-            aria-label={`スライド ${i + 1}/${images.length}`}
+            aria-label={t('carousel.slide', { current: i + 1, total: images.length })}
             role="tab"
             onClick={() => scrollTo(i)}
             type="button"

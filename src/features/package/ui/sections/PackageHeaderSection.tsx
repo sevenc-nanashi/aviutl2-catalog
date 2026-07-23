@@ -1,13 +1,17 @@
 import { useMemo } from 'react';
 import { CheckCircle2, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Badge from '@/components/ui/Badge';
 import { layout, surface, text } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
+import { resolvePackageTypeLabel } from '../../model/helpers';
 import type { PackageHeaderSectionProps } from '../types';
 
 export default function PackageHeaderSection({ item, listLink, listLabel, heroImage }: PackageHeaderSectionProps) {
+  const { t } = useTranslation('package');
   const heroImageStyle = useMemo(() => ({ backgroundImage: `url(${heroImage})` }), [heroImage]);
+  const packageTypeLabel = resolvePackageTypeLabel(item.packageType, t, t('header.uncategorized'), item.typeLabel);
 
   return (
     <>
@@ -27,13 +31,13 @@ export default function PackageHeaderSection({ item, listLink, listLabel, heroIm
           <div className={layout.rowBetweenWrapStartGap4}>
             <div className="space-y-2">
               <Badge variant="primary" shape="pill" size="sm" className="gap-2 normal-case">
-                {item.type || '未分類'}
+                {packageTypeLabel}
               </Badge>
               <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{item.name}</h1>
             </div>
             {item.installed ? (
               <Badge variant="success" shape="pill" size="sm" className={cn(layout.inlineGap1, 'font-bold')}>
-                <CheckCircle2 size={14} /> 導入済
+                <CheckCircle2 size={14} /> {t('actions.installed')}
               </Badge>
             ) : null}
           </div>

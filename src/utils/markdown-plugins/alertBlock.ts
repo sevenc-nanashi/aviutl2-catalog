@@ -1,3 +1,4 @@
+import { i18n } from '@/i18n';
 import { AlertOctagon, AlertTriangle, Info, Lightbulb, MessageSquareWarning } from 'lucide-static';
 import { MarkdownExit } from 'markdown-exit';
 import githubAlerts, { MarkdownItGitHubAlertsOptions } from 'markdown-it-github-alerts';
@@ -6,11 +7,11 @@ import githubAlerts, { MarkdownItGitHubAlertsOptions } from 'markdown-it-github-
 export function alertBlock(md: MarkdownExit): void {
   md.use(githubAlerts, {
     titles: {
-      note: '注記',
-      tip: 'ヒント',
-      important: '重要',
-      warning: '警告',
-      caution: '注意',
+      note: i18n.t('common:markdownAlerts.note'),
+      tip: i18n.t('common:markdownAlerts.tip'),
+      important: i18n.t('common:markdownAlerts.important'),
+      warning: i18n.t('common:markdownAlerts.warning'),
+      caution: i18n.t('common:markdownAlerts.caution'),
     },
     icons: {
       note: Info,

@@ -2,6 +2,7 @@
  * プレビューセクションのコンポーネント
  */
 import { useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 import { Moon, Sun } from 'lucide-react';
 import PackageCard from '@/components/package-card/PackageCard';
@@ -15,6 +16,7 @@ export default function RegisterPreviewSection({
   previewDarkMode,
   onTogglePreviewDarkMode,
 }: RegisterPreviewSectionProps) {
+  const { t } = useTranslation(['register', 'common']);
   const fallbackUpdatedAtRef = useRef(new Date().toISOString());
   const thumbnailPreview = packageForm.images.thumbnail?.previewUrl || '';
   const infoImages = useMemo(
@@ -23,24 +25,23 @@ export default function RegisterPreviewSection({
   );
   const updatedAt = useMemo(() => {
     if (packageForm.versions.length > 0) {
-      return packageForm.versions[packageForm.versions.length - 1].release_date;
+      return packageForm.versions[packageForm.versions.length - 1].releaseDate;
     }
     return fallbackUpdatedAtRef.current;
   }, [packageForm.versions]);
   const previewItem = useMemo(
     () => ({
       id: packageForm.id || 'preview-id',
-      name: packageForm.name || 'パッケージ名',
-      author: packageForm.author || '作者名',
-      type: packageForm.type || '種類',
+      name: packageForm.name || t('preview.fallbackName'),
+      author: packageForm.author || t('preview.fallbackAuthor'),
+      packageType: packageForm.type || t('common:labels.type'),
+      typeLabel: packageForm.type || t('common:labels.type'),
       tags: currentTags,
-      summary: packageForm.summary || '概要がここに表示されます',
-      images: [
-        {
-          thumbnail: thumbnailPreview,
-          infoImg: infoImages,
-        },
-      ],
+      summary: packageForm.summary || t('preview.fallbackSummary'),
+      deprecation: packageForm.deprecationEnabled
+        ? { message: String(packageForm.deprecationMessage || '').trim() }
+        : undefined,
+      thumbnailUrl: thumbnailPreview || infoImages[0] || '',
       updatedAt: new Date(updatedAt).getTime() || null,
       installed: false,
       isLatest: true,
@@ -52,6 +53,8 @@ export default function RegisterPreviewSection({
       packageForm.author,
       packageForm.type,
       packageForm.summary,
+      packageForm.deprecationEnabled,
+      packageForm.deprecationMessage,
       currentTags,
       thumbnailPreview,
       infoImages,
@@ -61,10 +64,10 @@ export default function RegisterPreviewSection({
   return (
     <section className={surface.cardSection}>
       <div className={layout.rowBetweenGap2}>
-        <h2 className={text.titleLg}>プレビュー</h2>
+        <h2 className={text.titleLg}>{t('preview.title')}</h2>
         <Button variant="muted" size="compact" type="button" onClick={onTogglePreviewDarkMode} className="font-medium">
           {previewDarkMode ? <Sun size={14} /> : <Moon size={14} />}
-          <span>{previewDarkMode ? 'ライトモードに切り替え' : 'ダークモードに切り替え'}</span>
+          <span>{previewDarkMode ? t('preview.switchToLight') : t('preview.switchToDark')}</span>
         </Button>
       </div>
       <div

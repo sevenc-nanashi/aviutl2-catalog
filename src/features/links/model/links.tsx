@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+import type { ParseKeys } from 'i18next';
 import { BookOpenText, Globe, MessagesSquare, MessageSquareMore, PlusCircle } from 'lucide-react';
 import { SiDiscord, SiGithub } from 'react-icons/si';
 import { APP_ROUTE_PATHS } from '@/routePaths';
@@ -9,19 +10,20 @@ type LinkIconProps = {
 };
 
 type LinkIconType = ComponentType<LinkIconProps>;
+type LinksTranslationKey = ParseKeys<'links'>;
 
 export interface LinkEntry {
   id: string;
-  title: string;
-  description: string;
+  titleKey: LinksTranslationKey;
+  descriptionKey: LinksTranslationKey;
   href: string;
   icon: LinkIconType;
 }
 
 export interface LinkSection {
   id: string;
-  title: string;
-  description: string;
+  titleKey: LinksTranslationKey;
+  descriptionKey: LinksTranslationKey;
   icon: LinkIconType;
   baseColor: string;
   links: readonly LinkEntry[];
@@ -30,22 +32,22 @@ export interface LinkSection {
 export const LINK_SECTIONS: readonly LinkSection[] = [
   {
     id: 'official',
-    title: 'AviUtl2 本体',
-    description: 'AviUtl2 本体の公式サイトと関連情報のリンク',
+    titleKey: 'sections.official.title',
+    descriptionKey: 'sections.official.description',
     icon: Globe,
     baseColor: 'oklch(0.62 0.17 252)',
     links: [
       {
         id: 'official-site',
-        title: '公式サイト',
-        description: 'AviUtl2 公式サイト「AviUtlのお部屋」',
+        titleKey: 'entries.official-site.title',
+        descriptionKey: 'entries.official-site.description',
         href: 'https://spring-fragrance.mints.ne.jp/aviutl/',
         icon: Globe,
       },
       {
         id: 'official-changelog',
-        title: '更新履歴（by Nanashi.）',
-        description: 'AviUtl2 本体の更新履歴を確認できる非公式サイト',
+        titleKey: 'entries.official-changelog.title',
+        descriptionKey: 'entries.official-changelog.description',
         href: 'https://docs.aviutl2.jp/changelog',
         icon: BookOpenText,
       },
@@ -53,15 +55,15 @@ export const LINK_SECTIONS: readonly LinkSection[] = [
   },
   {
     id: 'community',
-    title: 'コミュニティ',
-    description: 'AviUtl2 ユーザーコミュニティリンク',
+    titleKey: 'sections.community.title',
+    descriptionKey: 'sections.community.description',
     icon: SiDiscord,
     baseColor: 'oklch(0.5774 0.20 273.85)',
     links: [
       {
         id: 'community-discord',
-        title: 'Discord',
-        description: 'AviUtl2 の情報交換や質問ができる非公式 Discord コミュニティ',
+        titleKey: 'entries.community-discord.title',
+        descriptionKey: 'entries.community-discord.description',
         href: 'https://discord.gg/au2-daro',
         icon: SiDiscord,
       },
@@ -69,22 +71,22 @@ export const LINK_SECTIONS: readonly LinkSection[] = [
   },
   {
     id: 'support',
-    title: 'サポート',
-    description: 'AviUtl2カタログのサポートのリンク',
+    titleKey: 'sections.support.title',
+    descriptionKey: 'sections.support.description',
     icon: MessageSquareMore,
     baseColor: 'oklch(0.7132 0.2 142.67)',
     links: [
       {
         id: 'support-feedback',
-        title: 'フィードバック',
-        description: '不具合報告や改善要望・問い合わせの送信するフォーム',
+        titleKey: 'entries.support-feedback.title',
+        descriptionKey: 'entries.support-feedback.description',
         href: APP_ROUTE_PATHS.feedback,
         icon: MessagesSquare,
       },
       {
         id: 'support-register',
-        title: 'パッケージ登録',
-        description: 'パッケージの新規掲載や登録内容の修正を行うフォーム',
+        titleKey: 'entries.support-register.title',
+        descriptionKey: 'entries.support-register.description',
         href: APP_ROUTE_PATHS.register,
         icon: PlusCircle,
       },
@@ -92,22 +94,22 @@ export const LINK_SECTIONS: readonly LinkSection[] = [
   },
   {
     id: 'developers',
-    title: '開発者向け',
-    description: 'AviUtl2カタログへパッケージを掲載する開発者向けのリンク',
+    titleKey: 'sections.developers.title',
+    descriptionKey: 'sections.developers.description',
     icon: BookOpenText,
     baseColor: 'oklch(0.62 0.19 312)',
     links: [
       {
         id: 'developers-register-guide',
-        title: 'パッケージの掲載方法',
-        description: 'パッケージを掲載するための手順を解説したガイドドキュメント',
+        titleKey: 'entries.developers-register-guide.title',
+        descriptionKey: 'entries.developers-register-guide.description',
         href: 'https://github.com/Neosku/aviutl2-catalog-data/blob/main/register-package.md',
         icon: BookOpenText,
       },
       {
         id: 'developers-update-status',
-        title: '自動更新対応状況',
-        description: '掲載パッケージの自動更新対応状況をまとめたドキュメント',
+        titleKey: 'entries.developers-update-status.title',
+        descriptionKey: 'entries.developers-update-status.description',
         href: 'https://github.com/Neosku/aviutl2-catalog-data/blob/main/%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8.md',
         icon: BookOpenText,
       },
@@ -115,22 +117,22 @@ export const LINK_SECTIONS: readonly LinkSection[] = [
   },
   {
     id: 'catalog',
-    title: 'GitHubリポジトリ',
-    description: 'AviUtl2カタログ関連のGitHubリポジトリへのリンク',
+    titleKey: 'sections.catalog.title',
+    descriptionKey: 'sections.catalog.description',
     icon: SiGithub,
     baseColor: 'oklch(0.56 0.02 260)',
     links: [
       {
         id: 'catalog-github-app',
-        title: 'AviUtl2カタログ リポジトリ',
-        description: 'AviUtl2カタログ本体の GitHub リポジトリ',
+        titleKey: 'entries.catalog-github-app.title',
+        descriptionKey: 'entries.catalog-github-app.description',
         href: 'https://github.com/Neosku/aviutl2-catalog',
         icon: SiGithub,
       },
       {
         id: 'catalog-github-data',
-        title: 'カタログデータ レポジトリ',
-        description: '掲載パッケージデータの GitHub 管理リポジトリ',
+        titleKey: 'entries.catalog-github-data.title',
+        descriptionKey: 'entries.catalog-github-data.description',
         href: 'https://github.com/Neosku/aviutl2-catalog-data',
         icon: SiGithub,
       },

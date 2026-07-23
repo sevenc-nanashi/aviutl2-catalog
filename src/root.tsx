@@ -17,9 +17,10 @@ export const meta: MetaFunction = () => [{ title: 'AviUtl2 カタログ' }];
 
 export default function Layout() {
   useEffect(() => {
-    getSettings().then((raw) => {
+    void (async () => {
+      const raw = await getSettings();
       applyTheme(toSettingsForm(raw).theme);
-    });
+    })();
   }, []);
   return (
     <html lang="ja">

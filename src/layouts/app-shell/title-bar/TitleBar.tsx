@@ -1,4 +1,6 @@
+import { useMemo } from 'react';
 import type { CSSProperties, MouseEvent, PointerEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import TitleBarControls from './TitleBarControls';
 import useTitleBarWindow from './useTitleBarWindow';
 
@@ -11,7 +13,17 @@ function isNoDragTarget(target: EventTarget | null): boolean {
 }
 
 export default function TitleBar() {
+  const { t } = useTranslation('common');
   const { max, minimize, toggleMaximize, closeWindow, startDragging } = useTitleBarWindow();
+  const labels = useMemo(
+    () => ({
+      minimize: t('windowControls.minimize'),
+      maximize: t('windowControls.maximize'),
+      restore: t('windowControls.restore'),
+      close: t('actions.close'),
+    }),
+    [t],
+  );
 
   async function startDragIfAllowed(event: PointerEvent<HTMLDivElement>) {
     if (event.button !== 0) return;
@@ -27,14 +39,14 @@ export default function TitleBar() {
 
   return (
     <div
-      className="flex h-8 w-full flex-none items-stretch justify-between bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-200 pl-2 pr-0 select-none"
+      className="flex h-8 w-full flex-none items-stretch justify-between border-b border-slate-200 bg-slate-100 pl-2 pr-0 text-slate-700 select-none dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
       data-tauri-drag-region
       style={dragRegionStyle}
       onPointerDown={startDragIfAllowed}
       onDoubleClick={handleDoubleClick}
     >
       <div className="text-xs font-semibold tracking-wide flex items-center" data-tauri-drag-region>
-        AviUtl2 Catalog
+        {t('appName')}
       </div>
       <TitleBarControls
         max={max}
@@ -42,6 +54,7 @@ export default function TitleBar() {
         onToggleMaximize={toggleMaximize}
         onClose={closeWindow}
         noDragStyle={noDragStyle}
+        labels={labels}
       />
     </div>
   );

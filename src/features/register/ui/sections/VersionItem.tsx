@@ -3,6 +3,7 @@
  */
 import { memo, useCallback } from 'react';
 import type { MouseEvent, SyntheticEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 import { Calendar, ChevronDown, Folder, FolderOpen, Plus } from 'lucide-react';
 import type { VersionItemProps } from '../types';
@@ -24,6 +25,7 @@ const VersionItem = memo(
     openDatePicker,
     versionDateRefs,
   }: VersionItemProps) {
+    const { t } = useTranslation('register');
     const handleToggle = useCallback(
       (event: SyntheticEvent<HTMLDetailsElement>) => {
         toggleVersionOpen(version.key, event.currentTarget.open);
@@ -81,15 +83,17 @@ const VersionItem = memo(
                   version.version ? 'text-slate-800 dark:text-slate-100' : 'text-slate-400 italic',
                 )}
               >
-                {version.version || 'バージョン未設定'}
+                {version.version || t('versions.versionUnset')}
               </span>
               <span className={text.mutedXs}>
-                {version.release_date ? `公開日: ${version.release_date}` : '公開日未設定'}
+                {version.releaseDate
+                  ? `${t('versions.releaseDate')}: ${version.releaseDate}`
+                  : t('versions.releaseDateUnset')}
               </span>
             </div>
           </div>
           <div className={layout.inlineGap2}>
-            <DeleteButton onClick={handleRemove} ariaLabel="このバージョンを削除" />
+            <DeleteButton onClick={handleRemove} ariaLabel={t('versions.deleteVersion')} />
             <span className={text.disclosureChevron}>
               <ChevronDown size={20} />
             </span>
@@ -99,7 +103,8 @@ const VersionItem = memo(
           <div className={grid.twoCol}>
             <div className="space-y-2">
               <label className={text.labelSm} htmlFor={`version-${version.key}-name`}>
-                バージョン名<span className="text-red-500">*</span>
+                {t('versions.versionName')}
+                <span className="text-red-500">*</span>
               </label>
               <input
                 id={`version-${version.key}-name`}
@@ -110,7 +115,8 @@ const VersionItem = memo(
             </div>
             <div className="space-y-2">
               <label className={text.labelSm} htmlFor={`version-${version.key}-release`}>
-                公開日<span className="text-red-500">*</span>
+                {t('versions.releaseDate')}
+                <span className="text-red-500">*</span>
               </label>
               <div className={layout.inlineGap2}>
                 <input
@@ -118,8 +124,8 @@ const VersionItem = memo(
                   max="9999-12-31"
                   className="flex-1"
                   id={`version-${version.key}-release`}
-                  value={version.release_date}
-                  onChange={(e) => updateVersionField(version.key, 'release_date', e.target.value)}
+                  value={version.releaseDate}
+                  onChange={(e) => updateVersionField(version.key, 'releaseDate', e.target.value)}
                   ref={handleDateRef}
                 />
                 <Button
@@ -128,7 +134,7 @@ const VersionItem = memo(
                   type="button"
                   className="text-slate-500 dark:text-slate-400"
                   onClick={() => openDatePicker(version.key)}
-                  aria-label="カレンダーを開く"
+                  aria-label={t('versions.openCalendar')}
                 >
                   <Calendar size={18} />
                 </Button>
@@ -139,8 +145,8 @@ const VersionItem = memo(
           <div className="mt-6 space-y-3">
             <div className={cn(layout.rowBetweenWrapGap2, 'border-b border-slate-100 pb-2 dark:border-slate-800')}>
               <div>
-                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">ファイル構成</h3>
-                <p className={text.mutedXs}>主要ファイルのハッシュ値を計算してください</p>
+                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">{t('versions.filesTitle')}</h3>
+                <p className={text.mutedXs}>{t('versions.filesHint')}</p>
               </div>
               <Button
                 variant="secondary"
@@ -150,7 +156,7 @@ const VersionItem = memo(
                 onClick={() => addVersionFile(version.key)}
               >
                 <Plus size={14} />
-                <span>ファイルを追加</span>
+                <span>{t('versions.addFile')}</span>
               </Button>
             </div>
             <div className="space-y-3">
@@ -172,7 +178,7 @@ const VersionItem = memo(
                     'flex h-20 items-center justify-center dark:bg-slate-800/50',
                   )}
                 >
-                  ファイルを追加してください
+                  {t('versions.filesEmpty')}
                 </div>
               )}
             </div>

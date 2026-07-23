@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Calendar } from 'lucide-react';
-import { renderMarkdown } from '@/utils/markdown';
+import { useTranslation } from 'react-i18next';
 import { Alert } from '@/components/ui/Alert';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
@@ -28,8 +28,40 @@ export default function UpdateDialog({
   onCancel,
   publishedOn,
 }: UpdateDialogProps) {
-  const markdownHtml = useMemo(() => (notes ? renderMarkdown(notes) : ''), [notes]);
+  const { t, i18n } = useTranslation('common');
+  const [markdownHtml, setMarkdownHtml] = useState('');
   const markdownMarkup = useMemo(() => ({ __html: markdownHtml }), [markdownHtml]);
+  const publishedOnLabel = useMemo(() => {
+    if (!publishedOn) return '';
+    const parsed = new Date(publishedOn);
+    if (Number.isNaN(parsed.getTime())) return publishedOn;
+
+    try {
+      return new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(parsed);
+    } catch {
+      return publishedOn;
+    }
+  }, [i18n.language, publishedOn]);
+
+  useEffect(() => {
+    if (!notes) {
+      setMarkdownHtml('');
+      return;
+    }
+
+    let cancelled = false;
+    void (async () => {
+      const { renderMarkdown } = await import('@/utils/markdown');
+      if (!cancelled) {
+        setMarkdownHtml(renderMarkdown(notes));
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [notes]);
+
   if (!open) return null;
 
   const handleBackdrop = () => {
@@ -39,7 +71,7 @@ export default function UpdateDialog({
 
   return (
     <div className={layout.fixedCenter}>
-      <button type="button" aria-label="閉じる" className={overlay.backdrop} onClick={handleBackdrop} />
+      <button type="button" aria-label={t('actions.close')} className={overlay.backdrop} onClick={handleBackdrop} />
       <div
         className={cn(
           surface.cardOverflow,
@@ -51,14 +83,16 @@ export default function UpdateDialog({
       >
         <div className={cn(layout.rowBetweenWrapStartGap4, surface.sectionDivider)}>
           <div>
-            <span className="text-xs font-semibold uppercase tracking-widest text-blue-500">アップデート</span>
+            <span className="text-xs font-semibold uppercase tracking-widest text-blue-500">
+              {t('updateDialog.eyebrow')}
+            </span>
             <h3 className={text.titleLg} id="update-title">
-              新しいバージョンが利用可能です
+              {t('updateDialog.title')}
             </h3>
-            {publishedOn && (
+            {publishedOnLabel && (
               <p className={cn(layout.inlineGap2, 'mt-1', text.mutedXs)}>
                 <Calendar size={14} />
-                <span>公開日 {publishedOn}</span>
+                <span>{t('updateDialog.publishedOn', { date: publishedOnLabel })}</span>
               </p>
             )}
           </div>
@@ -87,15 +121,15 @@ export default function UpdateDialog({
               />
             </div>
           ) : (
-            <p className={text.mutedSm}>更新内容の詳細は取得できませんでした。</p>
+            <p className={text.mutedSm}>{t('updateDialog.notesUnavailable')}</p>
           )}
         </div>
         <div className="flex justify-end gap-2 border-t border-slate-100 px-6 py-4 dark:border-slate-800">
           <Button variant="secondary" onClick={onCancel} disabled={busy} type="button">
-            後で
+            {t('updateDialog.later')}
           </Button>
           <Button variant="primary" onClick={onConfirm} disabled={busy} type="button">
-            {busy ? '更新中…' : '今すぐ更新'}
+            {busy ? t('updateDialog.updating') : t('updateDialog.updateNow')}
           </Button>
         </div>
       </div>

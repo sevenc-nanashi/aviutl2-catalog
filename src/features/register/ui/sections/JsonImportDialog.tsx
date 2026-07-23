@@ -1,6 +1,7 @@
 /**
  * カタログ JSON の部分上書き入力ダイアログ
  */
+import { useTranslation } from 'react-i18next';
 import { Alert } from '@/components/ui/Alert';
 import Button from '@/components/ui/Button';
 import { FileBraces } from 'lucide-react';
@@ -24,17 +25,18 @@ export default function RegisterJsonImportDialog({
   onClose,
   onApply,
 }: RegisterJsonImportDialogProps) {
+  const { t } = useTranslation(['register', 'common']);
   const templateJsonUrl = 'https://github.com/Neosku/aviutl2-catalog-data/blob/main/template.json';
   if (!open) return null;
 
   return (
     <div className={layout.fixedCenterBlur} role="dialog" aria-modal="true">
-      <button type="button" aria-label="閉じる" className={overlay.backdrop} onClick={onClose} />
+      <button type="button" aria-label={t('common:actions.close')} className={overlay.backdrop} onClick={onClose} />
       <div className={cn(surface.modal, 'relative w-full max-w-3xl')}>
         <div className={surface.modalHeaderMuted}>
           <h3 className={cn(layout.inlineGap2, text.titleLg)}>
             <FileBraces size={18} />
-            JSON 入力
+            {t('jsonImport.title')}
           </h3>
         </div>
         <div className="space-y-3 px-6 py-5">
@@ -47,13 +49,12 @@ export default function RegisterJsonImportDialog({
             >
               template.json
             </a>{' '}
-            と同じ形式の JSON を貼り付けてください。 一致する項目は部分上書きし、未一致の
-            idは新規追加します。複数パッケージをまとめて追加することもできます。
+            {t('jsonImport.description')}
           </p>
           <textarea
             value={value}
             onChange={(event) => onChange(event.target.value)}
-            placeholder={`[\n  {\n    "id": "author.pluginName",\n    "name": "Example Plugin",\n    "type": "入力プラグイン",\n    "summary": "プラグインの概要がここに入ります。"\n  },\n  {\n    "id": "author.scriptName",\n    "name": "Example Script",\n    "type": "スクリプト",\n    "summary": "スクリプトの概要がここに入ります。"\n  }\n]`}
+            placeholder={t('jsonImport.placeholder')}
             className={cn(
               state.focusRing,
               'h-80 w-full rounded-lg border border-slate-300 bg-white p-3 font-mono text-xs leading-5 text-slate-800 shadow-inner dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100',
@@ -67,10 +68,10 @@ export default function RegisterJsonImportDialog({
         </div>
         <div className="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/50 px-6 py-4 dark:border-slate-800 dark:bg-slate-900/50">
           <Button variant="secondary" size="actionSm" type="button" className="border-slate-300" onClick={onClose}>
-            キャンセル
+            {t('jsonImport.cancel')}
           </Button>
           <Button variant="primary" size="actionSm" type="button" className="shadow-sm" onClick={onApply}>
-            適用
+            {t('jsonImport.apply')}
           </Button>
         </div>
       </div>

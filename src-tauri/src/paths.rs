@@ -2,6 +2,7 @@ use arc_swap::ArcSwap;
 use once_cell::sync::Lazy;
 use once_cell::sync::OnceCell;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use std::sync::{Arc, Mutex};
 use std::{
     fs,
@@ -12,22 +13,118 @@ use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
 
 static APP_DIR: OnceCell<ArcSwap<AppDirs>> = OnceCell::new();
 static SETTINGS_FILE_LOCK: Lazy<Mutex<()>> = Lazy::new(|| Mutex::new(()));
+pub const AUO_SETUP_READY_KEYWORD: &str = "を使用する準備が完了しました。";
 
 fn pathbuf_to_string(path: &Path) -> String {
     path.to_string_lossy().into_owned()
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum UiLocale {
+    Ja,
+    En,
+    Ko,
+    ZhCn,
+    ZhTw,
+}
+
+impl UiLocale {
+    pub fn parse(locale: &str) -> Self {
+        let normalized = locale.trim().to_ascii_lowercase();
+        if normalized == "zh" || normalized.starts_with("zh-cn") || normalized.starts_with("zh-hans") || normalized.starts_with("zh-sg") {
+            Self::ZhCn
+        } else if normalized.starts_with("zh-tw") || normalized.starts_with("zh-hk") || normalized.starts_with("zh-mo") || normalized.starts_with("zh-hant") {
+            Self::ZhTw
+        } else if normalized.starts_with("ko") {
+            Self::Ko
+        } else if normalized.starts_with("en") {
+            Self::En
+        } else {
+            Self::Ja
+        }
+    }
+
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Ja => "ja",
+            Self::En => "en",
+            Self::Ko => "ko",
+            Self::ZhCn => "zh-CN",
+            Self::ZhTw => "zh-TW",
+        }
+    }
+}
+
+static COMMON_RESOURCES_JA: Lazy<Value> = Lazy::new(|| serde_json::from_str(include_str!("../../src/i18n/resources/ja/common.json")).expect("failed to parse ja common.json"));
+static COMMON_RESOURCES_EN: Lazy<Value> = Lazy::new(|| serde_json::from_str(include_str!("../../src/i18n/resources/en/common.json")).expect("failed to parse en common.json"));
+static COMMON_RESOURCES_KO: Lazy<Value> = Lazy::new(|| serde_json::from_str(include_str!("../../src/i18n/resources/ko/common.json")).expect("failed to parse ko common.json"));
+static COMMON_RESOURCES_ZH_CN: Lazy<Value> =
+    Lazy::new(|| serde_json::from_str(include_str!("../../src/i18n/resources/zh-CN/common.json")).expect("failed to parse zh-CN common.json"));
+static COMMON_RESOURCES_ZH_TW: Lazy<Value> =
+    Lazy::new(|| serde_json::from_str(include_str!("../../src/i18n/resources/zh-TW/common.json")).expect("failed to parse zh-TW common.json"));
+
+fn common_resources(locale: UiLocale) -> &'static Value {
+    match locale {
+        UiLocale::Ja => &COMMON_RESOURCES_JA,
+        UiLocale::En => &COMMON_RESOURCES_EN,
+        UiLocale::Ko => &COMMON_RESOURCES_KO,
+        UiLocale::ZhCn => &COMMON_RESOURCES_ZH_CN,
+        UiLocale::ZhTw => &COMMON_RESOURCES_ZH_TW,
+    }
+}
+
+fn lookup_common_message(locale: UiLocale, key: &str) -> Option<&'static str> {
+    let mut current = common_resources(locale);
+    for segment in key.split('.') {
+        current = current.get(segment)?;
+    }
+    current.as_str()
+}
+
+fn interpolate_message(template: &str, args: &[(&str, &str)]) -> String {
+    let mut output = template.to_string();
+    for (key, value) in args {
+        output = output.replace(&format!("{{{{{key}}}}}"), value);
+    }
+    output
+}
+
+pub fn current_ui_locale() -> UiLocale {
+    let Some(app_dirs) = APP_DIR.get().map(|cell| cell.load_full()) else {
+        return UiLocale::Ja;
+    };
+    let settings_path = app_dirs.catalog_config_dir.join("settings.json");
+    UiLocale::parse(&Settings::load_from_file(&settings_path).locale)
+}
+
+pub fn common_message(locale: UiLocale, key: &str) -> String {
+    common_message_with_args(locale, key, &[])
+}
+
+pub fn common_message_with_args(locale: UiLocale, key: &str, args: &[(&str, &str)]) -> String {
+    let template = lookup_common_message(locale, key).or_else(|| lookup_common_message(UiLocale::En, key)).unwrap_or(key);
+    interpolate_message(template, args)
+}
+
+pub fn common_message_current(key: &str) -> String {
+    common_message(current_ui_locale(), key)
 }
 
 // settings.jsonから読み込む項目
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[serde(default)]
 pub struct Settings {
-    pub aviutl2_root: PathBuf,                   // AviUtl2 のルートディレクトリ
-    pub is_portable_mode: bool,                  // ポータブルモードかどうか
-    pub theme: String,                           // テーマ
-    pub package_state_opt_out: bool,             // 匿名統計の送信を無効化
-    pub package_updates_paused_ids: Vec<String>, // 一時停止中のパッケージID一覧(UpdateCheckerの更新で使用予定)
-    pub app_version: String,                     // 本アプリのバージョン(UpdateCheckerの更新で使用)
-    pub catalog_exe_path: PathBuf,               // 本ソフトの実行ファイルのパス(UpdateCheckerで使用))
+    pub aviutl2_root: PathBuf,                        // AviUtl2 のルートディレクトリ
+    pub is_portable_mode: bool,                       // ポータブルモードかどうか
+    pub theme: String,                                // テーマ
+    pub locale: String,                               // UI ロケール
+    pub package_state_opt_out: bool,                  // 匿名統計の送信を無効化
+    pub package_updates_paused_ids: Vec<String>,      // 一時停止中のパッケージID一覧(UpdateCheckerの更新で使用予定)
+    pub deprecated_notice_dismissed_ids: Vec<String>, // 非推奨パッケージ通知を非表示にしたパッケージID一覧
+    pub local_mode_enabled: bool,                     // ローカル配信カタログを読み込むメンテナー向けモード
+    pub local_manifest_path: PathBuf,                 // メンテナー向けモードで読み込むローカルの manifest.json
+    pub app_version: String,                          // 本アプリのバージョン(UpdateCheckerの更新で使用)
+    pub catalog_exe_path: PathBuf,                    // 本ソフトの実行ファイルのパス(UpdateCheckerで使用))
 }
 
 // アプリケーションで使用するディレクトリ一覧
@@ -160,11 +257,13 @@ fn finalize_settings(app: &AppHandle, settings: &mut Settings, settings_path: &P
 // "init-setup" ウィンドウを開く
 fn open_init_setup_window(app: &AppHandle) -> std::io::Result<()> {
     if app.get_webview_window("init-setup").is_none() {
-        let mut builder = WebviewWindowBuilder::new(app, "init-setup", WebviewUrl::App("/".into()))
-            .title("セットアップ")
+        let mut builder = WebviewWindowBuilder::new(app, "init-setup", WebviewUrl::App("/?window=init-setup".into()))
+            .title(common_message_current("backend.windowTitles.setup"))
             .inner_size(850.0, 640.0)
+            .center()
             .resizable(true)
             .decorations(false)
+            .transparent(true)
             .visible(false);
 
         #[cfg(target_os = "windows")]
@@ -182,7 +281,8 @@ fn open_init_setup_window(app: &AppHandle) -> std::io::Result<()> {
             );
         }
 
-        builder.build().map_err(|e| Error::other(e.to_string()))?;
+        let window = builder.build().map_err(|e| Error::other(e.to_string()))?;
+        let _ = window.hide();
     } else if let Some(window) = app.get_webview_window("init-setup") {
         let _ = window.show();
         let _ = window.set_focus();
@@ -195,13 +295,16 @@ fn open_init_setup_window(app: &AppHandle) -> std::io::Result<()> {
 fn open_main_window(app: &AppHandle) -> Result<(), String> {
     if let Some(window) = app.get_webview_window("main") {
         window.show().map_err(|e| e.to_string())?;
-        let _ = window.maximize();
         let _ = window.set_focus();
         return Ok(());
     }
 
-    let mut builder =
-        WebviewWindowBuilder::new(app, "main", WebviewUrl::App("/".into())).title("AviUtl2 カタログ").inner_size(950.0, 760.0).resizable(true).decorations(false).visible(false);
+    let mut builder = WebviewWindowBuilder::new(app, "main", WebviewUrl::App("/".into()))
+        .title(common_message_current("backend.windowTitles.main"))
+        .inner_size(950.0, 760.0)
+        .resizable(true)
+        .decorations(false)
+        .visible(false);
 
     #[cfg(target_os = "windows")]
     {
@@ -219,8 +322,7 @@ fn open_main_window(app: &AppHandle) -> Result<(), String> {
     }
 
     let window = builder.build().map_err(|e| e.to_string())?;
-    let _ = window.maximize();
-    let _ = window.set_focus();
+    let _ = window.hide();
     Ok(())
 }
 
@@ -255,14 +357,25 @@ pub async fn complete_initial_setup(app: AppHandle) -> Result<(), String> {
 
 // aviutl2_rootを保存し、APP_DIRを更新
 #[tauri::command]
-pub async fn update_settings(app: AppHandle, aviutl2_root: String, is_portable_mode: bool, theme: String, package_state_opt_out: bool) -> Result<(), String> {
+pub async fn update_settings(
+    app: AppHandle,
+    aviutl2_root: String,
+    is_portable_mode: bool,
+    theme: String,
+    locale: String,
+    package_state_opt_out: bool,
+    local_mode_enabled: bool,
+    local_manifest_path: String,
+) -> Result<(), String> {
+    let locale = UiLocale::parse(&locale);
+    let missing_root_message = common_message(locale, "backend.errors.aviutlFolderRequired");
     let trimmed = aviutl2_root.trim();
     if trimmed.is_empty() {
-        return Err(String::from("AviUtl2 のフォルダを選択してください。"));
+        return Err(missing_root_message.clone());
     }
     let root_path = resolve_aviutl_root(trimmed);
     if root_path.as_os_str().is_empty() {
-        return Err(String::from("AviUtl2 のフォルダを選択してください。"));
+        return Err(missing_root_message);
     }
     let catalog_config_dir = app.path().app_config_dir().map_err(|e| e.to_string())?;
     fs::create_dir_all(&catalog_config_dir).map_err(|e| e.to_string())?;
@@ -272,7 +385,10 @@ pub async fn update_settings(app: AppHandle, aviutl2_root: String, is_portable_m
     settings.aviutl2_root = root_path;
     settings.is_portable_mode = is_portable_mode;
     settings.theme = theme.to_string();
+    settings.locale = locale.as_str().to_string();
     settings.package_state_opt_out = package_state_opt_out;
+    settings.local_mode_enabled = local_mode_enabled;
+    settings.local_manifest_path = PathBuf::from(local_manifest_path.trim());
     finalize_settings(&app, &mut settings, &settings_path, &catalog_config_dir).map_err(|e| e.to_string())
 }
 
@@ -280,7 +396,7 @@ pub async fn update_settings(app: AppHandle, aviutl2_root: String, is_portable_m
 pub async fn set_package_update_paused(app: AppHandle, package_id: String, paused: bool) -> Result<Vec<String>, String> {
     let package_id = package_id.trim();
     if package_id.is_empty() {
-        return Err(String::from("パッケージIDが空です。"));
+        return Err(common_message_current("backend.errors.packageIdEmpty"));
     }
 
     let catalog_config_dir = app.path().app_config_dir().map_err(|e| e.to_string())?;
@@ -302,6 +418,26 @@ pub async fn set_package_update_paused(app: AppHandle, package_id: String, pause
     settings.package_updates_paused_ids.dedup();
     settings.save_to_file(&settings_path).map_err(|e| e.to_string())?;
     Ok(settings.package_updates_paused_ids)
+}
+
+#[tauri::command]
+pub async fn dismiss_deprecated_package_notice(app: AppHandle, package_ids: Vec<String>) -> Result<Vec<String>, String> {
+    let normalized_ids: Vec<String> = package_ids.into_iter().map(|id| id.trim().to_string()).filter(|id| !id.is_empty()).collect();
+    if normalized_ids.is_empty() {
+        return Err(common_message_current("backend.errors.packageIdEmpty"));
+    }
+
+    let catalog_config_dir = app.path().app_config_dir().map_err(|e| e.to_string())?;
+    fs::create_dir_all(&catalog_config_dir).map_err(|e| e.to_string())?;
+    let settings_path = catalog_config_dir.join("settings.json");
+    let _settings_guard = SETTINGS_FILE_LOCK.lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+    let mut settings = Settings::load_from_file(&settings_path);
+    settings.deprecated_notice_dismissed_ids.retain(|id| !id.trim().is_empty());
+    settings.deprecated_notice_dismissed_ids.extend(normalized_ids);
+    settings.deprecated_notice_dismissed_ids.sort_unstable();
+    settings.deprecated_notice_dismissed_ids.dedup();
+    settings.save_to_file(&settings_path).map_err(|e| e.to_string())?;
+    Ok(settings.deprecated_notice_dismissed_ids)
 }
 
 // aviutl2_rootの初期値を返す
@@ -326,5 +462,5 @@ fn resolve_aviutl_root(raw: &str) -> PathBuf {
 #[tauri::command]
 pub fn resolve_aviutl2_root(raw: String) -> Result<String, String> {
     let resolved = resolve_aviutl_root(&raw);
-    if resolved.as_os_str().is_empty() { Err(String::from("AviUtl2 のフォルダを選択してください。")) } else { Ok(pathbuf_to_string(&resolved)) }
+    if resolved.as_os_str().is_empty() { Err(common_message_current("backend.errors.aviutlFolderRequired")) } else { Ok(pathbuf_to_string(&resolved)) }
 }

@@ -16,7 +16,6 @@
 }
 
 @layer base {
-
   input:not([type]),
   input[type='text'],
   input[type='search'],
@@ -31,6 +30,10 @@
   textarea,
   select {
     @apply w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100;
+
+    &[disabled] {
+      @apply cursor-not-allowed opacity-50;
+    }
   }
 
   textarea {
@@ -495,11 +498,11 @@ body {
   overscroll-behavior: none;
 }
 
-body[data-target="web"] {
+body[data-target='web'] {
   --title-bar-height: 0px;
 }
 
-body[data-target="desktop"] {
+body[data-target='desktop'] {
   --title-bar-height: 32px;
 }
 
@@ -537,6 +540,11 @@ body[data-target="desktop"] {
 
 .prose :where(pre) {
   border-radius: 0.75rem;
+}
+
+.prose :where(h1):not(:where(.not-prose, .not-prose *)) {
+  font-size: 1.625rem;
+  line-height: 2.125rem;
 }
 
 .markdown-badges {

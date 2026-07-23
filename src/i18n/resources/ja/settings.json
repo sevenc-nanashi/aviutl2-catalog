@@ -1,0 +1,106 @@
+{
+  "page": {
+    "title": "設定",
+    "description": "アプリケーションの設定とカスタマイズ"
+  },
+  "sections": {
+    "app": "アプリ設定",
+    "developer": "メンテナー向け",
+    "dataManagement": "データ管理",
+    "appInfo": "アプリ情報"
+  },
+  "app": {
+    "aviutl2Root": {
+      "label": "AviUtl2 フォルダ",
+      "description": "aviutl2.exeを含むフォルダを指定してください。",
+      "placeholder": "aviutl2.exe のあるフォルダ",
+      "dialogTitle": "AviUtl2 のルートフォルダ"
+    },
+    "language": {
+      "label": "表示言語",
+      "description": "アプリUIの表示言語を選択します。"
+    },
+    "portableMode": {
+      "title": "ポータブルモード",
+      "recommendedOff": "オフ推奨",
+      "description": "プラグインやスクリプトを aviutl2.exe と同じ階層にある data フォルダに保存します"
+    },
+    "theme": {
+      "title": "ダークモード"
+    },
+    "packageState": {
+      "title": "匿名統計の送信",
+      "description": "利用状況を参考にした表示を提供するため、インストール・アンインストールされたパッケージID、およびインストール済みパッケージIDを匿名で送信します。ご協力をお願いします。"
+    },
+    "developerMode": {
+      "title": "ローカルモード",
+      "description": ""
+    },
+    "developerManifest": {
+      "label": "ローカルファイル",
+      "description": "ローカルの manifest.json を指定してください。",
+      "placeholder": "manifest.json のパス",
+      "dialogTitle": "ローカルファイルを選択"
+    }
+  },
+  "dataManagement": {
+    "packages": "パッケージ一覧のエクスポート / インポート",
+    "export": "エクスポート",
+    "import": "インポート",
+    "status": {
+      "pickExport": "エクスポート先を選択しています…",
+      "exporting": "エクスポートを作成中…",
+      "prepareImport": "インポート準備中…",
+      "pickImport": "インポートファイルを選択しています…",
+      "readingImport": "インポートファイルを読み込み中…",
+      "detecting": "インストール状態を検出中…",
+      "installing": "インストール中… ({{current}}/{{total}}) {{label}}",
+      "removing": "アンインストール中… ({{current}}/{{total}}) {{label}}",
+      "refreshing": "インストール状態を更新中…"
+    },
+    "dialogs": {
+      "exportTitle": "パッケージ一覧のエクスポート",
+      "importFileTitle": "インポートファイルを選択",
+      "importResultTitle": "インポート結果"
+    },
+    "messages": {
+      "exportSaved": "エクスポートを保存しました。",
+      "importConfirm": "インポート内容に合わせてパッケージをインストール/削除します。\n続行しますか？"
+    },
+    "summary": {
+      "installed": "インストール: {{installed}}/{{total}}件",
+      "removed": "削除: {{removed}}/{{total}}件",
+      "unknownIds": "未登録ID: {{ids}}",
+      "skippedInstall": "インストール不可: {{ids}}",
+      "skippedRemove": "削除不可: {{ids}}",
+      "failedInstall": "インストール失敗: {{ids}}",
+      "failedRemove": "削除失敗: {{ids}}"
+    },
+    "errors": {
+      "exportFailed": "エクスポートに失敗しました。\n権限や保存先を確認してください。",
+      "importFailed": "インポートに失敗しました。",
+      "invalidImportFormat": "インポートファイルの形式が正しくありません。",
+      "invalidJson": "インポートファイルのJSONを読み込めませんでした。",
+      "emptyImport": "インポートファイルの内容が空です。",
+      "catalogMissing": "カタログ情報が読み込まれていません。"
+    }
+  },
+  "appInfo": {
+    "version": "バージョン",
+    "license": "ライセンス",
+    "licenseBody": "本ソフトウェアは MIT License に基づき提供されます。ライセンス全文は LICENSE.txt をご参照ください。"
+  },
+  "messages": {
+    "autoSaving": "設定を保存しています…",
+    "autoSaveSuccess": "設定を保存しました。"
+  },
+  "errors": {
+    "directoryPickFailed": "ディレクトリ選択に失敗しました",
+    "filePickFailed": "ファイル選択に失敗しました",
+    "aviutl2Required": "AviUtl2 のフォルダを指定してください。",
+    "localManifestRequired": "ローカルの manifest.json を指定してください。",
+    "catalogReloadFailed": "カタログの再読み込みに失敗しました。",
+    "languageApplyFailed": "設定は保存しましたが、表示言語をすぐには反映できませんでした。",
+    "saveFailed": "保存に失敗しました。権限やパスをご確認ください。"
+  }
+}

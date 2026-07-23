@@ -106,7 +106,12 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
-        .plugin(tauri_plugin_window_state::Builder::new().build())
+        .plugin(
+            tauri_plugin_window_state::Builder::new()
+                .with_state_flags(tauri_plugin_window_state::StateFlags::all() - tauri_plugin_window_state::StateFlags::VISIBLE)
+                .with_denylist(&["init-setup"])
+                .build(),
+        )
         .on_window_event(|window, event| {
             if window.label() != "main" {
                 return;
@@ -132,7 +137,9 @@ pub fn run() {
             commands::archive::extract_7z_sfx,
             commands::diagnostics::collect_device_info,
             commands::version::detect_versions_map,
+            commands::zstd::decompress_zstd_to_utf8,
             commands::logging::log_cmd,
+            commands::niconi_commons::write_niconi_commons_ids,
             commands::version::calc_xxh3_hex,
             commands::installed::get_installed_map_cmd,
             commands::installed::add_installed_id_cmd,
@@ -151,6 +158,7 @@ pub fn run() {
             paths::complete_initial_setup,
             paths::update_settings,
             paths::set_package_update_paused,
+            paths::dismiss_deprecated_package_notice,
             paths::default_aviutl2_root,
             paths::resolve_aviutl2_root,
             paths::get_app_dirs,

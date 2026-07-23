@@ -1,0 +1,69 @@
+{
+  "header": {
+    "title": "피드백",
+    "description": "버그 신고와 의견을 보낼 수 있습니다.",
+    "issuesLink": "신고된 이슈"
+  },
+  "shared": {
+    "optional": "(선택 사항)",
+    "loading": "정보를 수집하는 중..."
+  },
+  "modes": {
+    "bug": "버그 신고",
+    "inquiry": "피드백 / 문의"
+  },
+  "visibility": {
+    "public": "공개",
+    "private": "비공개",
+    "publicTitle": "공개 범위",
+    "privateTitle": "비공개 범위",
+    "publicDescription": "<strong>제목</strong>과 <strong>상세 내용</strong>은 공개됩니다. 연락처, 첨부 파일, 기기 정보 및 기타 메타데이터는 비공개로 유지됩니다.",
+    "privateDescription": "피드백과 문의는 공개되지 않습니다. 개발자만 확인할 수 있습니다."
+  },
+  "fields": {
+    "title": "제목",
+    "detail": "상세 내용",
+    "contact": "연락처",
+    "bugTitlePlaceholder": "버그 내용을 간단히 적어 주세요",
+    "bugDetailPlaceholder": "무슨 일이 있었는지, 재현 방법과 기대했던 동작을 설명해 주세요",
+    "bugContactPlaceholder": "이메일 주소 또는 X 계정(개발자가 연락이 필요할 때만 사용)",
+    "inquiryTitlePlaceholder": "제목을 입력해 주세요",
+    "inquiryDetailPlaceholder": "의견이나 질문을 자세히 적어 주세요",
+    "inquiryContactPlaceholder": "이메일 주소 또는 X 계정(개발자가 연락이 필요할 때만 사용)"
+  },
+  "attachments": {
+    "label": "첨부 파일",
+    "remove": "첨부 제거"
+  },
+  "environment": {
+    "title": "환경 정보",
+    "includeApp": "앱 정보 첨부",
+    "includeDevice": "기기 정보 첨부",
+    "packages": "설치된 패키지: {{count}}",
+    "unknownVersion": "알 수 없음",
+    "driver": "드라이버",
+    "cores": "코어",
+    "logical": "논리 코어",
+    "maxClock": "최대 클록",
+    "unavailable": "기기 정보를 수집할 수 없습니다."
+  },
+  "log": {
+    "title": "로그 파일",
+    "include": "app.log 첨부",
+    "unavailable": "로그를 가져올 수 없습니다."
+  },
+  "submit": {
+    "sending": "전송 중..."
+  },
+  "messages": {
+    "bugSuccess": "버그 신고를 보냈습니다. 감사합니다.",
+    "inquirySuccess": "피드백을 보냈습니다. 감사합니다."
+  },
+  "errors": {
+    "requiredFields": "제목과 상세 내용은 필수입니다."
+  },
+  "payload": {
+    "bugTitlePrefix": "버그 신고",
+    "inquiryTitlePrefix": "문의"
+  }
+}

@@ -1,6 +1,8 @@
 /**
  * アンインストール手順コンポーネント
  */
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 import { GripVertical, Plus } from 'lucide-react';
 import { UNINSTALL_ACTION_OPTIONS } from '../../model/form';
@@ -27,13 +29,22 @@ export default function UninstallStepsSection({
   startHandleDrag,
   updateUninstallStep,
 }: UninstallStepsSectionProps) {
+  const { t } = useTranslation(['register', 'common']);
+  const uninstallActionOptions = useMemo(
+    () =>
+      UNINSTALL_ACTION_OPTIONS.map((option) => ({
+        ...option,
+        label: t(`installer.actions.${option.value}`),
+      })),
+    [t],
+  );
   return (
     <div className="space-y-4">
       <div className={layout.rowBetweenWrapGap2}>
-        <h3 className={text.titleBaseBold}>アンインストール手順</h3>
+        <h3 className={text.titleBaseBold}>{t('installer.uninstallSteps')}</h3>
         <Button variant="plain" size="none" type="button" className={action.stepAddButton} onClick={addUninstallStep}>
           <Plus size={14} />
-          <span>ステップを追加</span>
+          <span>{t('installer.addStep')}</span>
         </Button>
       </div>
       <div className="space-y-3" ref={uninstallListRef}>
@@ -50,7 +61,7 @@ export default function UninstallStepsSection({
                     type="button"
                     className={action.dragHandle}
                     onPointerDown={(e) => startHandleDrag('uninstall', idx, e)}
-                    aria-label="ドラッグして並び替え"
+                    aria-label={t('installer.dragAria')}
                   >
                     <GripVertical size={16} />
                   </Button>
@@ -59,25 +70,27 @@ export default function UninstallStepsSection({
                   <ActionDropdown
                     value={step.action}
                     onChange={(val) => updateUninstallStep(step.key, 'action', val)}
-                    options={UNINSTALL_ACTION_OPTIONS}
-                    ariaLabel="ステップの種類を選択"
+                    options={uninstallActionOptions}
+                    ariaLabel={t('installer.stepTypeAria')}
                   />
                 </div>
                 <div className={layout.inlineGap2}>
-                  <DeleteButton onClick={() => removeUninstallStep(step.key)} ariaLabel="ステップを削除" />
+                  <DeleteButton onClick={() => removeUninstallStep(step.key)} ariaLabel={t('installer.deleteStep')} />
                 </div>
               </div>
               <div className={grid.panelTwoCol}>
                 <div className="space-y-1">
                   <label className={text.labelXs} htmlFor={`uninstall-${step.key}-path`}>
-                    対象パス
+                    {t('common:labels.targetPath')}
                   </label>
                   <input
                     id={`uninstall-${step.key}-path`}
                     value={step.path}
                     onChange={(e) => updateUninstallStep(step.key, 'path', e.target.value)}
                     placeholder={
-                      step.action === 'delete' ? '(例: {pluginsDir}/example.auo)' : '(例: {appDir}/uninstall.exe)'
+                      step.action === 'delete'
+                        ? t('installer.deletePathPlaceholder')
+                        : t('installer.targetPathPlaceholderRun')
                     }
                     className="!bg-white dark:!bg-slate-800"
                   />
@@ -86,13 +99,13 @@ export default function UninstallStepsSection({
                   <>
                     <div className="space-y-1">
                       <label className={text.labelXs} htmlFor={`uninstall-${step.key}-args`}>
-                        引数 (カンマ区切り)
+                        {t('installer.args')}
                       </label>
                       <input
                         id={`uninstall-${step.key}-args`}
                         value={step.argsText}
                         onChange={(e) => updateUninstallStep(step.key, 'argsText', e.target.value)}
-                        placeholder="(例: /VERYSILENT)"
+                        placeholder={t('installer.argsPlaceholder')}
                         className="!bg-white dark:!bg-slate-800"
                       />
                     </div>
@@ -104,7 +117,7 @@ export default function UninstallStepsSection({
                           checked={!!step.elevate}
                           onChange={(e) => updateUninstallStep(step.key, 'elevate', e.target.checked)}
                         />
-                        <span>管理者権限で実行する</span>
+                        <span>{t('installer.runAsAdmin')}</span>
                       </label>
                     </div>
                   </>
@@ -115,7 +128,7 @@ export default function UninstallStepsSection({
         })}
         {!installer.uninstallSteps.length && (
           <div className={surface.dashedPlaceholder}>
-            <span className="text-xs">ステップを追加してアンインストール手順を定義してください</span>
+            <span className="text-xs">{t('installer.uninstallStepsEmpty')}</span>
           </div>
         )}
       </div>

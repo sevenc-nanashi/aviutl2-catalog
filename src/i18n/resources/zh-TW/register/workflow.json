@@ -1,0 +1,97 @@
+{
+  "page": {
+    "successActionBatch": "批次提交完成",
+    "submitActionUpdate": "更新套件",
+    "submitActionCreate": "新增套件",
+    "successPrimary": "{{action}}：{{name}}",
+    "jsonNoChanges": "未偵測到變更。",
+    "unsupportedValue": "不支援：{{value}}"
+  },
+  "actions": {
+    "removeValue": "移除 {{value}}",
+    "inputValue": "輸入 {{label}}"
+  },
+  "notice": {
+    "body": "在此表單中輸入的所有外掛資訊都會公開。\n即使不是原作者，任何人也都可以登錄套件。"
+  },
+  "sidebar": {
+    "newPackage": "建立套件",
+    "pendingList": "待提交項目",
+    "pendingReady": "準備提交",
+    "draftStatusNotRequired": "不需要測試",
+    "draftStatusReady": "已測試",
+    "draftStatusPending": "等待測試",
+    "deleteDraftAria": "刪除 {{id}} 的暫存草稿",
+    "noDrafts": "沒有待處理的套件。",
+    "searchPlaceholder": "搜尋套件...",
+    "unknownAuthor": "未知作者"
+  },
+  "submitBar": {
+    "guide": "指南",
+    "jsonImport": "匯入 JSON",
+    "authorHint": "如果你是作者，建議盡量填寫此項。",
+    "submitting": "提交中...",
+    "blocked": "還有 {{count}} 項測試待完成",
+    "submitMany": "提交 {{count}} 項"
+  },
+  "preview": {
+    "title": "預覽",
+    "switchToLight": "切換到淺色模式",
+    "switchToDark": "切換到深色模式",
+    "fallbackName": "套件名稱",
+    "fallbackAuthor": "作者",
+    "fallbackSummary": "摘要會顯示在這裡"
+  },
+  "jsonImport": {
+    "title": "JSON 輸入",
+    "description": "請貼上與 template.json 相同格式的 JSON。符合的項目會部分覆寫，ID 不符合的項目會作為新條目加入。也可以一次加入多個套件。",
+    "placeholder": "",
+    "cancel": "取消",
+    "apply": "套用"
+  },
+  "errors": {
+    "catalogInvalid": "source package 的格式無效。",
+    "jsonInvalidInput": "輸入格式無效。",
+    "jsonNoTargets": "沒有可覆寫的目標條目。",
+    "jsonParseFailed": "解析 JSON 失敗：{{detail}}",
+    "catalogFetch": "取得 source package 失敗：{{detail}}",
+    "attachmentsRequired": "請附加 Markdown 檔與圖片檔。",
+    "submitProcessFailed": "提交處理失敗。",
+    "packageFileUnavailable": "無法匯入套件檔。",
+    "packageFileParseFailed": "解析套件檔失敗。",
+    "packageFileExtension": "請選擇 `.au2pkg.zip` 格式的檔案。如果不適用，請在下方手動輸入步驟。",
+    "packageFileNoCopyTargets": "在支援的目錄下找不到可複製的檔案。",
+    "versionHashPickTitle": "選擇要計算 xxh128 的檔案",
+    "versionHashFailed": "計算 xxh128 失敗",
+    "versionHashUnavailable": "無法選擇檔案。請在 Tauri 環境中執行。",
+    "draftNotFound": "找不到所選的暫存草稿。",
+    "draftSaveFailed": "儲存暫存草稿失敗。",
+    "draftUnavailable": "無法使用草稿儲存功能。",
+    "draftIdRequired": "儲存草稿需要 ID。",
+    "restoreImageSourceMissing": "無法重新載入 {{label}} 的原始檔案：{{sourcePath}}",
+    "infoImageLabel": "說明圖片 {{index}}",
+    "batchBlocked": "由於測試未完成，提交已被阻擋：{{preview}}",
+    "batchSuffix": " 以及另外 {{count}} 項",
+    "batchCompleted": "已完成 {{success}} 項提交。",
+    "batchCompletedWithFailure": "已完成 {{success}} 項提交。{{failure}} 項失敗。",
+    "batchFailed": "{{count}} 項提交失敗。",
+    "batchCountLabel": "{{count}} 項",
+    "installerError": "錯誤",
+    "packageIdInvalidDetail": "套件 ID 格式無效: {{packageId}}",
+    "installerSourceDirectRequired": "需要 installer.source.url。",
+    "installerSourceBoothRequired": "需要 installer.source.booth。",
+    "installerSourceGithubRequired": "需要 installer.source.githubRelease 的 owner/repo/pattern。",
+    "installerSourceGoogleDriveRequired": "需要 installer.source.googleDrive.id。",
+    "installerSourceRequired": "請選擇 installer.source。",
+    "installActionUnsupported": "不支援的 install action: {{action}}",
+    "uninstallActionUnsupported": "不支援的 uninstall action: {{action}}",
+    "actionRequiresPath": "{{action}} action 需要 path。",
+    "copyActionRequiresFromTo": "copy action 需要 from/to。",
+    "elevateRunOnly": "elevate 僅支援 run action。",
+    "emptyAction": "(空)",
+    "installerDetectIncomplete": "偵測到的版本缺失或被標記為未知，因此無法將測試視為完成。",
+    "installerTestFailed": "安裝測試失敗。\n\n{{detail}}",
+    "uninstallerMissingTarget": "找不到移除目標，因此無法完成測試。",
+    "uninstallerTestFailed": "移除測試失敗。\n\n{{detail}}"
+  }
+}

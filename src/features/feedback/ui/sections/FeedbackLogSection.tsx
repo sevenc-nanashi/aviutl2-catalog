@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { FileText } from 'lucide-react';
 import { BUG_FIELDS } from '../../model/fieldNames';
 import FeedbackToggleSwitch from '../components/FeedbackToggleSwitch';
@@ -6,14 +7,15 @@ import { cn } from '@/lib/cn';
 import { layout, surface, text } from '@/components/ui/_styles';
 
 export default function FeedbackLogSection({ loading, includeLog, appLog, onBugChange }: FeedbackLogSectionProps) {
+  const { t } = useTranslation('feedback');
   return (
     <div className="space-y-3">
       <div className={text.inlineHeadingSm}>
         <FileText size={16} className="text-slate-500" />
-        ログファイル
+        {t('log.title')}
       </div>
       {loading ? (
-        <div className={layout.pulseXs}>情報を収集中...</div>
+        <div className={layout.pulseXs}>{t('shared.loading')}</div>
       ) : (
         <div className={cn(surface.panelLgSubtleSoft, 'p-3')}>
           <div className={layout.inlineGap3}>
@@ -24,7 +26,7 @@ export default function FeedbackLogSection({ loading, includeLog, appLog, onBugC
               onChange={onBugChange}
             />
             <label htmlFor="feedback-include-log" className={cn('cursor-pointer', text.labelSm)}>
-              app.log を添付
+              {t('log.include')}
             </label>
           </div>
           {includeLog ? (
@@ -34,7 +36,7 @@ export default function FeedbackLogSection({ loading, includeLog, appLog, onBugC
                   {appLog}
                 </pre>
               ) : (
-                <div className="mt-1 text-xs italic text-slate-400">ログを取得できませんでした。</div>
+                <div className="mt-1 text-xs italic text-slate-400">{t('log.unavailable')}</div>
               )}
             </div>
           ) : null}

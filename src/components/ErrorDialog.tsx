@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { AlertTriangle, Copy, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 import { layout, overlay, surface, text } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
@@ -19,7 +20,8 @@ function toErrorText(error: unknown): string {
   return String(error ?? 'unknown');
 }
 
-export default function ErrorDialog({ open, title = 'エラーが発生しました', message = '', onClose }: ErrorDialogProps) {
+export default function ErrorDialog({ open, title, message = '', onClose }: ErrorDialogProps) {
+  const { t } = useTranslation('common');
   const [copied, setCopied] = useState(false);
   const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -51,7 +53,7 @@ export default function ErrorDialog({ open, title = 'エラーが発生しまし
 
   return (
     <div className={layout.fixedCenter}>
-      <button type="button" aria-label="閉じる" className={overlay.backdrop} onClick={onClose} />
+      <button type="button" aria-label={t('errorDialog.closeAria')} className={overlay.backdrop} onClick={onClose} />
       <div
         className={cn(surface.card, layout.modalWidthLg, 'shadow-xl')}
         role="dialog"
@@ -64,17 +66,17 @@ export default function ErrorDialog({ open, title = 'エラーが発生しまし
             <AlertTriangle size={20} />
           </div>
           <div className="flex-1">
-            <p className="text-xs uppercase tracking-widest text-red-500">Error</p>
+            <p className="text-xs uppercase tracking-widest text-red-500">{t('errorDialog.eyebrow')}</p>
             <h3 className={text.titleLg} id="error-title">
-              {title}
+              {title || t('errorDialog.defaultTitle')}
             </h3>
           </div>
           <Button
             variant="iconSubtle"
             size="icon"
             onClick={onCopy}
-            aria-label={copied ? 'コピーしました' : 'エラーメッセージをコピー'}
-            title={copied ? 'コピーしました' : 'エラーメッセージをコピー'}
+            aria-label={copied ? t('errorDialog.copied') : t('errorDialog.copy')}
+            title={copied ? t('errorDialog.copied') : t('errorDialog.copy')}
             type="button"
           >
             {copied ? <Check size={16} /> : <Copy size={16} />}
@@ -91,7 +93,7 @@ export default function ErrorDialog({ open, title = 'エラーが発生しまし
         </div>
         <div className={layout.footerEnd}>
           <Button variant="primary" size="default" onClick={onClose} type="button">
-            閉じる
+            {t('actions.close')}
           </Button>
         </div>
       </div>

@@ -1,0 +1,66 @@
+{
+  "page": {
+    "title": "リンク集",
+    "description": "関連サイトやサポート情報へのアクセス"
+  },
+  "sections": {
+    "official": {
+      "title": "AviUtl2 本体",
+      "description": "AviUtl2 本体の公式サイトと関連情報のリンク"
+    },
+    "community": {
+      "title": "コミュニティ",
+      "description": "AviUtl2 ユーザーコミュニティリンク"
+    },
+    "support": {
+      "title": "サポート",
+      "description": "AviUtl2カタログのサポートのリンク"
+    },
+    "developers": {
+      "title": "開発者向け",
+      "description": "AviUtl2カタログへパッケージを掲載する開発者向けのリンク"
+    },
+    "catalog": {
+      "title": "GitHubリポジトリ",
+      "description": "AviUtl2カタログ関連のGitHubリポジトリへのリンク"
+    }
+  },
+  "entries": {
+    "official-site": {
+      "title": "公式サイト",
+      "description": "AviUtl2 公式サイト「AviUtlのお部屋」"
+    },
+    "official-changelog": {
+      "title": "更新履歴（by Nanashi.）",
+      "description": "AviUtl2 本体の更新履歴を確認できる非公式サイト"
+    },
+    "community-discord": {
+      "title": "Discord",
+      "description": "AviUtl2 の情報交換や質問ができる非公式 Discord コミュニティ"
+    },
+    "support-feedback": {
+      "title": "フィードバック",
+      "description": "不具合報告や改善要望・問い合わせの送信するフォーム"
+    },
+    "support-register": {
+      "title": "パッケージ登録",
+      "description": "パッケージの新規掲載や登録内容の修正を行うフォーム"
+    },
+    "developers-register-guide": {
+      "title": "パッケージの掲載方法",
+      "description": "パッケージを掲載するための手順を解説したガイドドキュメント"
+    },
+    "developers-update-status": {
+      "title": "自動更新対応状況",
+      "description": "掲載パッケージの自動更新対応状況をまとめたドキュメント"
+    },
+    "catalog-github-app": {
+      "title": "AviUtl2カタログ リポジトリ",
+      "description": "AviUtl2カタログ本体の GitHub リポジトリ"
+    },
+    "catalog-github-data": {
+      "title": "カタログデータ レポジトリ",
+      "description": "掲載パッケージデータの GitHub 管理リポジトリ"
+    }
+  }
+}

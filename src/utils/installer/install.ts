@@ -1,4 +1,5 @@
-import type { InstallerAction } from '../catalogSchema';
+import { i18n } from '@/i18n';
+import { isUnknownDetectResult } from '../detectResult';
 import { formatUnknownError } from '../errors';
 import { addInstalledId } from '../installed-map';
 import { bestEffortLogError, logInfo } from '../logging';
@@ -8,7 +9,13 @@ import { createInstallProgressTools } from './install-progress';
 import { executeInstallStep } from './install-step';
 import { deletePath, ensureAviutlClosed, ensureTmpDir } from './runtime';
 import { normalizeInstallerConfig, toTestOperationKind, toTestOperationLabel } from './shape';
-import type { CatalogDispatchFn, InstallProgressPayload, InstallerRunnableItem, TestOperationKind } from './types';
+import type {
+  CatalogDispatchFn,
+  InstallerAction,
+  InstallProgressPayload,
+  InstallerRunnableItem,
+  TestOperationKind,
+} from './types';
 
 type InstallStepOperation = {
   kind: TestOperationKind;
@@ -25,7 +32,7 @@ export async function runInstallerForItem(
   onOperation?: (operation: Record<string, unknown>) => void,
 ): Promise<void> {
   await ensureAviutlClosed();
-  const version = typeof item['latest-version'] === 'string' ? item['latest-version'] : '';
+  const version = typeof item.latestVersion === 'string' ? item.latestVersion : '';
   const idVersion = `${item.id}-${version || 'latest'}`.replace(/[^A-Za-z0-9._-]/g, '_');
   const tmpDir = await ensureTmpDir(idVersion);
   const installer = normalizeInstallerConfig(item.installer);
@@ -33,7 +40,7 @@ export async function runInstallerForItem(
     tmpDir: tmpDir,
     downloadPath: '',
   };
-  const steps = installer.install || [];
+  const steps = installer.installSteps;
 
   const { emitProgress, createDownloadProgressReporter } = createInstallProgressTools(steps.length, onProgress);
   emitProgress(0, null, -1, 'init');
@@ -75,7 +82,7 @@ export async function runInstallerForItem(
             onOperation({
               kind: stepOperation.kind,
               status: 'error',
-              summary: `${toTestOperationLabel(stepAction)} 失敗`,
+              summary: i18n.t('register:tests.operationFailed', { action: toTestOperationLabel(stepAction) }),
               detail: err.message || String(err),
               fromPath: stepOperation.fromPath,
               toPath: stepOperation.toPath,
@@ -90,9 +97,9 @@ export async function runInstallerForItem(
     }
 
     await addInstalledId(item.id, version);
-    const detectedVersion = await syncDetectedVersionWithDispatch(item, dispatch);
-    if (dispatch && detectedVersion === '不明') {
-      dispatch({ type: 'SET_DETECTED_ONE', payload: { id: item.id, version: detectedVersion, forceLatest: true } });
+    const detectedResult = await syncDetectedVersionWithDispatch(item, dispatch);
+    if (dispatch && isUnknownDetectResult(detectedResult)) {
+      dispatch({ type: 'SET_DETECTED_ONE', payload: { id: item.id, result: detectedResult, forceLatest: true } });
     }
     try {
       await recordPackageStateEvent('install', item.id);

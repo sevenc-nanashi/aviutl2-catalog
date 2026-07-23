@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import type { FormEvent } from 'react';
-import { EMPTY_SUCCESS_DIALOG, REQUIRED_FIELDS_ERROR } from '../../model/constants';
+import { EMPTY_SUCCESS_DIALOG } from '../../model/constants';
 import {
   appendAppLog,
   appendAttachments,
@@ -20,6 +20,7 @@ import type {
   FeedbackSuccessDialogState,
   InquiryFormState,
 } from '../../model/types';
+import { useTranslation } from 'react-i18next';
 
 interface UseFeedbackSubmitParams {
   mode: FeedbackMode;
@@ -44,6 +45,7 @@ export default function useFeedbackSubmit({
   appLog,
   appVersion,
 }: UseFeedbackSubmitParams) {
+  const { t } = useTranslation('feedback');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [successDialog, setSuccessDialog] = useState<FeedbackSuccessDialogState>(EMPTY_SUCCESS_DIALOG);
@@ -66,7 +68,7 @@ export default function useFeedbackSubmit({
       const title = mode === 'bug' ? bug.title : inquiry.title;
       const detail = mode === 'bug' ? bug.detail : inquiry.detail;
       if (!title.trim() || !detail.trim()) {
-        setError(REQUIRED_FIELDS_ERROR);
+        setError(t('errors.requiredFields'));
         return;
       }
 
@@ -101,7 +103,7 @@ export default function useFeedbackSubmit({
         setSubmitting(false);
       }
     },
-    [appLog, appVersion, attachments, bug, device, inquiry, installedPackages, mode, submitEndpoint],
+    [appLog, appVersion, attachments, bug, device, inquiry, installedPackages, mode, submitEndpoint, t],
   );
 
   return {

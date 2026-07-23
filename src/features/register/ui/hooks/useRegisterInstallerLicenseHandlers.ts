@@ -2,6 +2,7 @@
  * ライセンスとインストーラー編集の更新ハンドラ群を提供する hook
  */
 import { useCallback } from 'react';
+import { isOtherRegisterLicenseType, isUnknownRegisterLicenseType } from '@/utils/licenseTemplates';
 import { createEmptyCopyright, createEmptyLicense } from '../../model/form';
 import { generateKey } from '../../model/helpers';
 import { resetInstallStepForAction, resetUninstallStepForAction } from '../../model/installerRules';
@@ -58,9 +59,9 @@ export default function useRegisterInstallerLicenseHandlers({
             const nextType = String(value || '');
             let nextBody = next.licenseBody;
             let nextCopy = next.copyrights;
-            if (nextType === '不明' || nextType === 'その他') {
-              next.isCustom = nextType === 'その他';
-              if (nextType === '不明') {
+            if (isUnknownRegisterLicenseType(nextType) || isOtherRegisterLicenseType(nextType)) {
+              next.isCustom = isOtherRegisterLicenseType(nextType);
+              if (isUnknownRegisterLicenseType(nextType)) {
                 nextBody = '';
               }
               nextCopy = [createEmptyCopyright()];
@@ -88,8 +89,8 @@ export default function useRegisterInstallerLicenseHandlers({
         ...prev,
         licenses: (prev.licenses.length ? prev.licenses : [createEmptyLicense()]).map((license) => {
           if (license.key !== key) return license;
-          const forcedCustom = license.type === 'その他';
-          const forcedUnknown = license.type === '不明';
+          const forcedCustom = isOtherRegisterLicenseType(license.type);
+          const forcedUnknown = isUnknownRegisterLicenseType(license.type);
           if (forcedUnknown) {
             return {
               ...license,

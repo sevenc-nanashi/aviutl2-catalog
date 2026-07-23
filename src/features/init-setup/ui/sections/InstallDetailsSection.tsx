@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Download } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import ProgressCircle from '@/components/ProgressCircle';
 import DetailsSectionBase from '../components/DetailsSectionBase';
 import type { InstallDetailsSectionProps } from '../types';
@@ -17,35 +18,36 @@ export default function InstallDetailsSection({
   onBack,
   onNext,
 }: InstallDetailsSectionProps) {
+  const { t } = useTranslation('initSetup');
   const header = useMemo(
     () => ({
-      title: 'インストール先の指定',
-      description: 'AviUtl2 をインストールするフォルダを指定してください',
+      title: t('details.install.title'),
+      description: t('details.install.description'),
     }),
-    [],
+    [t],
   );
   const input = useMemo(
     () => ({
       inputId: 'setup-install-dir',
-      inputLabel: 'インストール先フォルダ',
+      inputLabel: t('details.install.label'),
       inputLabelClassName: 'text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ml-1',
       inputValue: installDir,
       inputPlaceholder: 'C:\\path\\to\\install',
-      pickButtonTitle: '参照',
+      pickButtonTitle: t('common:actions.browse'),
       onInputChange: onInstallDirChange,
       onPickDir: onPickInstallDir,
     }),
-    [installDir, onInstallDirChange, onPickInstallDir],
+    [installDir, onInstallDirChange, onPickInstallDir, t],
   );
   const portableOptions = useMemo(
     () => ({
       portable,
-      standardLabel: '標準 （推奨）',
+      standardLabel: t('details.standard'),
       portableActiveClassName: 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/10 ring-1 ring-blue-500',
       portableSectionClassName: 'space-y-3 pt-2',
       onPortableChange,
     }),
-    [onPortableChange, portable],
+    [onPortableChange, portable, t],
   );
   const actions = useMemo(
     () => ({
@@ -59,20 +61,20 @@ export default function InstallDetailsSection({
             value={coreProgressRatio}
             size={16}
             strokeWidth={4}
-            ariaLabel="インストール進捗"
+            ariaLabel={t('details.install.progressAria')}
             className="text-white"
           />
-          インストール中…
+          {t('details.install.installing')}
         </span>
       ),
       idleContent: (
         <span className={layout.inlineGap2}>
           <Download size={18} />
-          インストールして次へ
+          {t('details.install.next')}
         </span>
       ),
     }),
-    [canProceed, coreProgressRatio, onBack, onNext, savingInstallDetails],
+    [canProceed, coreProgressRatio, onBack, onNext, savingInstallDetails, t],
   );
 
   return <DetailsSectionBase header={header} input={input} portable={portableOptions} actions={actions} />;

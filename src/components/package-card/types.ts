@@ -1,11 +1,23 @@
 import type { PackageItem } from '@/utils/catalogStore';
+import type { InstallerRunnableItem } from '@/utils/installer/types';
 import type { PackageInstallBusyAction } from '@/utils/usePackageInstallerActions';
 
 export type PackageCardItem = Pick<
   PackageItem,
-  'id' | 'name' | 'author' | 'type' | 'tags' | 'summary' | 'images' | 'updatedAt' | 'installed' | 'repoURL'
+  | 'id'
+  | 'name'
+  | 'author'
+  | 'packageType'
+  | 'typeLabel'
+  | 'tags'
+  | 'summary'
+  | 'thumbnailUrl'
+  | 'updatedAt'
+  | 'installed'
+  | 'deprecation'
 > &
-  Partial<Pick<PackageItem, 'description' | 'isLatest' | 'installedVersion' | 'installer' | 'latest-version'>>;
+  Partial<Pick<PackageItem, 'isLatest' | 'installedVersion' | 'detectedResult' | 'latestVersion'>> &
+  InstallerRunnableItem;
 
 export interface PackageCardProps {
   item: PackageCardItem;
@@ -30,6 +42,13 @@ export interface UsePackageCardActionsResult {
   busyAction: PackageCardBusyAction;
   isBusy: boolean;
   progress: PackageCardProgressView;
+  noticeModal: {
+    open: boolean;
+    title: string;
+    html: string;
+  };
+  closeNoticeModal: () => void;
+  confirmNoticeModal: () => Promise<void>;
   onDownload: PackageCardActionHandler;
   onUpdate: PackageCardActionHandler;
   onRemove: PackageCardActionHandler;

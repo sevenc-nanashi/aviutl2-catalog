@@ -4,11 +4,11 @@ import {
   CirclePause,
   CircleQuestionMark,
   Download,
-  ExternalLink,
   RefreshCw,
   Trash2,
   type LucideIcon,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import ProgressCircle from '../../ProgressCircle';
 import type { PackageCardActionHandler, PackageCardBusyAction, PackageCardProgressView } from '../types';
 import { layout, surface } from '@/components/ui/_styles';
@@ -20,18 +20,15 @@ interface PackageCardActionSectionProps {
   hasUpdate: boolean;
   isPauseStateLoaded: boolean;
   isUpdatePaused: boolean;
-  isDirectDownloadSupported: boolean;
-  homepage: string | null;
   canInstall: boolean;
   busyAction: PackageCardBusyAction;
   isBusy: boolean;
   progress: PackageCardProgressView;
-  installedVersion?: string;
+  installedVersionLabel?: string;
+  onOpenDetail: () => void;
   onDownload: PackageCardActionHandler;
   onUpdate: PackageCardActionHandler;
   onRemove: PackageCardActionHandler;
-  onOpenDetail: () => void;
-  onWebDownload?: PackageCardActionHandler;
 }
 
 const actionButtonBaseClass = 'text-xs font-bold rounded-lg';
@@ -57,7 +54,7 @@ interface PrimaryActionButtonProps {
   title: string;
   icon: LucideIcon;
   iconClassName?: string;
-  progressClassName?: string;
+  progressClassName: string;
   className: string;
   onAction: PackageCardActionHandler;
 }
@@ -112,18 +109,28 @@ function StatusBadge({ icon: Icon, label, className }: { icon: LucideIcon; label
 }
 
 function InstalledActionBadge() {
-  return <StatusBadge icon={CheckCircle2} label="導入済" className={cn(installedActionClass, surface.baseMuted)} />;
+  const { t } = useTranslation('package');
+  return (
+    <StatusBadge
+      icon={CheckCircle2}
+      label={t('actions.installed')}
+      className={cn(installedActionClass, surface.baseMuted)}
+    />
+  );
 }
 
 function PausedUpdateBadge() {
-  return <StatusBadge icon={CirclePause} label="停止中" className={pausedActionClass} />;
+  const { t } = useTranslation('package');
+  return <StatusBadge icon={CirclePause} label={t('actions.paused')} className={pausedActionClass} />;
 }
 
 function RemoveActionButton({ disabled, onRemove }: { disabled: boolean; onRemove: PackageCardActionHandler }) {
+  const { t } = useTranslation('package');
   return (
     <button
       className={cn(layout.center, removeButtonClass)}
-      title="削除"
+      title={t('actions.remove')}
+      aria-label={t('actions.remove')}
       onClick={handleActionClick(onRemove)}
       disabled={disabled}
       type="button"
@@ -139,18 +146,16 @@ export default function PackageCardActionSection({
   isPauseStateLoaded,
   isUpdatePaused,
   canInstall,
-  isDirectDownloadSupported,
-  homepage,
   busyAction,
   isBusy,
   progress,
-  installedVersion,
+  installedVersionLabel,
+  onOpenDetail,
   onDownload,
   onUpdate,
   onRemove,
-  onOpenDetail,
-  onWebDownload,
 }: PackageCardActionSectionProps) {
+  const { t } = useTranslation('package');
   const downloading = busyAction === 'download';
   const updating = busyAction === 'update';
   const primaryDisabled = isBusy || !canInstall;
@@ -159,62 +164,34 @@ export default function PackageCardActionSection({
   return (
     <div className="relative z-20 flex items-end justify-between gap-3">
       <div className="flex items-center mb-1">
-        {isInstalled ? (
+        {isInstalled && installedVersionLabel ? (
           <div className={cn(layout.inlineGap1_5, 'text-xs font-mono text-slate-500 dark:text-slate-400')}>
             <CheckCircle2 size={14} className={hasUpdate ? 'text-amber-500' : 'text-emerald-500'} />
-            <span>{installedVersion}</span>
+            <span>{installedVersionLabel}</span>
           </div>
         ) : null}
       </div>
 
       <div className={cn(layout.inlineGap2, 'pointer-events-auto shrink-0 w-[140px] justify-end')}>
         {isWeb ? (
-          isDirectDownloadSupported ? (
-            <PrimaryActionButton
-              busy={false}
-              disabled={false}
-              progress={progress}
-              label="ダウンロード"
-              title="ブラウザでダウンロード"
-              icon={Download}
-              progressClassName="text-white"
-              className="h-9 w-full gap-1.5 px-2 bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 active:scale-95 cursor-pointer disabled:cursor-not-allowed"
-              onAction={onWebDownload!}
-            />
-          ) : homepage ? (
-            <PrimaryActionButton
-              busy={false}
-              disabled={false}
-              progress={progress}
-              label="ホームページ"
-              title="ホームページを開く"
-              icon={ExternalLink}
-              className="h-9 w-full gap-1.5 px-2 bg-gray-600 hover:bg-gray-500 text-white transition-all shadow-lg shadow gray-600/20 hover:shadow-gray-600/30 active:scale-95 cursor-pointer disabled:cursor-not-allowed"
-              onAction={async () => {
-                window.open(homepage!, '_blank', 'noopener');
-              }}
-            />
-          ) : (
-            <PrimaryActionButton
-              busy={false}
-              disabled={false}
-              progress={progress}
-              label="詳細"
-              title="詳細情報を確認"
-              icon={CircleQuestionMark}
-              className="h-9 w-full gap-1.5 px-2 bg-gray-600 hover:bg-gray-500 text-white transition-all shadow-lg shadow gray-600/20 hover:shadow-gray-600/30 active:scale-95 cursor-pointer disabled:cursor-not-allowed"
-              onAction={async () => {
-                onOpenDetail();
-              }}
-            />
-          )
+          <PrimaryActionButton
+            busy={false}
+            disabled={false}
+            progress={progress}
+            label={t('card.details')}
+            title={t('card.openDetails', { name: '' })}
+            icon={CircleQuestionMark}
+            progressClassName="text-white"
+            className="h-9 w-full gap-1.5 px-2 bg-slate-600 hover:bg-slate-500 text-white transition-all active:scale-95 cursor-pointer"
+            onAction={async () => onOpenDetail()}
+          />
         ) : !isInstalled ? (
           <PrimaryActionButton
             busy={downloading}
             disabled={primaryDisabled}
             progress={progress}
-            label="インストール"
-            title="インストール"
+            label={t('actions.install')}
+            title={t('actions.install')}
             icon={Download}
             progressClassName="text-white"
             className="h-9 w-full gap-1.5 px-2 bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 active:scale-95 cursor-pointer disabled:cursor-not-allowed"
@@ -228,8 +205,8 @@ export default function PackageCardActionSection({
               busy={updating}
               disabled={updateDisabled}
               progress={progress}
-              label="更新"
-              title="更新"
+              label={t('actions.update')}
+              title={t('actions.update')}
               icon={RefreshCw}
               iconClassName="animate-spin-slow"
               progressClassName="text-amber-600 dark:text-amber-400"

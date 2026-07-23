@@ -1,13 +1,10 @@
-import { checkIsDirectDownloadSupported } from '@/utils/isDirectDownloadSupported';
-import { webDownloadPackage } from '@/utils/webDownload';
+import { useTranslation } from 'react-i18next';
+import { getInstalledVersionLabel } from '@/utils/detectResult';
 import PackageCardActionSection from './sections/PackageCardActionSection';
 import PackageCardMetaSection from './sections/PackageCardMetaSection';
 import PackageCardThumbnailSection from './sections/PackageCardThumbnailSection';
 import type { PackageCardViewProps } from './types';
 import { cn } from '@/lib/cn';
-import { isWeb } from '@/lib/target';
-
-const EMPTY_TAGS: string[] = [];
 
 export default function PackageCardView({
   item,
@@ -27,9 +24,12 @@ export default function PackageCardView({
   onUpdate,
   onRemove,
 }: PackageCardViewProps) {
-  const tags = Array.isArray(item.tags) ? item.tags : EMPTY_TAGS;
-  const isDirectDownloadSupported = checkIsDirectDownloadSupported(item);
-  const onWebDownload = isWeb ? async () => { await webDownloadPackage(item); } : undefined;
+  const { t } = useTranslation('package');
+  const installedVersionLabel = getInstalledVersionLabel(
+    item.installedVersion,
+    item.detectedResult,
+    t('sidebar.versionUnknown'),
+  );
 
   return (
     <article
@@ -40,34 +40,36 @@ export default function PackageCardView({
     >
       <button
         type="button"
-        aria-label={`${item.name} の詳細を開く`}
+        aria-label={t('card.openDetails', { name: item.name })}
         className="absolute inset-0 z-0 rounded-2xl cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
         onClick={onOpenDetail}
       />
       <div className="pointer-events-none flex-1 p-4 flex flex-col min-w-0 relative z-10">
-        <PackageCardMetaSection item={item} lastUpdated={lastUpdated} tags={tags} />
+        <PackageCardMetaSection item={item} lastUpdated={lastUpdated} tags={item.tags} />
         <PackageCardActionSection
           isInstalled={isInstalled}
           hasUpdate={hasUpdate}
           isPauseStateLoaded={isPauseStateLoaded}
           isUpdatePaused={isUpdatePaused}
-          isDirectDownloadSupported={isDirectDownloadSupported}
-          homepage={item.repoURL}
           canInstall={canInstall}
           busyAction={busyAction}
           isBusy={isBusy}
           progress={progress}
-          installedVersion={item.installedVersion}
+          installedVersionLabel={installedVersionLabel}
+          onOpenDetail={onOpenDetail}
           onDownload={onDownload}
           onUpdate={onUpdate}
           onRemove={onRemove}
-          onOpenDetail={onOpenDetail}
-          onWebDownload={onWebDownload}
         />
       </div>
 
       <div className="pointer-events-none relative z-10">
-        <PackageCardThumbnailSection thumbnail={thumbnail} itemName={item.name} category={category} />
+        <PackageCardThumbnailSection
+          thumbnail={thumbnail}
+          itemName={item.name}
+          category={category}
+          typeLabel={item.typeLabel}
+        />
       </div>
 
       <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-transparent group-hover:ring-blue-500/20 dark:group-hover:ring-blue-400/20 pointer-events-none transition-all"></div>

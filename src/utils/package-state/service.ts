@@ -1,4 +1,5 @@
 import * as tauriWindow from '@tauri-apps/api/window';
+import { isInstalledDetectResult, type DetectResultMap } from '../detectResult';
 import { formatUnknownError } from '../errors';
 import { logError, logInfo } from '../logging';
 import { getSettings } from '../settings';
@@ -142,11 +143,11 @@ export async function recordPackageStateEvent(type: string, packageId: string): 
   });
 }
 
-export async function maybeSendPackageStateSnapshot(detectedMap: Record<string, string>): Promise<void> {
+export async function maybeSendPackageStateSnapshot(detectedMap: DetectResultMap): Promise<void> {
   return runPackageStateQueueOp(async () => {
     if (await shouldSkipPackageState()) return;
     const installed = Object.entries(detectedMap)
-      .filter(([, v]) => Boolean(v))
+      .filter(([, result]) => isInstalledDetectResult(result))
       .map(([id]) => String(id));
     const now = nowUnixSeconds();
     const meta = await loadPackageStateMeta();

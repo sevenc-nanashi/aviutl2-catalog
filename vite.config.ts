@@ -5,20 +5,18 @@ import tailwindcss from '@tailwindcss/vite';
 import { cloudflare } from '@cloudflare/vite-plugin';
 
 export default defineConfig(() => {
-  const target: 'desktop' | 'web' = process.env.TARGET === 'desktop' ? 'desktop' : 'web';
+  const target: 'desktop' | 'web' = process.env.VITE_TARGET === 'desktop' ? 'desktop' : 'web';
   const isWeb = target === 'web';
-  const isProduction = process.env.NODE_ENV === 'production';
   return {
     plugins: [
-      reactRouter(),
-      !isProduction &&
-        isWeb &&
+      isWeb &&
         cloudflare({
           // NOTE: なぜかデフォルトのEnvironmentだと動かないのでworkaround
           viteEnvironment: {
             name: 'ssr',
           },
         }),
+      reactRouter(),
       tailwindcss(),
     ],
     resolve: {
@@ -28,7 +26,7 @@ export default defineConfig(() => {
           replacement: `${import.meta.dirname}/src`,
         },
         {
-          find: '../build/server/index.js',
+          find: '../dist/server/index.js',
           replacement: 'virtual:react-router/server-build',
         },
       ],

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import * as tauriDialog from '@tauri-apps/plugin-dialog';
 import * as tauriProcess from '@tauri-apps/plugin-process';
 import * as tauriUpdater from '@tauri-apps/plugin-updater';
+import { useTranslation } from 'react-i18next';
 import { logError } from '@/utils/logging';
 
 export interface UseUpdatePromptOptions {
@@ -39,6 +40,9 @@ export interface UseUpdatePromptResult {
   confirmUpdate: () => Promise<void>;
 }
 
+type UpdateDialogTranslationKey = 'updateDialog.appliedMessage' | 'updateDialog.eyebrow';
+type UpdateDialogTranslator = (key: UpdateDialogTranslationKey) => string;
+
 function toErrorText(error: unknown): string {
   if (error instanceof Error && error.message) return error.message;
   return String(error ?? 'unknown');
@@ -48,27 +52,28 @@ function toCleanString(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
 }
 
-function resolvePubDate(update: UpdateCheckResult | null | undefined): { raw: string; label: string } {
-  if (!update || typeof update !== 'object') return { raw: '', label: '' };
+function resolvePublishedOn(update: UpdateCheckResult | null | undefined): string {
+  if (!update || typeof update !== 'object') return '';
   const candidates = [update.pubDate, update.publishDate, update.publishedAt, update.releaseDate, update.date];
-  const raw = candidates.map(toCleanString).find(Boolean) || '';
-  if (!raw) return { raw: '', label: '' };
+  return candidates.map(toCleanString).find(Boolean) || '';
+}
 
-  const parsed = new Date(raw);
-  if (Number.isNaN(parsed.getTime())) return { raw, label: '' };
-
-  let label = '';
+async function notifyUpdateApplied(t: UpdateDialogTranslator): Promise<void> {
   try {
-    label = new Intl.DateTimeFormat('ja-JP', { month: 'numeric', day: 'numeric' }).format(parsed);
+    await tauriProcess.relaunch();
   } catch {
-    label = `${parsed.getMonth() + 1}月${parsed.getDate()}日`;
+    try {
+      await tauriDialog.message(t('updateDialog.appliedMessage'), {
+        title: t('updateDialog.eyebrow'),
+        kind: 'info',
+      });
+    } catch {}
   }
-
-  return { raw, label };
 }
 
 export function useUpdatePrompt(options: UseUpdatePromptOptions = {}): UseUpdatePromptResult {
   const { autoCheck = true } = options;
+  const { t } = useTranslation('common');
   const [updateInfo, setUpdateInfo] = useState<UpdatePromptInfo | null>(null);
   const [updateBusy, setUpdateBusy] = useState(false);
   const [updateError, setUpdateError] = useState('');
@@ -84,14 +89,14 @@ export function useUpdatePrompt(options: UseUpdatePromptOptions = {}): UseUpdate
         const update = await tauriUpdater.check();
         if (!cancelled && update) {
           const notes = toCleanString(update.body);
-          const pubDate = resolvePubDate(update);
+          const publishedOn = resolvePublishedOn(update);
 
           setUpdateError('');
           setUpdateInfo({
             update,
             version: toCleanString(update.version),
             notes,
-            publishedOn: pubDate.label,
+            publishedOn,
           });
         }
       } catch (error) {
@@ -116,24 +121,15 @@ export function useUpdatePrompt(options: UseUpdatePromptOptions = {}): UseUpdate
     setUpdateError('');
     try {
       await updateInfo.update.downloadAndInstall();
-      try {
-        await tauriProcess.relaunch();
-      } catch {
-        try {
-          await tauriDialog.message('アップデートを適用しました。アプリを再起動してください。', {
-            title: 'アップデート',
-            kind: 'info',
-          });
-        } catch {}
-      }
+      await notifyUpdateApplied(t);
       setUpdateInfo(null);
     } catch (error) {
-      setUpdateError('アップデートに失敗しました。ネットワークや権限をご確認ください。');
+      setUpdateError(t('updateDialog.failed'));
       await logError(`[updater] download/install failed: ${toErrorText(error)}`);
     } finally {
       setUpdateBusy(false);
     }
-  }, [updateInfo]);
+  }, [t, updateInfo]);
 
   return {
     updateInfo,

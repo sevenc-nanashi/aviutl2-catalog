@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Smartphone } from 'lucide-react';
 import { BUG_FIELDS } from '../../model/fieldNames';
 import FeedbackToggleSwitch from '../components/FeedbackToggleSwitch';
@@ -16,25 +17,26 @@ export default function FeedbackEnvironmentSection({
   device,
   onBugChange,
 }: FeedbackEnvironmentSectionProps) {
+  const { t } = useTranslation('feedback');
   return (
     <div className="space-y-4">
       <div className={text.inlineHeadingSm}>
         <Smartphone size={16} className="text-slate-500" />
-        環境情報
+        {t('environment.title')}
       </div>
       {loading ? (
-        <div className={layout.pulseXs}>情報を収集中...</div>
+        <div className={layout.pulseXs}>{t('shared.loading')}</div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           <label className={surface.softSelectable}>
             <div className={layout.inlineGap3}>
               <FeedbackToggleSwitch name={BUG_FIELDS.includeApp} checked={bug.includeApp} onChange={onBugChange} />
-              <span className={text.labelSm}>アプリ情報を添付</span>
+              <span className={text.labelSm}>{t('environment.includeApp')}</span>
             </div>
             {bug.includeApp ? (
               <div className={cn(envMetaBaseClass, envMetaTextClass)}>
-                <div>Version: {appVersion || 'Unknown'}</div>
-                <div>パッケージ一覧: {pluginsCount}個</div>
+                <div>Version: {appVersion || t('environment.unknownVersion')}</div>
+                <div>{t('environment.packages', { count: pluginsCount })}</div>
               </div>
             ) : null}
           </label>
@@ -46,7 +48,7 @@ export default function FeedbackEnvironmentSection({
                 checked={bug.includeDevice}
                 onChange={onBugChange}
               />
-              <span className={text.labelSm}>デバイス情報を添付</span>
+              <span className={text.labelSm}>{t('environment.includeDevice')}</span>
             </div>
             {bug.includeDevice ? (
               <div className={cn(envMetaBaseClass, envMetaTextClass, 'overflow-x-auto')}>
@@ -65,9 +67,14 @@ export default function FeedbackEnvironmentSection({
                       {device.cpu.model}
                     </div>
                     <div>
-                      Cores: {device.cpu.cores} / Logical: {device.cpu.logicalProcessors}
+                      {t('environment.cores')}: {device.cpu.cores} / {t('environment.logical')}:{' '}
+                      {device.cpu.logicalProcessors}
                     </div>
-                    {device.cpu.maxClockMHz ? <div>Max Clock: {device.cpu.maxClockMHz} MHz</div> : null}
+                    {device.cpu.maxClockMHz ? (
+                      <div>
+                        {t('environment.maxClock')}: {device.cpu.maxClockMHz} MHz
+                      </div>
+                    ) : null}
                   </div>
                 ) : null}
                 {device?.gpu ? (
@@ -77,11 +84,11 @@ export default function FeedbackEnvironmentSection({
                       {device.gpu.name || device.gpu.vendor}
                     </div>
                     <div className="truncate" title={device.gpu.driver}>
-                      Driver: {device.gpu.driver}
+                      {t('environment.driver')}: {device.gpu.driver}
                     </div>
                   </div>
                 ) : null}
-                {!device ? <div>デバイス情報を取得できませんでした</div> : null}
+                {!device ? <div>{t('environment.unavailable')}</div> : null}
               </div>
             ) : null}
           </label>

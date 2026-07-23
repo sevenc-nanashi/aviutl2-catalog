@@ -1,10 +1,12 @@
 /**
  * Draft persistence utilities for register form
  */
-import type { CatalogEntry } from '@/utils/catalogSchema';
-import { basename, commaListToArray, computeStableTextHash, generateKey, normalizeArrayText } from './helpers';
+import { i18n } from '@/i18n';
+import { normalizeRegisterLicenseType } from '@/utils/licenseTemplates';
+import { basename, computeStableTextHash, generateKey, normalizeArrayText } from './helpers';
 import { normalizeInstallStepState, normalizeUninstallStepState } from './installerRules';
-import { entryToForm, getFileExtension } from './parse';
+import { getFileExtension } from './parse';
+import { createEmptyPackageForm } from './factories';
 import type { RegisterImageEntry, RegisterPackageForm } from './types';
 import * as tauriFs from '@tauri-apps/plugin-fs';
 import * as z from 'zod';
@@ -106,7 +108,7 @@ function toDraftImageSnapshot(entry: RegisterImageEntry): RegisterDraftImageSnap
 }
 
 function toDraftFormSnapshot(form: RegisterPackageForm): RegisterDraftFormSnapshot {
-  const { images: _images, ...rest } = form;
+  const { images: _images, relations: _relations, ...rest } = form as RegisterPackageForm & { relations?: unknown };
   return {
     ...(rest as Omit<RegisterPackageForm, 'images'>),
     images: {
@@ -127,10 +129,14 @@ function normalizeDraftImageSnapshot(
 }
 
 function normalizeDraftFormSnapshot(form: RegisterDraftFormSnapshot) {
+  const { relations: _relations, ...rest } = form as RegisterDraftFormSnapshot & {
+    relations?: { forkOf?: unknown };
+  };
   return {
-    ...form,
+    ...rest,
+    relationForkOfText: String(rest.relationForkOfText || _relations?.forkOf || ''),
     licenses: form.licenses.map((license) => ({
-      type: license.type,
+      type: normalizeRegisterLicenseType(license.type),
       licenseName: license.licenseName,
       isCustom: license.isCustom,
       licenseBody: license.licenseBody,
@@ -164,10 +170,10 @@ function normalizeDraftFormSnapshot(form: RegisterDraftFormSnapshot) {
     },
     versions: form.versions.map((version) => ({
       version: version.version,
-      release_date: version.release_date,
+      releaseDate: version.releaseDate,
       files: version.files.map((file) => ({
         path: file.path,
-        hash: file.hash,
+        xxh128: file.xxh128,
         fileName: file.fileName,
       })),
     })),
@@ -271,7 +277,7 @@ async function restoreImageEntry(
       previewUrl: URL.createObjectURL(file),
     };
   } catch {
-    warnings.push(`${label} の元ファイルを再読み込みできませんでした: ${sourcePath}`);
+    warnings.push(i18n.t('register:errors.restoreImageSourceMissing', { label, sourcePath }));
     return {
       key,
       existingPath,
@@ -291,7 +297,7 @@ export function saveRegisterDraft(args: {
 }): RegisterDraftRecord {
   const storage = getStorage();
   if (!storage) {
-    throw new Error('一時保存を利用できません。');
+    throw new Error(i18n.t('register:errors.draftUnavailable'));
   }
   const requestedDraftId = String(args.draftId || '').trim();
   const requestedPackageId = String(args.packageId || '').trim();
@@ -301,7 +307,7 @@ export function saveRegisterDraft(args: {
     : getRegisterDraft(requestedPackageId || fallbackPackageId);
   const packageId = requestedPackageId || fallbackPackageId || String(previous?.packageId || '').trim();
   if (!packageId) {
-    throw new Error('一時保存には ID の入力が必要です。');
+    throw new Error(i18n.t('register:errors.draftIdRequired'));
   }
   const draftId = String(previous?.draftId || requestedDraftId || createDraftId()).trim();
   const contentHash = computeRegisterDraftContentHash(args);
@@ -329,22 +335,6 @@ export function saveRegisterDraft(args: {
     storage.removeItem(createDraftStorageKey(current.draftId));
   }
   return record;
-}
-
-export function saveRegisterDraftFromCatalogEntry(args: {
-  item: CatalogEntry;
-  catalogBaseUrl?: string;
-  packageSender?: string;
-}): RegisterDraftRecord {
-  const form = entryToForm(args.item, args.catalogBaseUrl);
-  const existingDraft = getRegisterDraft(args.item.id);
-  return saveRegisterDraft({
-    packageForm: form,
-    tags: commaListToArray(form.tagsText),
-    packageSender: existingDraft?.packageSender || String(args.packageSender || ''),
-    draftId: existingDraft?.draftId,
-    packageId: args.item.id,
-  });
 }
 
 export function getRegisterDraftById(draftId: string): RegisterDraftRecord | null {
@@ -444,17 +434,36 @@ export async function restoreRegisterDraft(record: RegisterDraftRecord): Promise
   const source = (record.form || {}) as RegisterDraftFormSnapshot;
   const imageSnapshot = source.images || { thumbnail: null, info: [] };
   const thumbnail = imageSnapshot.thumbnail
-    ? await restoreImageEntry(imageSnapshot.thumbnail, warnings, 'サムネイル')
+    ? await restoreImageEntry(imageSnapshot.thumbnail, warnings, i18n.t('register:images.thumbnailTitle'))
     : null;
   const infoEntries = Array.isArray(imageSnapshot.info) ? imageSnapshot.info : [];
   const info: RegisterImageEntry[] = [];
   for (let i = 0; i < infoEntries.length; i += 1) {
-    const restored = await restoreImageEntry(infoEntries[i], warnings, `説明画像${i + 1}`);
+    const restored = await restoreImageEntry(
+      infoEntries[i],
+      warnings,
+      i18n.t('register:errors.infoImageLabel', { index: i + 1 }),
+    );
     info.push(restored);
   }
-  const { images: _images, ...rest } = source;
+  const {
+    images: _images,
+    relations: legacyRelations,
+    ...rest
+  } = source as RegisterDraftFormSnapshot & {
+    relations?: { forkOf?: unknown };
+  };
+  const defaults = createEmptyPackageForm();
   const packageForm: RegisterPackageForm = {
+    ...defaults,
     ...(rest as Omit<RegisterPackageForm, 'images'>),
+    relationForkOfText: String(rest.relationForkOfText || legacyRelations?.forkOf || ''),
+    licenses: Array.isArray(rest.licenses)
+      ? rest.licenses.map((license) => ({
+          ...license,
+          type: normalizeRegisterLicenseType(license.type),
+        }))
+      : [],
     images: {
       thumbnail,
       info,

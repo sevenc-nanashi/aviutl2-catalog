@@ -1,9 +1,18 @@
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
-use serde::Deserialize;
+use rayon::prelude::*;
+use serde::{Deserialize, Serialize};
 use tauri::Manager;
 use xxhash_rust::xxh3::xxh3_128;
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum DetectResult {
+    Missing,
+    Unknown,
+    Detected { version: String },
+}
 
 fn xxh3_128_hex<P: AsRef<Path>>(path: P) -> Result<String, String> {
     let buf = std::fs::read(path).map_err(|e| format!("open/read error: {}", e))?;
@@ -25,7 +34,7 @@ enum HashCacheRoot {
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 struct HashCacheEntry {
-    xxh3_128: String,
+    xxh128: String,
     mtime_ms: u128,
     size: u64,
 }
@@ -35,15 +44,15 @@ pub struct VersionFileInput {
     #[serde(default)]
     path: String,
     #[serde(default, alias = "XXH3_128")]
-    xxh3_128: String,
+    xxh128: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct VersionEntryInput {
     #[serde(default)]
     version: String,
-    #[serde(default)]
-    file: Vec<VersionFileInput>,
+    #[serde(default, alias = "file")]
+    files: Vec<VersionFileInput>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -136,7 +145,7 @@ fn collect_unique_paths(_app: &tauri::AppHandle, list: &[VersionItemInput]) -> R
     let mut unique_paths = HashSet::new();
     for it in list {
         for ver in &it.versions {
-            for f in &ver.file {
+            for f in &ver.files {
                 let raw = f.path.as_str();
                 let expanded = expand_macros(raw).replace('/', "\\");
                 if !is_abs(&expanded) {
@@ -160,28 +169,29 @@ fn build_file_hash_cache(app: &tauri::AppHandle, unique_paths: &HashSet<std::pat
             if let Some(entry) = disk_cache.get(path)
                 && entry.mtime_ms == mtime_ms
                 && entry.size == size
-                && entry.xxh3_128.len() == 32
+                && entry.xxh128.len() == 32
             {
-                file_hash_cache.insert(path.clone(), entry.xxh3_128.clone());
+                file_hash_cache.insert(path.clone(), entry.xxh128.clone());
                 continue;
             }
             to_hash.push(path.clone());
         }
     }
 
-    for path_str in &to_hash {
-        match xxh3_128_hex(path_str) {
-            Ok(hex) => {
-                file_hash_cache.insert(path_str.clone(), hex);
-            }
+    let hashed_paths = to_hash
+        .into_par_iter()
+        .filter_map(|path| match xxh3_128_hex(&path) {
+            Ok(hex) => Some((path, hex)),
             Err(e) => {
-                tracing::error!("hash error path=\"{}\": {}", path_str.display(), e);
+                tracing::error!("hash error path=\"{}\": {}", path.display(), e);
+                None
             }
-        }
-    }
+        })
+        .collect::<HashMap<_, _>>();
+    file_hash_cache.extend(hashed_paths);
     for (k, hex) in &file_hash_cache {
         if let Some((mtime_ms, size)) = stat_file(k) {
-            disk_cache.insert(k.clone(), HashCacheEntry { xxh3_128: hex.clone(), mtime_ms, size });
+            disk_cache.insert(k.clone(), HashCacheEntry { xxh128: hex.clone(), mtime_ms, size });
         }
     }
     write_hash_cache(app, &disk_cache);
@@ -189,7 +199,7 @@ fn build_file_hash_cache(app: &tauri::AppHandle, unique_paths: &HashSet<std::pat
     file_hash_cache
 }
 
-fn determine_versions(_app: &tauri::AppHandle, list: &[VersionItemInput], file_hash_cache: &HashMap<std::path::PathBuf, String>) -> HashMap<String, String> {
+fn determine_versions(_app: &tauri::AppHandle, list: &[VersionItemInput], file_hash_cache: &HashMap<std::path::PathBuf, String>) -> HashMap<String, DetectResult> {
     let mut out = HashMap::new();
     tracing::info!("Detecting installed versions...");
     for it in list {
@@ -197,20 +207,20 @@ fn determine_versions(_app: &tauri::AppHandle, list: &[VersionItemInput], file_h
         if id.is_empty() {
             continue;
         }
-        let mut detected = String::new();
+        let mut detected = DetectResult::Missing;
         let mut any_present = false;
         let mut any_mismatch = false;
         for ver in it.versions.iter().rev() {
-            if ver.file.is_empty() {
+            if ver.files.is_empty() {
                 continue;
             }
             let mut ok = true;
-            for f in &ver.file {
+            for f in &ver.files {
                 let raw = f.path.as_str();
                 let expanded = expand_macros(raw).replace('/', "\\");
                 let key = std::path::PathBuf::from(expanded);
                 let found_hex = file_hash_cache.get(&key).cloned().unwrap_or_default();
-                let want_hex = f.xxh3_128.as_str();
+                let want_hex = f.xxh128.as_str();
                 if !found_hex.is_empty() {
                     any_present = true;
                 }
@@ -223,12 +233,12 @@ fn determine_versions(_app: &tauri::AppHandle, list: &[VersionItemInput], file_h
                 }
             }
             if ok {
-                detected = ver.version.clone();
+                detected = DetectResult::Detected { version: ver.version.clone() };
                 break;
             }
         }
-        if detected.is_empty() && (any_present || any_mismatch) {
-            detected = String::from("不明");
+        if matches!(detected, DetectResult::Missing) && (any_present || any_mismatch) {
+            detected = DetectResult::Unknown;
         }
         out.insert(id, detected);
     }
@@ -237,7 +247,7 @@ fn determine_versions(_app: &tauri::AppHandle, list: &[VersionItemInput], file_h
 }
 
 #[tauri::command]
-pub fn detect_versions_map(app: tauri::AppHandle, items: Vec<VersionItemInput>) -> Result<HashMap<String, String>, String> {
+pub fn detect_versions_map(app: tauri::AppHandle, items: Vec<VersionItemInput>) -> Result<HashMap<String, DetectResult>, String> {
     let list = items;
     tracing::info!("detect map start count={}", list.len());
     let unique_paths = collect_unique_paths(&app, &list)?;

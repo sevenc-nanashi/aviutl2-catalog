@@ -1,0 +1,46 @@
+{
+  "shared": {
+    "all": "すべて"
+  },
+  "searchPlaceholder": "パッケージ名、作者、キーワードで検索...",
+  "filters": {
+    "label": "絞り込み",
+    "tagFilter": "タグ絞り込み",
+    "closeInstallMenu": "インストール状態メニューを閉じる",
+    "closeDeprecationMenu": "廃止状態メニューを閉じる",
+    "closeSortMenu": "並び替えメニューを閉じる",
+    "category": "種類",
+    "sort": "並び替え",
+    "count": "件",
+    "selected": "選択中:",
+    "clearAll": "すべてクリア",
+    "allTags": "すべてのタグ",
+    "clearSelection": "選択をクリア"
+  },
+  "empty": {
+    "title": "条件に一致するパッケージはありません",
+    "clear": "条件をクリア"
+  },
+  "categories": {},
+  "installStatus": {
+    "installed": "インストール済み",
+    "not_installed": "未インストール"
+  },
+  "deprecationStatus": {
+    "active": "非推奨を除外",
+    "deprecated": "非推奨のみ"
+  },
+  "sortOptions": {
+    "popularity_desc": "人気順",
+    "trend_desc": "トレンド順",
+    "added_desc": "新着順",
+    "updated_desc": "最終更新日順"
+  },
+  "errors": {
+    "dataDirUnavailable": "データフォルダの場所を取得できませんでした。設定画面で AviUtl2 のフォルダを確認してください。",
+    "dataDirOpenFailed": "データフォルダを開けませんでした。設定を確認してください。",
+    "launchFailed": "AviUtl2 の起動に失敗しました。",
+    "catalogUnavailable": "カタログの読み込みに失敗しました（ネットワーク/キャッシュなし）。",
+    "catalogLoadFailed": "カタログの読み込みに失敗しました。"
+  }
+}

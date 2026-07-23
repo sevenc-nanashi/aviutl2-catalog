@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import FeedbackSuccessDialog from './components/FeedbackSuccessDialog';
 import useFeedbackAttachments from './hooks/useFeedbackAttachments';
 import useFeedbackDiagnostics from './hooks/useFeedbackDiagnostics';
@@ -15,6 +16,7 @@ import { page, surface } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
 
 export default function FeedbackPage() {
+  const { t } = useTranslation(['feedback', 'common']);
   const submitEndpoint = (import.meta.env.VITE_SUBMIT_ENDPOINT || '').trim();
   const { mode, onModeChange } = useFeedbackMode();
   const { bug, inquiry, onBugChange, onInquiryChange } = useFeedbackForms();
@@ -39,7 +41,7 @@ export default function FeedbackPage() {
     };
   }, []);
 
-  const successPrimaryText = submit.successDialog.message || '送信が完了しました。';
+  const successPrimaryText = submit.successDialog.message || t('common:submit.successDefault');
 
   return (
     <div className={cn(page.container3xl, page.selectNone, page.enterFromBottom, 'space-y-8')}>

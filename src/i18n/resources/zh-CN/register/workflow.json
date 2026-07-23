@@ -1,0 +1,97 @@
+{
+  "page": {
+    "successActionBatch": "批量提交完成",
+    "submitActionUpdate": "更新包",
+    "submitActionCreate": "添加包",
+    "successPrimary": "{{action}}：{{name}}",
+    "jsonNoChanges": "无更改",
+    "unsupportedValue": "不支持：{{value}}"
+  },
+  "actions": {
+    "removeValue": "删除 {{value}}",
+    "inputValue": "输入 {{label}}"
+  },
+  "notice": {
+    "body": "在此表单中输入的插件信息将全部公开。\n非作者本人也可进行包注册。"
+  },
+  "sidebar": {
+    "newPackage": "新建包",
+    "pendingList": "待提交列表",
+    "pendingReady": "可提交",
+    "draftStatusNotRequired": "无需测试",
+    "draftStatusReady": "测试完成",
+    "draftStatusPending": "测试未完成",
+    "deleteDraftAria": "删除 {{id}} 的暂存内容",
+    "noDrafts": "没有待提交的包。",
+    "searchPlaceholder": "搜索包...",
+    "unknownAuthor": "未知作者"
+  },
+  "submitBar": {
+    "guide": "说明网站",
+    "jsonImport": "导入JSON",
+    "authorHint": "作者本人请尽可能填写此项",
+    "submitting": "提交中...",
+    "blocked": "测试未完成 ({{count}}个)",
+    "submitMany": "批量提交 {{count}}个"
+  },
+  "preview": {
+    "title": "预览",
+    "switchToLight": "切换到浅色模式",
+    "switchToDark": "切换到深色模式",
+    "fallbackName": "包名称",
+    "fallbackAuthor": "作者名",
+    "fallbackSummary": "此处显示概要"
+  },
+  "jsonImport": {
+    "title": "JSON 输入",
+    "description": "请粘贴与 template.json 相同格式的 JSON。匹配的项目会被部分覆盖，ID 不匹配的项目会作为新条目添加。也可以一次添加多个包。",
+    "placeholder": "",
+    "cancel": "取消",
+    "apply": "应用"
+  },
+  "errors": {
+    "catalogInvalid": "source package 的格式无效。",
+    "jsonInvalidInput": "输入格式无效。",
+    "jsonNoTargets": "无可覆盖的元素。",
+    "jsonParseFailed": "JSON解析失败：{{detail}}",
+    "catalogFetch": "source package 获取失败：{{detail}}",
+    "attachmentsRequired": "请附上 Markdown 和图片文件",
+    "submitProcessFailed": "提交处理失败。",
+    "packageFileUnavailable": "无法使用包文件导入功能。",
+    "packageFileParseFailed": "包文件解析失败。",
+    "packageFileExtension": "请选择 `.au2pkg.zip` 格式的文件。若不适用，请手动输入步骤。",
+    "packageFileNoCopyTargets": "对应目录下无可复制的文件。",
+    "versionHashPickTitle": "选择要计算 xxh128 的文件",
+    "versionHashFailed": "xxh128 计算失败",
+    "versionHashUnavailable": "无法使用文件选择功能。请在 Tauri 环境下运行。",
+    "draftNotFound": "找不到对应的暂存内容。",
+    "draftSaveFailed": "暂存失败。",
+    "draftUnavailable": "无法使用暂存功能。",
+    "draftIdRequired": "暂存需要输入ID。",
+    "restoreImageSourceMissing": "无法重新加载 {{label}} 的源文件：{{sourcePath}}",
+    "infoImageLabel": "说明图片 {{index}}",
+    "batchBlocked": "因测试未完成无法提交：{{preview}}",
+    "batchSuffix": " 等{{count}} 个",
+    "batchCompleted": "已成功提交 {{success}} 个",
+    "batchCompletedWithFailure": "已成功提交 {{success}} 个。{{failure}} 个失败。",
+    "batchFailed": "{{count}} 个提交失败。",
+    "batchCountLabel": "{{count}} 个",
+    "installerError": "错误",
+    "packageIdInvalidDetail": "包 ID 格式无效: {{packageId}}",
+    "installerSourceDirectRequired": "需要 installer.source.url。",
+    "installerSourceBoothRequired": "需要 installer.source.booth。",
+    "installerSourceGithubRequired": "需要 installer.source.githubRelease 的 owner/repo/pattern。",
+    "installerSourceGoogleDriveRequired": "需要 installer.source.googleDrive.id。",
+    "installerSourceRequired": "请选择 installer.source。",
+    "installActionUnsupported": "不支持的 install action: {{action}}",
+    "uninstallActionUnsupported": "不支持的 uninstall action: {{action}}",
+    "actionRequiresPath": "{{action}} action 需要 path。",
+    "copyActionRequiresFromTo": "copy action 需要 from/to。",
+    "elevateRunOnly": "elevate 仅支持 run action。",
+    "emptyAction": "(空)",
+    "installerDetectIncomplete": "检测到的版本为“未检测到”或“未知”，无法视为完成。",
+    "installerTestFailed": "安装测试失败。\n\n{{detail}}",
+    "uninstallerMissingTarget": "找不到要删除的对象，无法完成测试。",
+    "uninstallerTestFailed": "删除测试失败。\n\n{{detail}}"
+  }
+}

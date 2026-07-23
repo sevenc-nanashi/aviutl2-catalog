@@ -2,6 +2,7 @@
  * 一時保存からのまとめ送信フローを管理する hook
  */
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   deleteRegisterDraft,
   isRegisterDraftPending,
@@ -11,13 +12,13 @@ import {
 } from '../../model/draft';
 import { cleanupImagePreviews } from '../../model/helpers';
 import { resolveRegisterDraftTestState } from '../../model/registerTestRequirement';
-import type { CatalogEntry } from '@/utils/catalogSchema';
+import type { RegisterCatalogItem } from '../../model/types';
 import type { RegisterSuccessDialogState } from '../types';
 import type { SubmitSinglePackageInput, SubmitSinglePackageResult } from './useRegisterSubmitHandler';
 
 interface UseRegisterBatchSubmitArgs {
-  catalogItems: CatalogEntry[];
-  setCatalogItems: React.Dispatch<React.SetStateAction<CatalogEntry[]>>;
+  catalogItems: RegisterCatalogItem[];
+  setCatalogItems: React.Dispatch<React.SetStateAction<RegisterCatalogItem[]>>;
   submitPackage: (input: SubmitSinglePackageInput) => Promise<SubmitSinglePackageResult>;
   flushAutoSaveNow: () => void;
   reloadDraftPackages: () => void;
@@ -36,6 +37,7 @@ export default function useRegisterBatchSubmit({
   setSubmitting,
   setSuccessDialog,
 }: UseRegisterBatchSubmitArgs) {
+  const { t } = useTranslation(['register', 'common']);
   const [submitProgressText, setSubmitProgressText] = useState('');
 
   const handleSubmitAllDrafts = useCallback(
@@ -81,8 +83,8 @@ export default function useRegisterBatchSubmit({
             return `${draft.packageId}(${missing.join('/')})`;
           });
           const preview = blockedLabels.slice(0, 4).join(', ');
-          const suffix = blockedLabels.length > 4 ? ` ほか${blockedLabels.length - 4}件` : '';
-          setError(`テスト未完了のため送信できません: ${preview}${suffix}`);
+          const suffix = blockedLabels.length > 4 ? t('errors.batchSuffix', { count: blockedLabels.length - 4 }) : '';
+          setError(t('errors.batchBlocked', { preview: `${preview}${suffix}` }));
           return;
         }
         setSubmitting(true);
@@ -112,8 +114,7 @@ export default function useRegisterBatchSubmit({
             successCount += 1;
             deleteRegisterDraft(draft.draftId);
           } catch (err) {
-            const message =
-              err instanceof Error ? err.message : '送信に失敗しました。ネットワークや設定をご確認ください。';
+            const message = err instanceof Error ? err.message : t('common:errors.submitFailed');
             failureCount += 1;
             updateRegisterDraftSubmitState({
               draftId: draft.draftId,
@@ -134,20 +135,20 @@ export default function useRegisterBatchSubmit({
             open: true,
             message:
               failureCount > 0
-                ? `${successCount}件の送信が完了しました。${failureCount}件は失敗しました。`
-                : `${successCount}件の送信が完了しました。`,
+                ? t('errors.batchCompletedWithFailure', { success: successCount, failure: failureCount })
+                : t('errors.batchCompleted', { success: successCount }),
             url: lastSuccessUrl,
-            packageName: successCount === 1 ? lastSuccessName : `${successCount}件`,
-            packageAction: successCount === 1 ? '送信完了' : 'まとめて送信完了',
+            packageName: successCount === 1 ? lastSuccessName : t('errors.batchCountLabel', { count: successCount }),
+            packageAction: successCount === 1 ? t('common:submit.completeTitle') : t('page.successActionBatch'),
           });
         }
         if (failureCount > 0) {
-          setError(firstError || `${failureCount}件の送信に失敗しました。`);
+          setError(firstError || t('errors.batchFailed', { count: failureCount }));
         } else {
           setError('');
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : '送信処理に失敗しました。');
+        setError(err instanceof Error ? err.message : t('errors.submitProcessFailed'));
       } finally {
         setSubmitting(false);
         setSubmitProgressText('');
@@ -163,6 +164,7 @@ export default function useRegisterBatchSubmit({
       setSubmitting,
       setSuccessDialog,
       submitPackage,
+      t,
     ],
   );
 

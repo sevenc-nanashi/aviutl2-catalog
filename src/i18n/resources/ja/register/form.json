@@ -1,0 +1,138 @@
+{
+  "meta": {
+    "title": "基本情報",
+    "idPlaceholder": "Kenkun.AviUtlExEdit2",
+    "idHint": "作者名.パッケージ名 の形式で入力してください。英数字と記号 ( . - _ ) のみ",
+    "name": "パッケージ名",
+    "namePlaceholder": "AviUtl2",
+    "author": "作者名",
+    "authorPlaceholder": "KENくん",
+    "originalAuthor": "オリジナル作者名 (任意)",
+    "originalAuthorPlaceholder": "オリジナル版がある場合に入力",
+    "sourceLocale": "編集を行う言語",
+    "sourceLocaleHint": "ここで選択した言語を編集します。対応言語は日本語・英語・韓国語・中国語 (簡体字/繁体字) です。",
+    "sourceLocaleOptions": {
+      "ja": "日本語",
+      "en": "英語",
+      "ko": "韓国語",
+      "zh-CN": "中国語 (簡体字)",
+      "zh-TW": "中国語 (繁体字)"
+    },
+    "repoUrl": "パッケージのサイト",
+    "repoUrlPlaceholder": "パッケージのことが分かるURL",
+    "niconiCommonsId": "ニコニ・コモンズID (任意)",
+    "packageRole": "パッケージの分類",
+    "packageRoleHint": "AviUtl2本体に機能を追加せず、他のパッケージの動作にのみ必要なパッケージは「補助パッケージ」を選択してください。",
+    "packageRoleOptions": {
+      "primaryPackage": "メインパッケージ",
+      "supportPackage": "補助パッケージ"
+    },
+    "deprecationEnabled": "非推奨として表示する",
+    "deprecationMessage": "非推奨メッセージ",
+    "deprecationHint": "何らかの理由で非推奨としたい場合に、ここに理由や代替パッケージなどの情報を入力してください。",
+    "deprecationPlaceholder": "代替パッケージや移行先がある場合に入力"
+  },
+  "packageType": {
+    "suggestions": "種類一覧",
+    "inputAria": "種類を入力",
+    "placeholder": "種類を入力または一覧から選択",
+    "helper": "一覧から選択できます。候補にない種類は手入力で追加できます。"
+  },
+  "tags": {
+    "suggestions": "既存タグ",
+    "inputAria": "タグを入力",
+    "placeholder": "タグを入力 (Enterで追加)",
+    "helper": "既存タグから選択できます。候補にないタグは手入力で追加できます。"
+  },
+  "description": {
+    "summaryPlaceholder": "パッケージの概要 (35文字以内)",
+    "modeInline": "アプリ内入力",
+    "modeExternal": "外部MDリンク",
+    "markdown": "Markdown形式",
+    "tabEdit": "編集",
+    "tabExternalEdit": "外部リンク指定",
+    "externalUrlPlaceholder": "https://example.com/description.md",
+    "externalUrlHint": "MarkdownのURLを入力してください。",
+    "externalRawHint": "GitHub上のMDを登録される場合はhttps://raw.githubusercontent.com/から始まるリンクになっているか注意してください。",
+    "externalLoading": "リンク先を読み込み中…",
+    "externalLoaded": "Markdown読み込み済み",
+    "externalError": "Markdownを読み込めませんでした",
+    "bodyPlaceholder": "パッケージの詳細情報を入力してください。Markdown形式で記入できます。どこから呼び出せるか（メニュー位置など）や、UIの説明もあわせて記入していただけると助かります。外部サイトの画像も貼り付けることができます。"
+  },
+  "changelog": {
+    "title": "更新履歴",
+    "body": "任意項目です。設定することでアップデートセンター、詳細画面にて更新内容を確認できます。",
+    "formatTitle": "更新履歴の形式",
+    "formatBody": "バージョンごとに `## バージョン名 日付(YYYY-MM-DD)` の見出しを作り、バージョン名は上記のバージョン履歴と合わせてください。\n各バージョンの中では `###` 以降の見出しを使用できます。\n変更内容は箇条書きで書くことを推奨します。\n\n例:",
+    "formatExample": "# 更新履歴\n\n## 2.0.0 2025-07-07\n### 新機能\n- 機能を追加1\n- 機能を追加2\n\n### 修正\n- 修正1",
+    "externalUrl": "外部 Markdown URL"
+  },
+  "noticeMarkdown": {
+    "title": "注意事項",
+    "body": "任意項目です。ダウンロード時にユーザーに表示される注意事項を入力してください。",
+    "placeholder": "注意事項を Markdown で入力してください。"
+  },
+  "markdownControls": {
+    "modeInline": "アプリ内入力",
+    "modeExternal": "外部MDリンク"
+  },
+  "relations": {
+    "title": "関連パッケージ",
+    "description": "いずれも任意項目です。複数ある場合はカンマ区切りで入力してください。",
+    "requires": "必須依存パッケージ",
+    "recommends": "推奨パッケージ",
+    "conflicts": "競合パッケージ",
+    "similar": "類似パッケージ",
+    "replaces": "置き換え対象パッケージ",
+    "forkOf": "fork 元パッケージ",
+    "placeholder": "パッケージID (カンマ区切り)",
+    "forkOfPlaceholder": "パッケージID"
+  },
+  "license": {
+    "title": "ライセンス",
+    "typeAria": "ライセンスの種類を選択",
+    "selectPlaceholder": "選択してください",
+    "name": "ライセンス名",
+    "namePlaceholder": "ライセンス名を入力してください",
+    "nameHint": "カスタムライセンスの場合は「カスタムライセンス」と入力してください。",
+    "useTemplate": "テンプレートを使用する",
+    "body": "ライセンス本文",
+    "bodyPlaceholder": "ライセンス本文を入力してください",
+    "templateHint": "テンプレートを使用します。著作権年と著作権者を入力してください。",
+    "copyrightYears": "著作権年",
+    "copyrightYearsPlaceholder": "(例: 2025)",
+    "copyrightHolder": "著作権者",
+    "copyrightHolderPlaceholder": "(例: KENくん)",
+    "copy": "ライセンス本文をコピー",
+    "copyTitle": "クリップボードにコピー",
+    "copySuccess": "コピーしました",
+    "copyError": "コピーに失敗しました",
+    "previewHint": "プレビューは種類と著作権者を入力すると表示されます。",
+    "typeOptions": {
+      "other": "その他",
+      "unknown": "不明"
+    }
+  },
+  "images": {
+    "title": "画像",
+    "thumbnailTitle": "サムネイル",
+    "thumbnailDescription": "パッケージ一覧に表示します (1枚)",
+    "thumbnailHint": "※推奨：縦横比1:1 (206×206px前後)\n一覧を見やすくするため、可能であればご登録ください",
+    "selectThumbnail": "サムネイル画像を選択",
+    "selectImage": "画像を選択",
+    "dropToAdd": "ここにドロップして追加",
+    "thumbnailPreviewEmpty": "プレビューなし",
+    "unset": "未設定",
+    "removeThumbnail": "サムネイルを削除",
+    "thumbnailEmpty": "サムネイルが未設定です",
+    "dragAndDrop": "画像をドラッグ＆ドロップ",
+    "infoTitle": "説明画像",
+    "infoDescription": "パッケージ詳細ページに表示する説明画像 (複数可)",
+    "infoHint": "※縦横比は16:9を推奨します",
+    "selectInfo": "説明画像を選択",
+    "addImages": "画像を追加",
+    "infoEmpty": "説明画像が未設定です",
+    "removeImage": "削除",
+    "defaultInfoFilename": "./image/{{packageId}}_{{index}}.(拡張子)"
+  }
+}

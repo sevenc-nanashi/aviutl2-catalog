@@ -1,9 +1,11 @@
 /**
  * インストール手順コンポーネント
  */
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 import { GripVertical, Plus } from 'lucide-react';
-import { ACTION_LABELS, INSTALL_ACTION_OPTIONS, SPECIAL_INSTALL_ACTIONS } from '../../model/form';
+import { INSTALL_ACTION_OPTIONS, SPECIAL_INSTALL_ACTIONS } from '../../model/form';
 import type { PackageInstallerSectionProps } from '../types';
 import ActionDropdown from '../components/ActionDropdown';
 import DeleteButton from '../components/DeleteButton';
@@ -23,13 +25,22 @@ export default function InstallStepsSection({
   startHandleDrag,
   updateInstallStep,
 }: InstallStepsSectionProps) {
+  const { t } = useTranslation('register');
+  const installActionOptions = useMemo(
+    () =>
+      INSTALL_ACTION_OPTIONS.map((option) => ({
+        ...option,
+        label: t(`installer.actions.${option.value}`),
+      })),
+    [t],
+  );
   return (
     <div className="space-y-4">
       <div className={layout.rowBetweenWrapGap2}>
-        <h3 className={text.titleBaseBold}>インストール手順</h3>
+        <h3 className={text.titleBaseBold}>{t('installer.installSteps')}</h3>
         <Button variant="plain" size="none" type="button" className={action.stepAddButton} onClick={addInstallStep}>
           <Plus size={14} />
-          <span>ステップを追加</span>
+          <span>{t('installer.addStep')}</span>
         </Button>
       </div>
       <div className="space-y-3" ref={installListRef}>
@@ -48,7 +59,7 @@ export default function InstallStepsSection({
                       type="button"
                       className={action.dragHandle}
                       onPointerDown={(e) => startHandleDrag('install', idx, e)}
-                      aria-label="ドラッグして並び替え"
+                      aria-label={t('installer.dragAria')}
                     >
                       <GripVertical size={16} />
                     </Button>
@@ -62,21 +73,23 @@ export default function InstallStepsSection({
                         'rounded-lg bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-200',
                       )}
                     >
-                      {ACTION_LABELS[step.action] || step.action}
-                      <span className={cn('ml-auto', text.optionalMuted)}>固定ステップ</span>
+                      {t(`installer.actions.${step.action}`, {
+                        defaultValue: step.action,
+                      })}
+                      <span className={cn('ml-auto', text.optionalMuted)}>{t('installer.fixedStep')}</span>
                     </div>
                   ) : (
                     <ActionDropdown
                       value={step.action}
                       onChange={(val) => updateInstallStep(step.key, 'action', val)}
-                      options={INSTALL_ACTION_OPTIONS}
-                      ariaLabel="ステップの種類を選択"
+                      options={installActionOptions}
+                      ariaLabel={t('installer.stepTypeAria')}
                     />
                   )}
                 </div>
                 <div className={layout.inlineGap2}>
                   {!isSpecialAction && (
-                    <DeleteButton onClick={() => removeInstallStep(step.key)} ariaLabel="ステップを削除" />
+                    <DeleteButton onClick={() => removeInstallStep(step.key)} ariaLabel={t('installer.deleteStep')} />
                   )}
                 </div>
               </div>
@@ -84,7 +97,7 @@ export default function InstallStepsSection({
                 <div className={grid.panelTwoCol}>
                   <div className="space-y-1">
                     <label className={text.labelXs} htmlFor={`install-${step.key}-path`}>
-                      実行パス
+                      {t('installer.runPath')}
                     </label>
                     <input
                       id={`install-${step.key}-path`}
@@ -96,7 +109,7 @@ export default function InstallStepsSection({
                   </div>
                   <div className="space-y-1">
                     <label className={text.labelXs} htmlFor={`install-${step.key}-args`}>
-                      引数 (カンマ区切り)
+                      {t('installer.args')}
                     </label>
                     <input
                       id={`install-${step.key}-args`}
@@ -114,7 +127,7 @@ export default function InstallStepsSection({
                         checked={!!step.elevate}
                         onChange={(e) => updateInstallStep(step.key, 'elevate', e.target.checked)}
                       />
-                      <span>管理者権限で実行する</span>
+                      <span>{t('installer.runAsAdmin')}</span>
                     </label>
                   </div>
                 </div>
@@ -123,13 +136,13 @@ export default function InstallStepsSection({
                 <div className="grid gap-3 rounded-lg bg-slate-50 p-3 dark:bg-slate-800/50">
                   <div className="space-y-1">
                     <label className={text.labelXs} htmlFor={`install-${step.key}-path`}>
-                      削除するパス
+                      {t('installer.deletePath')}
                     </label>
                     <input
                       id={`install-${step.key}-path`}
                       value={step.path}
                       onChange={(e) => updateInstallStep(step.key, 'path', e.target.value)}
-                      placeholder="（例：{pluginsDir}/example.auo）"
+                      placeholder={t('installer.deletePathPlaceholder')}
                       className="!bg-white dark:!bg-slate-800"
                     />
                   </div>
@@ -139,25 +152,25 @@ export default function InstallStepsSection({
                 <div className={grid.panelTwoCol}>
                   <div className="space-y-1">
                     <label className={text.labelXs} htmlFor={`install-${step.key}-from`}>
-                      コピー元
+                      {t('installer.copyFrom')}
                     </label>
                     <input
                       id={`install-${step.key}-from`}
                       value={step.from}
                       onChange={(e) => updateInstallStep(step.key, 'from', e.target.value)}
-                      placeholder="（例：{tmp}/example.auo）"
+                      placeholder={t('installer.copyFromPlaceholder')}
                       className="!bg-white dark:!bg-slate-800"
                     />
                   </div>
                   <div className="space-y-1">
                     <label className={text.labelXs} htmlFor={`install-${step.key}-to`}>
-                      コピー先
+                      {t('installer.copyTo')}
                     </label>
                     <input
                       id={`install-${step.key}-to`}
                       value={step.to}
                       onChange={(e) => updateInstallStep(step.key, 'to', e.target.value)}
-                      placeholder="（例：{pluginsDir}）"
+                      placeholder={t('installer.copyToPlaceholder')}
                       className="!bg-white dark:!bg-slate-800"
                     />
                   </div>
@@ -168,7 +181,7 @@ export default function InstallStepsSection({
         })}
         {!installer.installSteps.length && (
           <div className={surface.dashedPlaceholder}>
-            <span className="text-xs">ステップを追加してインストール手順を定義してください</span>
+            <span className="text-xs">{t('installer.installStepsEmpty')}</span>
           </div>
         )}
       </div>

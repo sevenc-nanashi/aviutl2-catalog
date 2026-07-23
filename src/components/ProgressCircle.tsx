@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/cn';
 
 // 円形の進捗リングを表示するシンプルなコンポーネント
@@ -30,16 +31,17 @@ export default function ProgressCircle({
   className = '',
   progressColorClassName,
 }: ProgressCircleProps) {
+  const { t } = useTranslation('common');
   const clamped = Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0;
   const center = size / 2;
   const radius = Math.max((size - strokeWidth) / 2, strokeWidth / 2);
   const circumference = 2 * Math.PI * radius;
   const dashOffset = circumference * (1 - clamped);
   const percent = Math.round(clamped * 100);
-  const label = ariaLabel || `進行度 ${percent}%`;
+  const label = ariaLabel || t('progress.percent', { percent });
   const isComplete = showComplete && clamped >= 1;
   const iconSize = Math.max(12, Math.round(size * 0.5));
-  const legacyColorClasses = useMemo(() => extractTextColorClasses(className), [className]);
+  const legacyColorClasses = extractTextColorClasses(className);
   const progressColorClasses = progressColorClassName || legacyColorClasses || 'text-blue-600';
   const sizeStyle = useMemo(() => ({ width: `${size}px`, height: `${size}px` }), [size]);
   const baseCircleProps = {

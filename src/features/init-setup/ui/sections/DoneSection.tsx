@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import type { DoneSectionProps } from '../types';
 import Button from '@/components/ui/Button';
 import { cn } from '@/lib/cn';
@@ -8,6 +9,8 @@ import { action, layout, state, text } from '@/components/ui/_styles';
 const pulseStyle: CSSProperties = { animationDuration: '3s' };
 
 export default function DoneSection({ busy, onFinalize, onBack }: DoneSectionProps) {
+  const { t } = useTranslation(['initSetup', 'common']);
+
   return (
     <div className={cn(layout.centerCol, state.enterZoomIn95, 'w-full my-auto text-center duration-700')}>
       <div className="relative mb-10">
@@ -25,9 +28,9 @@ export default function DoneSection({ busy, onFinalize, onBack }: DoneSectionPro
         </div>
       </div>
 
-      <h2 className={text.heroTitle}>セットアップ完了</h2>
+      <h2 className={text.heroTitle}>{t('done.title')}</h2>
       <p className="text-slate-500 dark:text-slate-400 mb-12 leading-relaxed max-w-sm text-base">
-        すべての設定が完了しました
+        {t('done.description')}
       </p>
 
       <Button
@@ -38,7 +41,7 @@ export default function DoneSection({ busy, onFinalize, onBack }: DoneSectionPro
         onClick={onFinalize}
         disabled={busy}
       >
-        {busy ? <div className="spinner border-white" /> : 'AviUtl2 カタログを開く'}
+        {busy ? <div className="spinner border-white" /> : t('done.openApp')}
       </Button>
 
       <button
@@ -48,7 +51,7 @@ export default function DoneSection({ busy, onFinalize, onBack }: DoneSectionPro
         )}
         onClick={onBack}
       >
-        戻る
+        {t('common:actions.back')}
       </button>
     </div>
   );

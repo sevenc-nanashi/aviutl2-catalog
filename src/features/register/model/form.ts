@@ -2,7 +2,6 @@
  * register モジュールのエントリーポイント
  */
 export {
-  ACTION_LABELS,
   ID_PATTERN,
   INSTALL_ACTION_OPTIONS,
   INSTALL_ACTIONS,
@@ -11,6 +10,7 @@ export {
   PACKAGE_GUIDE_FALLBACK_URL,
   SPECIAL_INSTALL_ACTIONS,
   SUBMIT_ACTIONS,
+  SUPPORTED_SOURCE_LOCALES,
   UNINSTALL_ACTION_OPTIONS,
   UNINSTALL_ACTIONS,
 } from './constants';
@@ -24,9 +24,16 @@ export {
   createEmptyVersionFile,
 } from './factories';
 
-export { entryToForm, getFileExtension } from './parse';
+export { getFileExtension, sourcePackageToForm } from './parse';
 
-export { applyCatalogJsonPatch } from './catalogPatch';
+export { importSourceBundleJson } from './sourceBundleImport';
+export {
+  applyLocalizedContent,
+  captureLocalizedContent,
+  getRegisterSourceLocales,
+  storeCurrentLocalizedContent,
+  switchRegisterSourceLocale,
+} from './localizedContent';
 export {
   AU2PKG_ALLOWED_ROOTS,
   buildAu2pkgInstallSteps,
@@ -39,7 +46,8 @@ export {
 export {
   buildInstallerPayload,
   buildInstallerTestItem,
-  buildPackageEntry,
+  buildRegisterCatalogItem,
+  buildSourceSubmitPayload,
   computeHashFromFile,
   computeLatestVersion,
 } from './build';

@@ -27,11 +27,3 @@ export const EMPTY_SUCCESS_DIALOG: FeedbackSuccessDialogState = {
   message: '',
   url: '',
 };
-
-export const BUG_SUCCESS_MESSAGE = '不具合報告を送信しました。ご協力ありがとうございます。';
-export const INQUIRY_SUCCESS_MESSAGE = '意見/問い合わせを送信しました。ありがとうございます。';
-
-export const REQUIRED_FIELDS_ERROR = 'タイトルと詳細は必須です';
-export const SUBMIT_ENDPOINT_REQUIRED_ERROR = 'VITE_SUBMIT_ENDPOINT が設定されていません。';
-export const SUBMIT_ENDPOINT_HTTPS_ERROR = 'VITE_SUBMIT_ENDPOINT には https:// で始まるURLを設定してください。';
-export const SUBMIT_FAILED_ERROR = '送信に失敗しました。ネットワークや設定をご確認ください。';

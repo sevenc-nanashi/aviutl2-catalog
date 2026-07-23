@@ -1,14 +1,12 @@
 import { ExternalLink } from 'lucide-react';
+import { useMemo } from 'react';
 import type { CSSProperties } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { page } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
 import { openExternalLink } from '@/utils/externalLink';
 import { LINK_SECTIONS, type LinkEntry } from '../model/links';
-
-const SECTION_STYLE_MAP = Object.fromEntries(
-  LINK_SECTIONS.map((section) => [section.id, { '--links-base': section.baseColor } as CSSProperties]),
-) as Record<string, CSSProperties>;
 
 function isInternalHref(href: string): boolean {
   return href.startsWith('/');
@@ -23,7 +21,15 @@ function getDisplayHref(link: LinkEntry): string {
 }
 
 export default function LinksPage() {
+  const { t } = useTranslation('links');
   const navigate = useNavigate();
+  const sectionStyles = useMemo(
+    () =>
+      Object.fromEntries(
+        LINK_SECTIONS.map((section) => [section.id, { '--links-base': section.baseColor } as CSSProperties]),
+      ) as Record<(typeof LINK_SECTIONS)[number]['id'], CSSProperties>,
+    [],
+  );
 
   const handleOpenLink = async (link: LinkEntry) => {
     if (isInternalHref(link.href)) {
@@ -38,25 +44,26 @@ export default function LinksPage() {
     <div className={cn(page.container6xl, page.selectNone, page.enterFromBottom, 'space-y-10 pb-2')}>
       <header className="border-b border-slate-100 pb-6 dark:border-slate-800">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-800 dark:text-slate-100">リンク集</h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">関連サイトやサポート情報へのアクセス</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-800 dark:text-slate-100">
+            {t('page.title')}
+          </h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t('page.description')}</p>
         </div>
       </header>
 
       {LINK_SECTIONS.map((section) => {
         const SectionIcon = section.icon;
-        const sectionStyle = SECTION_STYLE_MAP[section.id];
 
         return (
-          <section key={section.id} className="links-section space-y-4" style={sectionStyle}>
+          <section key={section.id} className="links-section space-y-4" style={sectionStyles[section.id]}>
             <div className="flex items-center gap-3 border-b border-slate-100 pb-3 dark:border-slate-800">
               <div className="links-section__iconSurface flex h-10 w-10 items-center justify-center rounded-xl border shadow-sm">
                 <SectionIcon size={18} className="links-section__icon" />
               </div>
 
               <div className="min-w-0">
-                <h2 className="text-lg font-medium text-slate-700 dark:text-slate-200">{section.title}</h2>
-                <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{section.description}</p>
+                <h2 className="text-lg font-medium text-slate-700 dark:text-slate-200">{t(section.titleKey)}</h2>
+                <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{t(section.descriptionKey)}</p>
               </div>
             </div>
 
@@ -91,10 +98,10 @@ export default function LinksPage() {
                     <div className="relative mt-4 flex-1 space-y-2">
                       <div className="links-card__copy space-y-2">
                         <h3 className="links-card__title text-lg font-bold tracking-tight text-slate-900 dark:text-slate-50">
-                          {link.title}
+                          {t(link.titleKey)}
                         </h3>
                         <p className="line-clamp-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                          {link.description}
+                          {t(link.descriptionKey)}
                         </p>
                       </div>
                     </div>

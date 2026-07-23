@@ -3,6 +3,7 @@
  */
 import { memo, useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 import { cva } from 'class-variance-authority';
 import { Check, ChevronDown } from 'lucide-react';
@@ -43,6 +44,7 @@ const ActionDropdown = memo(function ActionDropdown({
   buttonId,
   ariaLabelledby,
 }: ActionDropdownProps) {
+  const { t } = useTranslation('register');
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
   const normalized = Array.isArray(options) ? options : [];
@@ -88,7 +90,7 @@ const ActionDropdown = memo(function ActionDropdown({
         aria-labelledby={ariaLabelledby}
       >
         <span className="truncate text-slate-700 dark:text-slate-200">
-          {selected?.label || (value ? `未対応: ${value}` : '')}
+          {selected?.label || (value ? t('page.unsupportedValue', { value }) : '')}
         </span>
         <span className={cn('text-slate-400 transition-transform duration-200', open ? 'rotate-180' : '')} aria-hidden>
           <ChevronDown size={16} />

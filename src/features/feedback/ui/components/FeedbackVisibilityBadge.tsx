@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import type { FeedbackVisibilityBadgeProps } from '../types';
 import { cn } from '@/lib/cn';
 
 export default function FeedbackVisibilityBadge({ type = 'public', label }: FeedbackVisibilityBadgeProps) {
-  const text = label || (type === 'public' ? '公開' : '非公開');
+  const { t } = useTranslation('feedback');
+  const text = label || (type === 'public' ? t('visibility.public') : t('visibility.private'));
   const tone =
     type === 'public'
       ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-900/20 dark:text-emerald-300'

@@ -7,10 +7,14 @@ import { isWeb } from '@/lib/target';
 const SETTINGS_FILE = 'settings.json';
 const settingsFileSchema = z.object({
   theme: z.string().optional(),
+  locale: z.string().optional(),
   aviutl2_root: z.string().optional(),
   is_portable_mode: z.boolean().optional(),
   package_state_opt_out: z.boolean().optional(),
   package_updates_paused_ids: z.array(z.string()).optional(),
+  deprecated_notice_dismissed_ids: z.array(z.string()).optional(),
+  local_mode_enabled: z.boolean().optional(),
+  local_manifest_path: z.string().optional(),
 });
 
 export type AppSettings = z.infer<typeof settingsFileSchema>;

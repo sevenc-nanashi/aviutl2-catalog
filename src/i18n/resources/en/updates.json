@@ -1,0 +1,37 @@
+{
+  "page": {
+    "title": "Update center",
+    "description": "Review packages with available updates",
+    "updateAll": "Update all"
+  },
+  "sections": {
+    "available": "Available updates",
+    "paused": "Paused",
+    "changelog": "What changed"
+  },
+  "empty": {
+    "available": "No packages are ready to update",
+    "loadingPaused": "Loading paused update settings...",
+    "paused": "No paused packages"
+  },
+  "table": {
+    "package": "Package",
+    "before": "Current",
+    "after": "Latest",
+    "resume": "Resume",
+    "pause": "Pause",
+    "update": "Update",
+    "saving": "Saving...",
+    "progressAria": "Update progress for {{name}}"
+  },
+  "errors": {
+    "bulkFailed": "Failed to update {{count}} packages (example: {{name}}: {{detail}})",
+    "updateFailed": "Update failed\n\n{{detail}}",
+    "pauseSaveFailed": "Could not save paused update settings\n\n{{detail}}"
+  },
+  "changelog": {
+    "loading": "Loading changelog...",
+    "empty": "No changelog entries are available.",
+    "loadFailed": "Failed to load the changelog."
+  }
+}

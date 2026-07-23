@@ -9,7 +9,7 @@ export default function PackageGridSection({
   onBeforeOpenDetail,
 }: PackageGridSectionProps) {
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(500px,1fr))] gap-6 pb-10">
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(500px,1fr))] gap-6">
       {filteredPackages.map((item) => (
         <PackageCard
           key={item.id}

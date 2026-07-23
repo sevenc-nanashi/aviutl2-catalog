@@ -1,0 +1,27 @@
+{
+  "versions": {
+    "title": "版本歷史",
+    "addVersion": "新增版本",
+    "githubReleaseHint": "如果使用 GitHub Releases，建議將版本名稱與發佈標籤設為相同的值。",
+    "showOlder": "顯示較舊的版本（{{count}}）",
+    "emptyTitle": "沒有版本資訊",
+    "emptyDescription": "請使用上方按鈕新增",
+    "versionUnset": "未設定版本",
+    "releaseDate": "發佈日期",
+    "releaseDateUnset": "未設定發佈日期",
+    "deleteVersion": "刪除此版本",
+    "versionName": "版本名稱",
+    "openCalendar": "開啟日曆",
+    "filesTitle": "檔案",
+    "filesHint": "請為主要檔案計算雜湊值。",
+    "addFile": "新增檔案",
+    "filesEmpty": "請至少新增一個檔案",
+    "fileLabel": "檔案 {{count}}",
+    "deleteFile": "刪除檔案 {{count}}",
+    "pathLabel": "安裝路徑",
+    "hashLabel": "雜湊值（xxh128）",
+    "hashMissing": "未計算",
+    "sourceFile": "原始檔名",
+    "chooseAndHash": "選擇檔案並計算雜湊"
+  }
+}

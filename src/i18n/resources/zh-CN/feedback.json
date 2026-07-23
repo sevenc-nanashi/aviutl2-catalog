@@ -1,0 +1,69 @@
+{
+  "header": {
+    "title": "反馈",
+    "description": "请报告问题或提供意见",
+    "issuesLink": "已报告的问题"
+  },
+  "shared": {
+    "optional": "（可选）",
+    "loading": "正在收集信息..."
+  },
+  "modes": {
+    "bug": "问题报告",
+    "inquiry": "意见/咨询"
+  },
+  "visibility": {
+    "public": "公开",
+    "private": "私密",
+    "publicTitle": "公开设置",
+    "privateTitle": "私密设置",
+    "publicDescription": "<strong>标题</strong>和<strong>详细内容</strong>将会公开。联系方式、附件、设备信息等元数据将保持私密。",
+    "privateDescription": "意见/咨询的内容不会公开。仅开发者可查看"
+  },
+  "fields": {
+    "title": "标题",
+    "detail": "详细内容",
+    "contact": "联系方式",
+    "bugTitlePlaceholder": "请输入问题的概要",
+    "bugDetailPlaceholder": "请详细填写发生情况、重现步骤、预期行为等",
+    "bugContactPlaceholder": "电子邮件地址或 X 账号（开发者可能会联系您）",
+    "inquiryTitlePlaceholder": "请输入主题",
+    "inquiryDetailPlaceholder": "请详细填写您的意见或咨询内容",
+    "inquiryContactPlaceholder": "电子邮件地址或 X 账号（必要时开发者会联系您）"
+  },
+  "attachments": {
+    "label": "附件",
+    "remove": "删除附件"
+  },
+  "environment": {
+    "title": "环境信息",
+    "includeApp": "附加应用信息",
+    "includeDevice": "附加设备信息",
+    "packages": "包列表：{{count}} 个",
+    "unknownVersion": "未知",
+    "driver": "驱动程序",
+    "cores": "物理核心",
+    "logical": "逻辑核心",
+    "maxClock": "最大频率",
+    "unavailable": "无法获取设备信息"
+  },
+  "log": {
+    "title": "日志文件",
+    "include": "附加 app.log",
+    "unavailable": "无法获取日志。"
+  },
+  "submit": {
+    "sending": "发送中..."
+  },
+  "messages": {
+    "bugSuccess": "问题报告已发送。感谢您的配合。",
+    "inquirySuccess": "意见/咨询已发送。非常感谢。"
+  },
+  "errors": {
+    "requiredFields": "标题和详细内容为必填项"
+  },
+  "payload": {
+    "bugTitlePrefix": "问题报告",
+    "inquiryTitlePrefix": "咨询"
+  }
+}

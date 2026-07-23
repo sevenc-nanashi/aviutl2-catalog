@@ -1,0 +1,27 @@
+{
+  "versions": {
+    "title": "버전 기록",
+    "addVersion": "새 버전 추가",
+    "githubReleaseHint": "GitHub Releases를 사용하는 경우 버전 이름과 릴리스 태그를 같은 값으로 맞추는 것을 권장합니다.",
+    "showOlder": "이전 버전 보기 ({{count}})",
+    "emptyTitle": "버전 정보가 없습니다",
+    "emptyDescription": "위 버튼으로 추가해 주세요",
+    "versionUnset": "버전 미설정",
+    "releaseDate": "릴리스 날짜",
+    "releaseDateUnset": "릴리스 날짜 미설정",
+    "deleteVersion": "이 버전 삭제",
+    "versionName": "버전 이름",
+    "openCalendar": "달력 열기",
+    "filesTitle": "파일",
+    "filesHint": "주요 파일의 해시를 계산해 주세요.",
+    "addFile": "파일 추가",
+    "filesEmpty": "최소 1개의 파일을 추가해 주세요",
+    "fileLabel": "파일 {{count}}",
+    "deleteFile": "파일 {{count}} 삭제",
+    "pathLabel": "설치 경로",
+    "hashLabel": "해시 (xxh128)",
+    "hashMissing": "미계산",
+    "sourceFile": "원본 파일명",
+    "chooseAndHash": "파일 선택 및 해시 계산"
+  }
+}

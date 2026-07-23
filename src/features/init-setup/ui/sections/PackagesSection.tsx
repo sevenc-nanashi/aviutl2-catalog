@@ -1,6 +1,8 @@
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
+import { getDetectedVersion, getInstalledVersionLabel } from '@/utils/detectResult';
 import { Check, CheckCircle2, Download } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import ProgressCircle from '@/components/ProgressCircle';
 import type { PackagesSectionProps } from '../types';
 import { cn } from '@/lib/cn';
@@ -18,10 +20,12 @@ export default function PackagesSection({
   onSkip,
   onInstallAndNext,
 }: PackagesSectionProps) {
+  const { t } = useTranslation(['initSetup', 'package', 'common']);
+
   return (
     <div className={cn(layout.centerCol, state.enterSlideRight500, 'h-full max-w-2xl w-full flex-1')}>
       <div className="text-center mb-6 mt-2 shrink-0">
-        <h2 className={text.title2xl}>推奨パッケージの導入</h2>
+        <h2 className={text.title2xl}>{t('packages.title')}</h2>
         {allRequiredInstalled ? (
           <p
             className={cn(
@@ -30,17 +34,17 @@ export default function PackagesSection({
             )}
           >
             <CheckCircle2 size={16} />
-            すべての推奨パッケージが導入済みです
+            {t('packages.allInstalled')}
           </p>
         ) : (
-          <p className={text.mutedSmMt2}>標準的な利用に必要となる基本プラグインをインストールします</p>
+          <p className={text.mutedSmMt2}>{t('packages.description')}</p>
         )}
       </div>
 
       {packagesLoading ? (
         <div className={cn(layout.centerCol, 'flex-1 gap-3 text-slate-400')}>
           <div className="spinner w-8 h-8 border-4 border-slate-200 dark:border-slate-800 border-t-blue-500" />
-          <span className="text-sm font-medium">パッケージ情報を取得中…</span>
+          <span className="text-sm font-medium">{t('packages.loading')}</span>
         </div>
       ) : (
         <>
@@ -50,6 +54,13 @@ export default function PackagesSection({
               const ratio = progress?.ratio ?? 0;
               const progressPercent = progress?.percent;
               const percent = Number.isFinite(progressPercent) ? progressPercent : Math.round(ratio * 100);
+              const detectedResult = packageVersions[id];
+              const detectedVersion = getDetectedVersion(detectedResult);
+              const installedVersionLabel = getInstalledVersionLabel(
+                detectedVersion,
+                detectedResult,
+                t('package:sidebar.versionUnknown'),
+              );
 
               return (
                 <div key={id} className={cn(surface.panel, 'group flex items-center gap-4 p-4 transition-all')}>
@@ -58,18 +69,18 @@ export default function PackagesSection({
                       <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
                         {item?.name || id}
                       </h3>
-                      {packageVersions[id] && (
+                      {installedVersionLabel && (
                         <Badge
                           shape="rounded"
                           size="xxs"
                           className="font-mono font-bold bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
                         >
-                          {packageVersions[id]}
+                          {installedVersionLabel}
                         </Badge>
                       )}
                     </div>
                     <p className={cn(text.mutedXsTruncate, 'leading-relaxed')}>
-                      {item?.summary || '詳細情報を取得できませんでした'}
+                      {item?.summary || t('packages.missingSummary')}
                     </p>
                   </div>
 
@@ -88,7 +99,7 @@ export default function PackagesSection({
                           value={ratio}
                           size={18}
                           strokeWidth={3}
-                          ariaLabel={`${item?.name || id} の進捗`}
+                          ariaLabel={t('packages.progressAria', { name: item?.name || id })}
                           className="text-blue-600 dark:text-blue-400"
                         />
                       </Badge>
@@ -101,7 +112,7 @@ export default function PackagesSection({
                           'bg-emerald-50 px-3 py-1.5 text-[10px] font-bold text-emerald-700 dark:border-emerald-500/20 dark:bg-emerald-500/10 dark:text-emerald-400',
                         )}
                       >
-                        <Check size={12} strokeWidth={4} /> インストール済
+                        <Check size={12} strokeWidth={4} /> {t('packages.installed')}
                       </Badge>
                     ) : (
                       <Badge
@@ -109,7 +120,7 @@ export default function PackagesSection({
                         size="sm"
                         className="bg-slate-100 px-3 py-1.5 text-[10px] font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-300"
                       >
-                        未インストール
+                        {t('packages.notInstalled')}
                       </Badge>
                     )}
                   </div>
@@ -128,7 +139,7 @@ export default function PackagesSection({
             )}
           >
             <Button variant="secondary" size="none" radius="xl" className={action.initSecondary} onClick={onBack}>
-              戻る
+              {t('common:actions.back')}
             </Button>
             <div className="flex items-center gap-4">
               {!allRequiredInstalled && (
@@ -140,7 +151,7 @@ export default function PackagesSection({
                   onClick={onSkip}
                   disabled={bulkDownloading}
                 >
-                  インストールせずに次へ
+                  {t('packages.skip')}
                 </Button>
               )}
               <Button
@@ -154,14 +165,14 @@ export default function PackagesSection({
                 {bulkDownloading ? (
                   <span className={layout.inlineGap2}>
                     <div className={action.spinnerWhite} />
-                    インストール中…
+                    {t('details.install.installing')}
                   </span>
                 ) : allRequiredInstalled ? (
-                  '次へ'
+                  t('common:actions.next')
                 ) : (
                   <span className={layout.inlineGap2}>
                     <Download size={18} />
-                    まとめてインストールして次へ
+                    {t('packages.installAndNext')}
                   </span>
                 )}
               </Button>

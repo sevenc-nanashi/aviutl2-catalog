@@ -1,11 +1,23 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import * as tauriShell from '@tauri-apps/plugin-shell';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useCatalog } from '@/utils/catalogStore';
 import { ipc } from '@/utils/invokeIpc';
 import usePausedPackageUpdates from '@/utils/usePausedPackageUpdates';
-import { filterByTagsAndType, getSorter, matchQuery, ORDERED_PACKAGE_TYPES } from '@/utils/query';
-import { installStatusFromQueryValue, sortOrderFromQuery, sortParamsFromOrder } from '../constants';
+import {
+  filterByTagsAndType,
+  getSorter,
+  matchQuery,
+  ORDERED_PACKAGE_TYPE_KEYS,
+  packageTypeKeyFromQueryValue,
+} from '@/utils/query';
+import {
+  deprecationStatusFromQueryValue,
+  installStatusFromQueryValue,
+  sortOrderFromQuery,
+  sortParamsFromOrder,
+} from '../constants';
 import {
   createSidebarRouteActionHandlers,
   resolveAppShellActivePage,
@@ -31,6 +43,17 @@ function toSortKey(rawSortKey: string | null): SortKey {
   return 'popularity';
 }
 
+function readStoredHomeSortOrder(search: string): HomeSortOrder | null {
+  if (new URLSearchParams(search).has('sort')) return null;
+  if (typeof window === 'undefined') return null;
+
+  const value = window.localStorage.getItem('home-sort-order');
+  if (value === 'trend_desc' || value === 'added_desc' || value === 'updated_desc') {
+    return value;
+  }
+  return null;
+}
+
 function readHomeRestoreState(value: unknown): HomeRestoreState | null {
   if (!value || typeof value !== 'object') return null;
   const restoreSearchFromQuery = (value as { restoreSearchFromQuery?: unknown }).restoreSearchFromQuery === true;
@@ -43,6 +66,7 @@ function readHomeRestoreState(value: unknown): HomeRestoreState | null {
 }
 
 export default function useAppShellState() {
+  const { t } = useTranslation('home');
   const location = useLocation();
   const navigate = useNavigate();
   const { items, allTags } = useCatalog();
@@ -55,24 +79,30 @@ export default function useAppShellState() {
   const previousIsHomeRef = useRef(false);
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { isLoaded: pausedPackageUpdatesLoaded, pausedPackageIdSet } = usePausedPackageUpdates();
+  const isHome = location.pathname === (isDesktop ? '/home' : '/');
+  const storedHomeSortOrder = useMemo(
+    () => (isHome ? readStoredHomeSortOrder(location.search) : null),
+    [isHome, location.search],
+  );
 
   const parseQuery = useMemo<ParsedHomeQuery>(() => {
     const params = new URLSearchParams(location.search);
+    const initialSortKey = storedHomeSortOrder ? sortParamsFromOrder(storedHomeSortOrder).sortKey : null;
     const q = params.get('q') || '';
-    const sortKey = toSortKey(params.get('sort'));
-    const dir = sortKey === 'newest' ? 'desc' : params.get('dir') === 'asc' ? 'asc' : 'desc';
-    const type = params.get('type') || '';
+    const sortKey = initialSortKey ?? toSortKey(params.get('sort'));
+    const dir = initialSortKey ? 'desc' : sortKey === 'newest' ? 'desc' : params.get('dir') === 'asc' ? 'asc' : 'desc';
+    const type = packageTypeKeyFromQueryValue(params.get('type'));
     const tags = (params.get('tags') || '').split(',').filter(Boolean);
     const installStatus = installStatusFromQueryValue(params.get('installed'));
-    return { q, sortKey, dir, type, tags, installStatus };
+    const deprecationStatus = deprecationStatusFromQueryValue(params.get('deprecated'));
+    return { q, sortKey, dir, type, tags, installStatus, deprecationStatus };
   }, [location.search]);
 
   const installStatus = parseQuery.installStatus;
-  const selectedCategory = parseQuery.type || 'すべて';
+  const deprecationStatus = parseQuery.deprecationStatus;
+  const selectedCategory = parseQuery.type;
   const selectedTags = parseQuery.tags;
   const sortOrder = sortOrderFromQuery(parseQuery.sortKey);
-
-  const isHome = location.pathname === (isDesktop ? '/home' : '/');
   const homeRestoreState = useMemo(
     () => (isHome ? readHomeRestoreState(location.state) : null),
     [isHome, location.state],
@@ -176,11 +206,17 @@ export default function useAppShellState() {
     return () => window.cancelAnimationFrame(frameId);
   }, [homeRestoreState?.restoreScroll, isHome, location.pathname]);
 
-  const categories = useMemo(() => ['すべて', ...ORDERED_PACKAGE_TYPES], []);
+  useLayoutEffect(() => {
+    if (!storedHomeSortOrder) return;
+    const { sortKey, dir } = sortParamsFromOrder(storedHomeSortOrder);
+    updateUrl({ sort: sortKey, dir });
+  }, [storedHomeSortOrder, updateUrl]);
+
+  const categories = ORDERED_PACKAGE_TYPE_KEYS;
 
   const filteredPackages = useMemo(() => {
     const base = parseQuery.q ? items.filter((item) => matchQuery(item, parseQuery.q)) : items;
-    const category = selectedCategory === 'すべて' ? '' : selectedCategory;
+    const category = selectedCategory === 'all' ? '' : selectedCategory;
     const filteredByTags = filterByTagsAndType(base, selectedTags, category ? [category] : []);
     const filteredByInstalled =
       installStatus === 'installed'
@@ -188,11 +224,27 @@ export default function useAppShellState() {
         : installStatus === 'not_installed'
           ? filteredByTags.filter((item: { installed?: boolean }) => !item.installed)
           : filteredByTags;
+    const filteredByDeprecation =
+      deprecationStatus === 'deprecated'
+        ? filteredByInstalled.filter((item: { deprecation?: unknown }) => Boolean(item.deprecation))
+        : deprecationStatus === 'active'
+          ? filteredByInstalled.filter((item: { deprecation?: unknown }) => !item.deprecation)
+          : filteredByInstalled;
     const sorter = getSorter(parseQuery.sortKey, parseQuery.dir);
-    return filteredByInstalled.toSorted(sorter);
-  }, [installStatus, items, parseQuery.dir, parseQuery.q, parseQuery.sortKey, selectedCategory, selectedTags]);
+    return filteredByDeprecation.toSorted(sorter);
+  }, [
+    deprecationStatus,
+    installStatus,
+    items,
+    parseQuery.dir,
+    parseQuery.q,
+    parseQuery.sortKey,
+    selectedCategory,
+    selectedTags,
+  ]);
 
-  const isFilterActive = installStatus !== 'all' || selectedCategory !== 'すべて' || selectedTags.length > 0;
+  const isFilterActive =
+    installStatus !== 'all' || deprecationStatus !== 'active' || selectedCategory !== 'all' || selectedTags.length > 0;
   const updateAvailableCount = useMemo(
     () =>
       pausedPackageUpdatesLoaded
@@ -214,11 +266,13 @@ export default function useAppShellState() {
   const clearFilters = useCallback(() => {
     pendingDraftSearchSyncRef.current = '';
     setDraftSearchQuery('');
-    updateUrl({ q: '', type: '', tags: [], installed: '' });
+    updateUrl({ q: '', type: '', tags: [], installed: '', deprecated: '' });
   }, [updateUrl]);
 
   const setSortOrder = useCallback(
     (order: HomeSortOrder) => {
+      if (order === 'popularity_desc') window.localStorage.removeItem('home-sort-order');
+      else window.localStorage.setItem('home-sort-order', order);
       const { sortKey, dir } = sortParamsFromOrder(order);
       updateUrl({ sort: sortKey, dir });
     },
@@ -230,27 +284,27 @@ export default function useAppShellState() {
       const dirs = await ipc.getAppDirs();
       const target = dirs && typeof dirs.aviutl2_data === 'string' ? dirs.aviutl2_data.trim() : '';
       if (!target) {
-        setError('データフォルダの場所を取得できませんでした。設定画面で AviUtl2 のフォルダを確認してください。');
+        setError(t('errors.dataDirUnavailable'));
         return;
       }
       const command = tauriShell.Command.create('explorer', [target]);
       await command.execute();
       return;
     } catch {
-      setError('データフォルダを開けませんでした。設定を確認してください。');
+      setError(t('errors.dataDirOpenFailed'));
     }
-  }, []);
+  }, [t]);
 
   const launchAviUtl2 = useCallback(async () => {
     try {
       await ipc.launchAviutl2();
     } catch (launchError) {
-      setError(typeof launchError === 'string' ? launchError : 'AviUtl2 の起動に失敗しました。');
+      setError(typeof launchError === 'string' ? launchError : t('errors.launchFailed'));
     }
-  }, []);
+  }, [t]);
 
-  const downloadCatalog = useCallback(async () => {
-    window.open('https://github.com/neosku/aviutl2-catalog', '_blank', 'noopener');
+  const downloadCatalog = useCallback(() => {
+    window.open('https://github.com/neosku/aviutl2-catalog', '_blank', 'noopener,noreferrer');
   }, []);
 
   const toggleSidebar = useCallback(() => setSidebarCollapsed((prev) => !prev), []);
@@ -260,10 +314,10 @@ export default function useAppShellState() {
       ...routeActionHandlers,
       'launch-aviutl2': launchAviUtl2,
       'open-data-dir': openDataDir,
-      'toggle-sidebar': toggleSidebar,
       'download-catalog': downloadCatalog,
+      'toggle-sidebar': toggleSidebar,
     }),
-    [launchAviUtl2, openDataDir, routeActionHandlers, toggleSidebar],
+    [downloadCatalog, launchAviUtl2, openDataDir, routeActionHandlers, toggleSidebar],
   );
 
   useEffect(() => {
@@ -286,7 +340,10 @@ export default function useAppShellState() {
   const outletContext = useMemo<HomeContextValue>(
     () => ({
       filteredPackages,
+      scrollContainerRef,
       saveHomeScrollPosition,
+      searchQuery: draftSearchQuery,
+      setSearchQuery: setSearchInput,
       selectedCategory,
       clearFilters,
       isFilterActive,
@@ -296,9 +353,10 @@ export default function useAppShellState() {
       sortOrder,
       setSortOrder,
       categories,
-      allTags: allTags || [],
+      allTags,
       selectedTags,
       installStatus,
+      deprecationStatus,
       toggleTag,
       updateUrl,
     }),
@@ -306,14 +364,18 @@ export default function useAppShellState() {
       allTags,
       categories,
       clearFilters,
+      deprecationStatus,
       installStatus,
       filteredPackages,
       isFilterActive,
       pausedPackageUpdatesLoaded,
       pausedPackageIdSet,
       saveHomeScrollPosition,
+      scrollContainerRef,
+      setSearchInput,
       selectedCategory,
       selectedTags,
+      draftSearchQuery,
       setSortOrder,
       sortOrder,
       toggleTag,
@@ -327,9 +389,6 @@ export default function useAppShellState() {
     setError,
     isSidebarCollapsed,
     activePage,
-    isHome,
-    displaySearchQuery: draftSearchQuery,
-    setSearchQuery: setSearchInput,
     scrollContainerRef,
     outletContext,
     updateAvailableCount,

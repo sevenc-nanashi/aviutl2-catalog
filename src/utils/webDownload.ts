@@ -1,4 +1,6 @@
-import type { InstallerSource } from './catalogSchema';
+import type { InstallerSource } from './installer/types';
+import type { InstallerRunnableItem } from './installer/types';
+import { resolveInstallableCatalogItem } from './catalogInstallItem';
 import { formatUnknownError } from './errors';
 
 type GitHubAsset = {
@@ -59,11 +61,11 @@ async function fetchNewestRelease(owner: string, repo: string): Promise<GitHubRe
 }
 
 export async function resolveWebDownloadUrl(source: InstallerSource): Promise<string> {
-  if ('direct' in source) {
-    return source.direct;
+  if (source.type === 'directUrl') {
+    return source.url;
   }
-  if ('github' in source) {
-    const { owner, repo, pattern } = source.github;
+  if (source.type === 'githubRelease') {
+    const { owner, repo, pattern } = source;
     let regex: RegExp;
     try {
       regex = new RegExp(pattern);
@@ -96,9 +98,9 @@ export function triggerBrowserDownload(url: string): void {
   document.body.removeChild(a);
 }
 
-export async function webDownloadPackage(item: { installer?: { source: InstallerSource } }): Promise<void> {
-  const source = item.installer?.source;
-  if (!source) throw new Error('No installer source');
-  const url = await resolveWebDownloadUrl(source);
+export async function webDownloadPackage(item: InstallerRunnableItem): Promise<void> {
+  const installableItem = await resolveInstallableCatalogItem(item);
+  if (!installableItem) throw new Error('No installer source');
+  const url = await resolveWebDownloadUrl(installableItem.installer.source);
   triggerBrowserDownload(url);
 }

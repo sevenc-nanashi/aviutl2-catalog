@@ -1,4 +1,4 @@
-import { InstallerSource } from './catalogSchema';
+import type { InstallerSource } from './installer/types';
 
 const allowedExtensions = [
   '.au2pkg.zip',
@@ -16,14 +16,14 @@ const allowedExtensions = [
 export function checkIsDirectDownloadSupported(item: { installer?: { source: InstallerSource } }): boolean {
   const source = item.installer?.source;
   if (!source) return false;
-  if ('direct' in source) {
-    return allowedExtensions.some((ext) => source.direct.endsWith(ext));
+  if (source.type === 'directUrl') {
+    return allowedExtensions.some((ext) => source.url.endsWith(ext));
   }
-  if ('github' in source) {
+  if (source.type === 'githubRelease') {
     return allowedExtensions.some(
       (ext) =>
-        source.github.pattern.endsWith(ext.replaceAll('.', '\\.') + '$') ||
-        source.github.pattern.endsWith(ext.replaceAll('.', '\\.')),
+        source.pattern.endsWith(ext.replaceAll('.', '\\.') + '$') ||
+        source.pattern.endsWith(ext.replaceAll('.', '\\.')),
     );
   }
 

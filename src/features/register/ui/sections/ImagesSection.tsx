@@ -2,6 +2,7 @@
  * サムネイル／説明画像のコンポーネント
  */
 import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as tauriDialog from '@tauri-apps/plugin-dialog';
 import * as tauriFs from '@tauri-apps/plugin-fs';
 import * as tauriWindow from '@tauri-apps/api/window';
@@ -77,6 +78,7 @@ const ImagePreviewLayer = memo(function ImagePreviewLayer({ preview, emptyLabel,
 });
 
 const InfoImageCard = memo(function InfoImageCard({ entryKey, filename, preview, onRemove }: InfoImageCardProps) {
+  const { t } = useTranslation('register');
   const previewStyle = useMemo(() => (preview ? { backgroundImage: `url(${preview})` } : undefined), [preview]);
   const handleRemove = useCallback(() => {
     onRemove(entryKey);
@@ -85,7 +87,7 @@ const InfoImageCard = memo(function InfoImageCard({ entryKey, filename, preview,
   return (
     <div className={imageCardClass}>
       <div className="relative aspect-video w-full bg-slate-100 dark:bg-slate-900">
-        <ImagePreviewLayer preview={preview} emptyLabel="No Preview" style={previewStyle} />
+        <ImagePreviewLayer preview={preview} emptyLabel={t('images.thumbnailPreviewEmpty')} style={previewStyle} />
         <div className={imageHoverOverlayClass} />
         <div className="absolute top-1 right-1 opacity-0 transition-opacity group-hover:opacity-100">
           <Button
@@ -95,7 +97,7 @@ const InfoImageCard = memo(function InfoImageCard({ entryKey, filename, preview,
             type="button"
             className="shadow-sm backdrop-blur-sm"
             onClick={handleRemove}
-            aria-label="削除"
+            aria-label={t('images.removeImage')}
           >
             <Trash2 size={14} />
           </Button>
@@ -119,6 +121,7 @@ const PackageImagesSection = memo(
     onAddInfoImages,
     onRemoveInfoImage,
   }: PackageImagesSectionProps) {
+    const { t } = useTranslation('register');
     const thumbnailRef = useRef<HTMLDivElement | null>(null);
     const infoRef = useRef<HTMLDivElement | null>(null);
     const [isDraggingOverThumbnail, setIsDraggingOverThumbnail] = useState(false);
@@ -148,7 +151,7 @@ const PackageImagesSection = memo(
       async (multiple: boolean): Promise<RegisterSelectedImageInput[]> => {
         try {
           const selection = await tauriDialog.open({
-            title: multiple ? '説明画像を選択' : 'サムネイル画像を選択',
+            title: multiple ? t('images.selectInfo') : t('images.selectThumbnail'),
             multiple,
             filters: [{ name: 'Image', extensions: ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp'] }],
           });
@@ -249,7 +252,7 @@ const PackageImagesSection = memo(
     return (
       <section className={surface.cardSection}>
         <div className={layout.rowBetweenWrapGap2}>
-          <h2 className={text.titleLg}>画像</h2>
+          <h2 className={text.titleLg}>{t('images.title')}</h2>
         </div>
         <div className="grid gap-6 lg:grid-cols-3">
           <div
@@ -261,12 +264,17 @@ const PackageImagesSection = memo(
           >
             <div className={layout.rowBetweenWrapGap3}>
               <div>
-                <h3 className={text.imageHeader}>サムネイル</h3>
-                <p className={text.mutedXs}>パッケージ一覧に表示します (1枚)</p>
+                <h3 className={text.imageHeader}>{t('images.thumbnailTitle')}</h3>
+                <p className={text.mutedXs}>{t('images.thumbnailDescription')}</p>
                 <p className="text-[11px] text-blue-500 dark:text-blue-400">
-                  ※推奨：縦横比1:1 (206×206px前後)
-                  <br />
-                  一覧を見やすくするため、可能であればご登録ください
+                  {t('images.thumbnailHint')
+                    .split('\n')
+                    .map((line, index) => (
+                      <span key={`${line}-${index}`}>
+                        {index > 0 ? <br /> : null}
+                        {line}
+                      </span>
+                    ))}
                 </p>
               </div>
               <Button
@@ -280,14 +288,14 @@ const PackageImagesSection = memo(
                 }}
               >
                 <ImagePlus size={16} />
-                <span>画像を選択</span>
+                <span>{t('images.selectImage')}</span>
               </Button>
             </div>
             {isDraggingOverThumbnail ? (
               <div className={cn(dragDropZoneClass, 'h-52')}>
                 <div className="text-center">
                   <Download size={32} className={bounceIconClass} />
-                  <span className="text-sm font-bold">ここにドロップして追加</span>
+                  <span className="text-sm font-bold">{t('images.dropToAdd')}</span>
                 </div>
               </div>
             ) : images.thumbnail ? (
@@ -295,7 +303,7 @@ const PackageImagesSection = memo(
                 <div className="relative aspect-square w-full bg-slate-100 dark:bg-slate-900">
                   <ImagePreviewLayer
                     preview={thumbnailPreview}
-                    emptyLabel="プレビューなし"
+                    emptyLabel={t('images.thumbnailPreviewEmpty')}
                     style={thumbnailPreviewStyle}
                   />
                   <div className={imageHoverOverlayClass} />
@@ -313,16 +321,16 @@ const PackageImagesSection = memo(
                     {images.thumbnail.file?.name ||
                       images.thumbnail.sourcePath ||
                       images.thumbnail.existingPath ||
-                      '未設定'}
+                      t('images.unset')}
                   </span>
-                  <DeleteButton onClick={onRemoveThumbnail} ariaLabel="サムネイルを削除" />
+                  <DeleteButton onClick={onRemoveThumbnail} ariaLabel={t('images.removeThumbnail')} />
                 </div>
               </div>
             ) : (
               <div className={cn(surface.dashedPlaceholder, 'h-52 dark:border-slate-700 dark:bg-slate-900/50')}>
                 <Image size={32} className="mb-2 opacity-50" />
-                <span className="text-xs font-medium">サムネイルが未設定です</span>
-                <span className={text.tinyMutedMt1}>画像をドラッグ＆ドロップ</span>
+                <span className="text-xs font-medium">{t('images.thumbnailEmpty')}</span>
+                <span className={text.tinyMutedMt1}>{t('images.dragAndDrop')}</span>
               </div>
             )}
           </div>
@@ -336,9 +344,9 @@ const PackageImagesSection = memo(
           >
             <div className={layout.rowBetweenWrapGap3}>
               <div>
-                <h3 className={text.imageHeader}>説明画像</h3>
-                <p className={text.mutedXs}>パッケージ詳細ページに表示する説明画像 (複数可)</p>
-                <p className="text-[10px] text-blue-500 dark:text-blue-400">※縦横比は16:9を推奨します</p>
+                <h3 className={text.imageHeader}>{t('images.infoTitle')}</h3>
+                <p className={text.mutedXs}>{t('images.infoDescription')}</p>
+                <p className="text-[10px] text-blue-500 dark:text-blue-400">{t('images.infoHint')}</p>
               </div>
               <Button
                 variant="muted"
@@ -351,14 +359,14 @@ const PackageImagesSection = memo(
                 }}
               >
                 <Images size={16} />
-                <span>画像を追加</span>
+                <span>{t('images.addImages')}</span>
               </Button>
             </div>
             {isDraggingOverInfo ? (
               <div className={cn(dragDropZoneClass, 'flex-1 min-h-[13rem]')}>
                 <div className="text-center">
                   <Download size={32} className={bounceIconClass} />
-                  <span className="text-sm font-bold">ここにドロップして追加</span>
+                  <span className="text-sm font-bold">{t('images.dropToAdd')}</span>
                 </div>
               </div>
             ) : images.info.length ? (
@@ -369,7 +377,7 @@ const PackageImagesSection = memo(
                     entry.file?.name ||
                     entry.sourcePath ||
                     entry.existingPath ||
-                    `./image/${packageId}_${idx + 1}.(拡張子)`;
+                    t('images.defaultInfoFilename', { packageId, index: idx + 1 });
                   return (
                     <InfoImageCard
                       key={entry.key}
@@ -389,8 +397,8 @@ const PackageImagesSection = memo(
                 )}
               >
                 <Image size={32} className="mb-2 opacity-50" />
-                <span className="text-xs font-medium">説明画像が未設定です</span>
-                <span className={text.tinyMutedMt1}>画像をドラッグ＆ドロップ</span>
+                <span className="text-xs font-medium">{t('images.infoEmpty')}</span>
+                <span className={text.tinyMutedMt1}>{t('images.dragAndDrop')}</span>
               </div>
             )}
           </div>

@@ -1,0 +1,123 @@
+{
+  "appName": "AviUtl2 目录",
+  "router": {
+    "loading": "加载中...",
+    "notFoundTitle": "找不到页面",
+    "notFoundDescription": "指定的页面不存在或已被移动。",
+    "goHome": "返回包列表"
+  },
+  "actions": {
+    "close": "关闭",
+    "back": "返回",
+    "next": "下一步",
+    "browse": "浏览",
+    "submit": "提交",
+    "preview": "预览",
+    "openPublicPage": "打开公开页面"
+  },
+  "labels": {
+    "id": "ID",
+    "type": "类型",
+    "author": "作者",
+    "tags": "标签",
+    "licenses": "许可证",
+    "summary": "摘要",
+    "description": "详细说明",
+    "niconiCommonsId": "ニコニ・コモンズID",
+    "noMatches": "无匹配项",
+    "senderNickname": "发送者昵称",
+    "targetPath": "目标路径"
+  },
+  "progress": {
+    "percent": "进度 {{percent}}%"
+  },
+  "status": {
+    "preparing": "准备中...",
+    "processing": "处理中...",
+    "done": "完成",
+    "error": "发生错误"
+  },
+  "installerActions": {
+    "download": "下载",
+    "extract": "解压中",
+    "copy": "复制中",
+    "delete": "删除中",
+    "run": "运行中"
+  },
+  "packageTypes": {
+    "core": "本体",
+    "mod": "MOD",
+    "inputPlugin": "导入插件",
+    "outputPlugin": "导出插件",
+    "generalPlugin": "通用插件",
+    "filterPlugin": "滤镜插件",
+    "script": "脚本",
+    "other": "其他"
+  },
+  "errors": {
+    "unknown": "未知错误",
+    "submitFailed": "提交失败。请检查网络连接和设置。",
+    "submitEndpointRequired": "未设置 VITE_SUBMIT_ENDPOINT。",
+    "submitEndpointHttps": "VITE_SUBMIT_ENDPOINT 必须设置为以 https:// 开头的 URL。",
+    "downloadSourceMissing": "未指定下载来源。",
+    "installerSourceInvalid": "installer.source 格式无效。",
+    "installerInstallStepInvalid": "installer.installSteps[{{index}}] 格式无效。",
+    "installerUninstallStepInvalid": "installer.uninstallSteps[{{index}}] 格式无效。"
+  },
+  "submit": {
+    "successDefault": "提交完成。",
+    "completeTitle": "提交完成"
+  },
+  "process": {
+    "checkFailed": "无法确认 AviUtl2 的运行状态：{{detail}}",
+    "running": "AviUtl2 正在运行。\n请先退出应用程序，然后再进行安装或卸载。"
+  },
+  "github": {
+    "rateLimit": "已达到 GitHub API 的主速率限制。请等待至 {{resetAt}} 后重试。"
+  },
+  "markdownAlerts": {
+    "note": "注释",
+    "tip": "提示",
+    "important": "重要",
+    "warning": "警告",
+    "caution": "注意"
+  },
+  "errorDialog": {
+    "eyebrow": "错误",
+    "defaultTitle": "发生错误",
+    "copy": "复制错误消息",
+    "copied": "已复制",
+    "closeAria": "关闭错误对话框"
+  },
+  "updateDialog": {
+    "eyebrow": "更新",
+    "title": "新版本可用",
+    "publishedOn": "发布日期 {{date}}",
+    "notesUnavailable": "无法获取更新内容的详细信息。",
+    "later": "以后提示",
+    "updating": "更新中...",
+    "updateNow": "立即更新",
+    "appliedMessage": "更新已应用。请重新启动应用程序。",
+    "failed": "更新失败。请检查网络连接或权限。"
+  },
+  "windowControls": {
+    "minimize": "最小化",
+    "maximize": "最大化",
+    "restore": "还原"
+  },
+  "backend": {
+    "windowTitles": {
+      "setup": "设置",
+      "main": "AviUtl2 目录",
+      "boothLogin": "BOOTH 登录"
+    },
+    "errors": {
+      "aviutlFolderRequired": "请选择 AviUtl2 文件夹。",
+      "packageIdEmpty": "包ID为空。",
+      "aviutlExeNotFound": "找不到 aviutl2.exe: {{path}}",
+      "launchAviutlFailed": "AviUtl2 启动失败: {{detail}}",
+      "exedit2NotInstalled": "尚未安装 Kenkun.AviUtlExEdit2。请安装后重新运行。",
+      "aviutlRootNotConfigured": "settings.json 中未设置 AviUtl2 的根文件夹。"
+    }
+  }
+}

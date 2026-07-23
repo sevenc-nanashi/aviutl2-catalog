@@ -1,6 +1,7 @@
 /**
  * 送信完了ダイアログコンポーネント
  */
+import { useTranslation } from 'react-i18next';
 import Button, { buttonVariants } from '@/components/ui/Button';
 import { Check, ExternalLink } from 'lucide-react';
 import type { RegisterSuccessDialogProps } from '../types';
@@ -13,14 +14,15 @@ export default function RegisterSuccessDialog({
   supportText,
   onClose,
 }: RegisterSuccessDialogProps) {
+  const { t } = useTranslation(['register', 'common']);
   if (!dialog.open) return null;
   return (
     <div className={layout.fixedCenterBlur} role="dialog" aria-modal="true" aria-labelledby="submit-success-title">
-      <button type="button" aria-label="閉じる" className={overlay.backdrop} onClick={onClose} />
+      <button type="button" aria-label={t('common:actions.close')} className={overlay.backdrop} onClick={onClose} />
       <div className={cn(surface.modal, layout.modalWidthLg, 'transform transition-all')}>
         <div className={surface.modalHeaderMuted}>
           <h3 id="submit-success-title" className={text.titleLg}>
-            送信が完了しました
+            {t('common:submit.completeTitle')}
           </h3>
         </div>
         <div className="px-6 py-6">
@@ -46,11 +48,11 @@ export default function RegisterSuccessDialog({
               rel="noreferrer noopener"
             >
               <ExternalLink size={16} />
-              公開ページを開く
+              {t('common:actions.openPublicPage')}
             </a>
           )}
           <Button variant="primary" size="actionSm" type="button" className="shadow-sm" onClick={onClose}>
-            閉じる
+            {t('common:actions.close')}
           </Button>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react';
+import type { ParseKeys } from 'i18next';
 import {
-  DownloadIcon,
+  Download,
   ExternalLink,
   FolderOpen,
   Link,
@@ -14,7 +15,7 @@ import {
 } from 'lucide-react';
 import aviutl2Icon from '../../../src-tauri/icons/aviutl2.png';
 import type { SidebarButtonVariant, SidebarIconProps, SidebarIconType } from './components/SidebarButton';
-import type { ActivePage } from './types';
+import { type ActivePage, HOME_LIST_RESTORE_STATE } from './types';
 import { isDesktop, isWeb } from '@/lib/target';
 
 type SidebarRoutePage = Exclude<ActivePage, '' | 'package'>;
@@ -30,8 +31,8 @@ export type SidebarActionId =
   | 'open-data-dir'
   | 'feedback'
   | 'settings'
-  | 'toggle-sidebar'
-  | 'download-catalog';
+  | 'download-catalog'
+  | 'toggle-sidebar';
 
 export type SidebarActionHandler = () => void | Promise<void>;
 export type SidebarActionHandlers = Record<SidebarActionId, SidebarActionHandler>;
@@ -45,15 +46,18 @@ interface SidebarRenderContext {
   activePage: ActivePage;
   isSidebarCollapsed: boolean;
   updateAvailableCount: number;
+  t: (key: SidebarTranslationKey) => string;
 }
+
+export type SidebarTranslationKey = ParseKeys<'nav'>;
 
 type SidebarItemLabelDefinition =
   | {
-      label: string;
+      labelKey: SidebarTranslationKey;
       getLabel?: never;
     }
   | {
-      label?: never;
+      labelKey?: never;
       getLabel: (context: SidebarRenderContext) => string;
     };
 
@@ -88,7 +92,7 @@ type SidebarRouteItemDefinition = SidebarItemDefinition & {
 
 export interface SidebarSectionDefinition {
   id: 'main-menu' | 'shortcuts' | 'app';
-  label?: string;
+  label?: SidebarTranslationKey;
   className?: string;
   labelClassName?: string;
   hideDivider?: boolean;
@@ -118,7 +122,7 @@ const niconiCommonsIcon = (
 
 const homeSidebarItem = {
   id: 'home',
-  label: 'パッケージ一覧',
+  labelKey: 'navigation.home',
   icon: PackageSearch,
   page: 'home',
   path: isDesktop ? '/home' : '/',
@@ -128,7 +132,7 @@ const homeSidebarItem = {
 
 const updatesSidebarItem = {
   id: 'updates',
-  label: 'アップデートセンター',
+  labelKey: 'navigation.updates',
   icon: RefreshCw,
   page: 'updates',
   path: '/updates',
@@ -138,7 +142,7 @@ const updatesSidebarItem = {
 
 const linksSidebarItem = {
   id: 'links',
-  label: 'リンク集',
+  labelKey: 'navigation.links',
   icon: Link,
   page: 'links',
   path: '/links',
@@ -148,7 +152,7 @@ const linksSidebarItem = {
 
 const niconiCommonsSidebarItem = {
   id: 'niconi-commons',
-  label: 'ニコニコモンズ',
+  labelKey: 'navigation.niconiCommons',
   icon: niconiCommonsIcon,
   page: 'niconi-commons',
   path: '/niconi-commons',
@@ -158,7 +162,7 @@ const niconiCommonsSidebarItem = {
 
 const registerSidebarItem = {
   id: 'register',
-  label: 'パッケージ登録',
+  labelKey: 'navigation.register',
   icon: PlusCircle,
   page: 'register',
   path: '/register',
@@ -168,7 +172,7 @@ const registerSidebarItem = {
 
 const feedbackSidebarItem = {
   id: 'feedback',
-  label: 'フィードバック',
+  labelKey: 'navigation.feedback',
   icon: MessagesSquare,
   page: 'feedback',
   path: '/feedback',
@@ -178,7 +182,7 @@ const feedbackSidebarItem = {
 
 const settingsSidebarItem = {
   id: 'settings',
-  label: '設定',
+  labelKey: 'navigation.settings',
   icon: Settings,
   page: 'settings',
   path: '/settings',
@@ -198,89 +202,93 @@ const SIDEBAR_ROUTE_ITEMS = [
 
 type SidebarRouteActionId = (typeof SIDEBAR_ROUTE_ITEMS)[number]['id'];
 
-export const SIDEBAR_SECTIONS: readonly SidebarSectionDefinition[] = isWeb
-  ? [
+const desktopSidebarSections: readonly SidebarSectionDefinition[] = [
+  {
+    id: 'main-menu',
+    label: 'sections.mainMenu',
+    labelClassName: 'mb-1',
+    hideDivider: true,
+    items: [homeSidebarItem, updatesSidebarItem, linksSidebarItem, niconiCommonsSidebarItem, registerSidebarItem],
+  },
+  {
+    id: 'shortcuts',
+    label: 'sections.shortcuts',
+    className: 'pt-2',
+    labelClassName: 'mt-2 mb-1',
+    items: [
       {
-        id: 'main-menu',
-        label: 'メインメニュー',
-        labelClassName: 'mb-1',
-        hideDivider: true,
-        items: [homeSidebarItem, linksSidebarItem],
+        id: 'launch-aviutl2',
+        labelKey: 'items.launchAviutl2',
+        icon: AviUtlIcon,
+        shortcut: { code: 'KeyA', label: 'Alt+A' },
+        rightIcon: ExternalLink,
       },
       {
-        id: 'shortcuts',
-        label: 'ショートカット',
-        className: 'pt-2',
-        labelClassName: 'mt-2 mb-1',
-        items: [
-          {
-            id: 'download-catalog',
-            label: 'カタログを導入',
-            icon: DownloadIcon,
-            rightIcon: ExternalLink,
-          },
-        ],
+        id: 'open-data-dir',
+        labelKey: 'items.openDataDir',
+        icon: FolderOpen,
+        shortcut: { code: 'KeyD', label: 'Alt+D' },
+        rightIcon: ExternalLink,
       },
+    ],
+  },
+  {
+    id: 'app',
+    className: 'mt-auto border-t border-slate-200 pt-3 dark:border-slate-800',
+    items: [
+      feedbackSidebarItem,
+      settingsSidebarItem,
       {
-        id: 'app',
-        className: 'mt-auto border-t border-slate-200 pt-3 dark:border-slate-800',
-        items: [
-          {
-            id: 'toggle-sidebar',
-            getLabel: ({ isSidebarCollapsed }) => (isSidebarCollapsed ? 'サイドバーを開く' : 'サイドバーを閉じる'),
-            getIcon: ({ isSidebarCollapsed }) => (isSidebarCollapsed ? PanelLeftOpen : PanelLeftClose),
-            variant: 'ghost',
-            shortcut: { code: 'KeyB', label: 'Alt+B' },
-          },
-        ],
+        id: 'toggle-sidebar',
+        getLabel: ({ isSidebarCollapsed, t }) =>
+          isSidebarCollapsed ? t('items.openSidebar') : t('items.closeSidebar'),
+        getIcon: ({ isSidebarCollapsed }) => (isSidebarCollapsed ? PanelLeftOpen : PanelLeftClose),
+        variant: 'ghost',
+        shortcut: { code: 'KeyB', label: 'Alt+B' },
       },
-    ]
-  : [
+    ],
+  },
+];
+
+const webSidebarSections: readonly SidebarSectionDefinition[] = [
+  {
+    id: 'main-menu',
+    label: 'sections.mainMenu',
+    labelClassName: 'mb-1',
+    hideDivider: true,
+    items: [homeSidebarItem, linksSidebarItem],
+  },
+  {
+    id: 'shortcuts',
+    label: 'sections.shortcuts',
+    className: 'pt-2',
+    labelClassName: 'mt-2 mb-1',
+    items: [
       {
-        id: 'main-menu',
-        label: 'メインメニュー',
-        labelClassName: 'mb-1',
-        hideDivider: true,
-        items: [homeSidebarItem, updatesSidebarItem, linksSidebarItem, niconiCommonsSidebarItem, registerSidebarItem],
+        id: 'download-catalog',
+        labelKey: 'items.downloadCatalog',
+        icon: Download,
+        rightIcon: ExternalLink,
       },
+    ],
+  },
+  {
+    id: 'app',
+    className: 'mt-auto border-t border-slate-200 pt-3 dark:border-slate-800',
+    items: [
       {
-        id: 'shortcuts',
-        label: 'ショートカット',
-        className: 'pt-2',
-        labelClassName: 'mt-2 mb-1',
-        items: [
-          {
-            id: 'launch-aviutl2',
-            label: 'AviUtl2を起動',
-            icon: AviUtlIcon,
-            shortcut: { code: 'KeyA', label: 'Alt+A' },
-            rightIcon: ExternalLink,
-          },
-          {
-            id: 'open-data-dir',
-            label: 'データフォルダを開く',
-            icon: FolderOpen,
-            shortcut: { code: 'KeyD', label: 'Alt+D' },
-            rightIcon: ExternalLink,
-          },
-        ],
+        id: 'toggle-sidebar',
+        getLabel: ({ isSidebarCollapsed, t }) =>
+          isSidebarCollapsed ? t('items.openSidebar') : t('items.closeSidebar'),
+        getIcon: ({ isSidebarCollapsed }) => (isSidebarCollapsed ? PanelLeftOpen : PanelLeftClose),
+        variant: 'ghost',
+        shortcut: { code: 'KeyB', label: 'Alt+B' },
       },
-      {
-        id: 'app',
-        className: 'mt-auto border-t border-slate-200 pt-3 dark:border-slate-800',
-        items: [
-          feedbackSidebarItem,
-          settingsSidebarItem,
-          {
-            id: 'toggle-sidebar',
-            getLabel: ({ isSidebarCollapsed }) => (isSidebarCollapsed ? 'サイドバーを開く' : 'サイドバーを閉じる'),
-            getIcon: ({ isSidebarCollapsed }) => (isSidebarCollapsed ? PanelLeftOpen : PanelLeftClose),
-            variant: 'ghost',
-            shortcut: { code: 'KeyB', label: 'Alt+B' },
-          },
-        ],
-      },
-    ];
+    ],
+  },
+];
+
+export const SIDEBAR_SECTIONS = isWeb ? webSidebarSections : desktopSidebarSections;
 
 export const SIDEBAR_SHORTCUTS = SIDEBAR_SECTIONS.flatMap((section) =>
   section.items.flatMap((item) => (item.shortcut ? [{ id: item.id, shortcut: item.shortcut }] : [])),
@@ -299,10 +307,10 @@ export function resolveAppShellActivePage(pathname: string): ActivePage {
 }
 
 export function createSidebarRouteActionHandlers(
-  navigate: (path: string) => void,
+  navigate: (path: string, options?: { state?: unknown }) => void,
 ): Pick<SidebarActionHandlers, SidebarRouteActionId> {
   return {
-    home: () => navigate(homeSidebarItem.path),
+    home: () => navigate(homeSidebarItem.path, { state: HOME_LIST_RESTORE_STATE }),
     links: () => navigate(linksSidebarItem.path),
     updates: () => navigate(updatesSidebarItem.path),
     'niconi-commons': () => navigate(niconiCommonsSidebarItem.path),
@@ -318,7 +326,7 @@ export function resolveSidebarItem(
 ): ResolvedSidebarItemDefinition {
   return {
     id: item.id,
-    label: item.getLabel ? item.getLabel(context) : item.label,
+    label: item.getLabel ? item.getLabel(context) : context.t(item.labelKey),
     icon: item.getIcon ? item.getIcon(context) : item.icon,
     variant: item.variant ?? 'default',
     isActive: item.page ? context.activePage === item.page : false,

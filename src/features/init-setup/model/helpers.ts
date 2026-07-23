@@ -1,4 +1,4 @@
-import * as windowApi from '@tauri-apps/api/window';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { logError } from '@/utils/logging';
 
 export function getErrorMessage(error: unknown): string {
@@ -27,8 +27,7 @@ export async function safeLog(prefix: string, error: unknown) {
 
 export async function fetchWindowLabel() {
   try {
-    const win = windowApi.getCurrentWindow();
-    return String(win.label || '');
+    return String(getCurrentWindow().label || '');
   } catch (error) {
     await safeLog('[init-window] get label failed', error);
     return '';

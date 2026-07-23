@@ -1,0 +1,27 @@
+{
+  "versions": {
+    "title": "バージョン履歴",
+    "addVersion": "新しいバージョンを追加",
+    "githubReleaseHint": "GitHub Release をご利用の場合は、バージョン名とリリースタグを同じ内容にしていただけますと助かります。",
+    "showOlder": "以前のバージョン ({{count}}件) を表示",
+    "emptyTitle": "バージョン情報がありません",
+    "emptyDescription": "右上のボタンから追加してください",
+    "versionUnset": "バージョン未設定",
+    "releaseDate": "公開日",
+    "releaseDateUnset": "公開日未設定",
+    "deleteVersion": "このバージョンを削除",
+    "versionName": "バージョン名",
+    "openCalendar": "カレンダーを開く",
+    "filesTitle": "ファイル構成",
+    "filesHint": "主要ファイルのハッシュ値を計算してください",
+    "addFile": "ファイルを追加",
+    "filesEmpty": "ファイルを追加してください",
+    "fileLabel": "File {{count}}",
+    "deleteFile": "ファイル{{count}}を削除",
+    "pathLabel": "保存先パス (インストール時)",
+    "hashLabel": "ハッシュ値 (xxh128)",
+    "hashMissing": "未計算",
+    "sourceFile": "元ファイル名",
+    "chooseAndHash": "ファイルを選択して計算"
+  }
+}

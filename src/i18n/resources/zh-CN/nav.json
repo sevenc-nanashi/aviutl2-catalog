@@ -1,0 +1,22 @@
+{
+  "navigation": {
+    "home": "包列表",
+    "updates": "更新中心",
+    "links": "链接集",
+    "niconiCommons": "ニコニコモンズ",
+    "register": "包注册",
+    "feedback": "反馈",
+    "settings": "设置"
+  },
+  "sections": {
+    "mainMenu": "主菜单",
+    "shortcuts": "快捷操作"
+  },
+  "items": {
+    "launchAviutl2": "启动 AviUtl2",
+    "openDataDir": "打开数据文件夹",
+    "downloadCatalog": "获取目录应用",
+    "openSidebar": "打开侧边栏",
+    "closeSidebar": "关闭侧边栏"
+  }
+}

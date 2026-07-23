@@ -1,5 +1,7 @@
 import { memo } from 'react';
 import { AppWindow, FileCode2, FileInput, FileOutput, Package, Puzzle, SlidersHorizontal } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { resolvePackageTypeLabel } from '@/features/package/model/helpers';
 import { placeholderPatternStyle } from '../helpers';
 import { getPrimaryPackageTypeMeta } from '@/utils/query';
 import { layout, media } from '@/components/ui/_styles';
@@ -9,6 +11,7 @@ interface PackageCardThumbnailSectionProps {
   thumbnail: string;
   itemName: string;
   category: string;
+  typeLabel?: string;
 }
 
 const categoryIconMap = {
@@ -20,9 +23,11 @@ const categoryIconMap = {
   'file-code-2': FileCode2,
 } as const;
 
-function PackageCardThumbnailSection({ thumbnail, itemName, category }: PackageCardThumbnailSectionProps) {
+function PackageCardThumbnailSection({ thumbnail, itemName, category, typeLabel }: PackageCardThumbnailSectionProps) {
+  const { t } = useTranslation('common');
   const packageTypeMeta = getPrimaryPackageTypeMeta(category);
   const CategoryIcon = packageTypeMeta ? categoryIconMap[packageTypeMeta.icon] : Package;
+  const categoryLabel = resolvePackageTypeLabel(category, t, t('packageTypes.other'), typeLabel);
 
   return (
     <div
@@ -55,7 +60,7 @@ function PackageCardThumbnailSection({ thumbnail, itemName, category }: PackageC
 
       <div className="absolute top-2 right-2 z-10">
         <span className="px-2 py-1 rounded-md bg-white/90 dark:bg-slate-900/80 border border-slate-200/50 dark:border-slate-700/50 text-[10px] text-slate-600 dark:text-slate-300 font-bold shadow-sm">
-          {category}
+          {categoryLabel}
         </span>
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import Input from '@/components/ui/Input';
 import Label from '@/components/ui/Label';
 import Textarea from '@/components/ui/Textarea';
@@ -35,11 +36,12 @@ export default function FeedbackBasicFieldsSection({
   detailPlaceholder,
   contactPlaceholder,
 }: FeedbackBasicFieldsSectionProps) {
+  const { t } = useTranslation('feedback');
   return (
     <div className="space-y-4">
       <div>
         <Label spacing="default" htmlFor={`${idPrefix}-title`}>
-          タイトル <span className="text-red-500">*</span>
+          {t('fields.title')} <span className="text-red-500">*</span>
         </Label>
         <Input
           id={`${idPrefix}-title`}
@@ -53,7 +55,7 @@ export default function FeedbackBasicFieldsSection({
 
       <div>
         <Label spacing="default" htmlFor={`${idPrefix}-detail`}>
-          詳細 <span className="text-red-500">*</span>
+          {t('fields.detail')} <span className="text-red-500">*</span>
         </Label>
         <Textarea
           id={`${idPrefix}-detail`}
@@ -68,7 +70,7 @@ export default function FeedbackBasicFieldsSection({
 
       <div>
         <Label spacing="default" htmlFor={`${idPrefix}-contact`}>
-          連絡先 <span className={`ml-1 ${text.optionalMuted}`}>(任意)</span>
+          {t('fields.contact')} <span className={`ml-1 ${text.optionalMuted}`}>{t('shared.optional')}</span>
         </Label>
         <Input
           id={`${idPrefix}-contact`}

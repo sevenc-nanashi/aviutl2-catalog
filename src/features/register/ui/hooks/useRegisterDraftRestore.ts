@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   getRegisterDraft,
   getRegisterDraftById,
@@ -8,13 +9,14 @@ import {
 import { cleanupImagePreviews } from '../../model/helpers';
 import type { RegisterDraftRecord } from '../../model/draft';
 import type { RegisterPackageForm } from '../../model/types';
+import type { RegisterMarkdownTab } from '../types';
 
 interface UseRegisterDraftRestoreArgs {
   selectedPackageId: string;
   setSelectedPackageId: React.Dispatch<React.SetStateAction<string>>;
   setPackageForm: React.Dispatch<React.SetStateAction<RegisterPackageForm>>;
   setPackageSender: React.Dispatch<React.SetStateAction<string>>;
-  setDescriptionTab: React.Dispatch<React.SetStateAction<string>>;
+  setDescriptionTab: React.Dispatch<React.SetStateAction<RegisterMarkdownTab>>;
   setExpandedVersionKeys: React.Dispatch<React.SetStateAction<Set<string>>>;
   setError: React.Dispatch<React.SetStateAction<string>>;
   applyTagList: (list: string[]) => void;
@@ -36,6 +38,7 @@ export default function useRegisterDraftRestore({
   activeDraftIdRef,
   reloadDraftPackages,
 }: UseRegisterDraftRestoreArgs) {
+  const { t } = useTranslation('register');
   const draftRestoreTokenRef = useRef(0);
   const skipNextSelectedRestoreIdRef = useRef('');
 
@@ -98,14 +101,14 @@ export default function useRegisterDraftRestore({
       const draft = getRegisterDraftById(draftId);
       if (!draft) {
         reloadDraftPackages();
-        setError('対象の一時保存が見つかりませんでした。');
+        setError(t('errors.draftNotFound'));
         return;
       }
       skipNextSelectedRestoreIdRef.current = draft.packageId;
       setSelectedPackageId(draft.packageId);
       await applyDraftRecord(draft);
     },
-    [applyDraftRecord, reloadDraftPackages, setError, setSelectedPackageId],
+    [applyDraftRecord, reloadDraftPackages, setError, setSelectedPackageId, t],
   );
 
   const restoreDraftForPackage = useCallback(

@@ -2,10 +2,10 @@
  * register UI 層で共有する型定義
  */
 import type { FormEvent, MouseEventHandler, PointerEvent } from 'react';
-import type { CatalogEntry } from '@/utils/catalogSchema';
 import type { Au2pkgImportSummary } from '../model/au2pkg';
 import type { RegisterDraftTestState } from '../model/registerTestRequirement';
 import type {
+  RegisterCatalogItem,
   RegisterImageState,
   RegisterInstallerOption,
   RegisterInstallerState,
@@ -17,6 +17,7 @@ import type {
 } from '../model/types';
 
 export type RegisterStepType = 'install' | 'uninstall';
+export type RegisterMarkdownTab = 'edit' | 'preview';
 export interface RefCell<T> {
   current: T;
 }
@@ -28,7 +29,7 @@ export interface InstallerTestProgress {
   phase: string;
 }
 
-export type RegisterTestOperationKind = 'download' | 'extract' | 'extract_sfx' | 'copy' | 'delete' | 'run' | 'error';
+export type RegisterTestOperationKind = 'download' | 'extract' | 'extractSfx' | 'copy' | 'delete' | 'run' | 'error';
 export type RegisterTestOperationStatus = 'done' | 'skip' | 'error';
 
 export interface RegisterTestOperation {
@@ -49,6 +50,7 @@ export interface SubmitPackagePayload {
   packageName: string;
   packageAuthor: string;
   labels: string[];
+  sourcePaths?: string[];
   sender?: string;
 }
 
@@ -185,11 +187,11 @@ export interface RegisterSuccessDialogProps {
 export interface RegisterSidebarProps {
   packageSearch: string;
   catalogLoadState: 'idle' | 'loading' | 'loaded' | 'error';
-  filteredPackages: CatalogEntry[];
+  filteredPackages: RegisterCatalogItem[];
   draftPackages: RegisterDraftListItemView[];
   selectedPackageId: string;
   onPackageSearchChange: (value: string) => void;
-  onSelectPackage: (item: CatalogEntry | null) => void;
+  onSelectPackage: (item: RegisterCatalogItem | null) => void;
   onStartNewPackage: () => void;
   onOpenDraftPackage: (draftId: string) => void;
   onDeleteDraftPackage: (draftId: string) => void;
@@ -210,13 +212,14 @@ export interface RegisterMetaSectionProps {
   packageForm: RegisterPackageForm;
   initialTags: string[];
   tagCandidates: string[];
+  onSwitchSourceLocale: (locale: string) => void;
   onUpdatePackageField: <K extends keyof RegisterPackageForm>(field: K, value: RegisterPackageForm[K]) => void;
   onTagsChange: (list: string[]) => void;
 }
 
 export interface RegisterDescriptionSectionProps {
   packageForm: RegisterPackageForm;
-  descriptionTab: string;
+  descriptionTab: RegisterMarkdownTab;
   descriptionLoading: boolean;
   descriptionPreviewHtml: string;
   isExternalDescription: boolean;
@@ -224,7 +227,22 @@ export interface RegisterDescriptionSectionProps {
   isExternalDescriptionLoaded: boolean;
   externalDescriptionStatus: string;
   onUpdatePackageField: <K extends keyof RegisterPackageForm>(field: K, value: RegisterPackageForm[K]) => void;
-  onSetDescriptionTab: (tab: string) => void;
+  onSetDescriptionTab: (tab: RegisterMarkdownTab) => void;
+}
+
+export interface RegisterChangelogSectionProps {
+  packageForm: RegisterPackageForm;
+  onUpdatePackageField: <K extends keyof RegisterPackageForm>(field: K, value: RegisterPackageForm[K]) => void;
+}
+
+export interface RegisterNoticeMarkdownSectionProps {
+  packageForm: RegisterPackageForm;
+  onUpdatePackageField: <K extends keyof RegisterPackageForm>(field: K, value: RegisterPackageForm[K]) => void;
+}
+
+export interface RegisterRelationsSectionProps {
+  packageForm: RegisterPackageForm;
+  onUpdatePackageField: <K extends keyof RegisterPackageForm>(field: K, value: RegisterPackageForm[K]) => void;
 }
 
 export interface RegisterPreviewSectionProps {
@@ -275,11 +293,14 @@ export interface RegisterFormLayoutProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   sidebar: RegisterSidebarProps;
   meta: RegisterMetaSectionProps;
+  relations: RegisterRelationsSectionProps;
   description: RegisterDescriptionSectionProps;
   license: PackageLicenseSectionProps;
+  noticeMarkdown: RegisterNoticeMarkdownSectionProps;
   images: PackageImagesSectionProps;
   installer: PackageInstallerSectionProps;
   versions: PackageVersionSectionProps;
+  changelog: RegisterChangelogSectionProps;
   preview: RegisterPreviewSectionProps;
   tests: RegisterTestSectionProps;
   submitBar: RegisterSubmitBarProps;

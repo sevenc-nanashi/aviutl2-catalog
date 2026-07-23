@@ -8,12 +8,17 @@ export default function PackageSidebarSection({
   listLinkState,
   updated,
   latest,
+  originalAuthor,
+  packagePageUrl,
   canInstall,
   busyAction,
   isBusy,
   progress,
+  hasNotice,
+  noticeLoading,
   renderableLicenses,
   licenseTypesLabel,
+  onOpenNotice,
   onOpenLicense,
   onDownload,
   onUpdate,
@@ -26,8 +31,13 @@ export default function PackageSidebarSection({
           item={item}
           updated={updated}
           latest={latest}
+          originalAuthor={originalAuthor}
+          packagePageUrl={packagePageUrl}
+          hasNotice={hasNotice}
+          noticeLoading={noticeLoading}
           renderableLicenses={renderableLicenses}
           licenseTypesLabel={licenseTypesLabel}
+          onOpenNotice={onOpenNotice}
           onOpenLicense={onOpenLicense}
         />
         <PackageSidebarActionsCard

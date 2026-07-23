@@ -1,0 +1,37 @@
+{
+  "page": {
+    "title": "업데이트 센터",
+    "description": "업데이트 가능한 패키지를 확인합니다",
+    "updateAll": "모두 업데이트"
+  },
+  "sections": {
+    "available": "사용 가능한 업데이트",
+    "paused": "일시 중지됨",
+    "changelog": "변경 내용"
+  },
+  "empty": {
+    "available": "업데이트할 수 있는 패키지가 없습니다",
+    "loadingPaused": "일시 중지된 업데이트 설정을 불러오는 중...",
+    "paused": "일시 중지된 패키지가 없습니다"
+  },
+  "table": {
+    "package": "패키지",
+    "before": "현재",
+    "after": "최신",
+    "resume": "재개",
+    "pause": "일시 중지",
+    "update": "업데이트",
+    "saving": "저장 중...",
+    "progressAria": "{{name}} 업데이트 진행률"
+  },
+  "errors": {
+    "bulkFailed": "{{count}}개 패키지 업데이트에 실패했습니다(예: {{name}}: {{detail}})",
+    "updateFailed": "업데이트 실패\n\n{{detail}}",
+    "pauseSaveFailed": "일시 중지된 업데이트 설정을 저장하지 못했습니다\n\n{{detail}}"
+  },
+  "changelog": {
+    "loading": "변경 기록을 불러오는 중...",
+    "empty": "표시할 변경 기록이 없습니다.",
+    "loadFailed": "변경 기록을 불러오지 못했습니다."
+  }
+}

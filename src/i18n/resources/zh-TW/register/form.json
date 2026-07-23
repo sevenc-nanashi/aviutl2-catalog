@@ -1,0 +1,138 @@
+{
+  "meta": {
+    "title": "基本資訊",
+    "idPlaceholder": "Kenkun.AviUtlExEdit2",
+    "idHint": "請使用 authorName.packageName 格式。僅允許字母、數字以及符號 . - _ 。",
+    "name": "套件名稱",
+    "namePlaceholder": "AviUtl2",
+    "author": "作者",
+    "authorPlaceholder": "KEN-kun",
+    "originalAuthor": "原作者（選填）",
+    "originalAuthorPlaceholder": "如果存在原始版本，請填寫此項",
+    "sourceLocale": "要編輯的語言",
+    "sourceLocaleHint": "編輯在此選擇的語言。支援語言為日文、英文、韓文、簡體中文與繁體中文。",
+    "sourceLocaleOptions": {
+      "ja": "日文",
+      "en": "英文",
+      "ko": "韓文",
+      "zh-CN": "簡體中文",
+      "zh-TW": "繁體中文"
+    },
+    "repoUrl": "套件網站",
+    "repoUrlPlaceholder": "用來說明此套件的 URL",
+    "niconiCommonsId": "Niconi Commons ID（選填）",
+    "packageRole": "套件角色",
+    "packageRoleHint": "若套件本身不向 AviUtl2 新增功能，只是其他套件運作所必需的套件，請選擇「輔助套件」。",
+    "packageRoleOptions": {
+      "primaryPackage": "主要套件",
+      "supportPackage": "輔助套件"
+    },
+    "deprecationEnabled": "標記為已棄用",
+    "deprecationMessage": "棄用訊息",
+    "deprecationHint": "如果你想將此套件標記為已棄用，請在這裡說明原因以及可替代的套件。",
+    "deprecationPlaceholder": "如果有可替代套件或遷移目標，請填寫"
+  },
+  "packageType": {
+    "suggestions": "類型清單",
+    "inputAria": "輸入套件類型",
+    "placeholder": "輸入類型或從清單中選擇",
+    "helper": "你可以從清單中選擇。如果缺少需要的類型，也可以手動輸入。"
+  },
+  "tags": {
+    "suggestions": "現有標籤",
+    "inputAria": "輸入標籤",
+    "placeholder": "輸入標籤（按 Enter 新增）",
+    "helper": "你可以從現有標籤中選擇。如果缺少需要的標籤，也可以手動輸入。"
+  },
+  "description": {
+    "summaryPlaceholder": "套件摘要（最多 35 個字元）",
+    "modeInline": "內嵌",
+    "modeExternal": "外部 MD 連結",
+    "markdown": "Markdown",
+    "tabEdit": "編輯",
+    "tabExternalEdit": "外部連結",
+    "externalUrlPlaceholder": "https://example.com/description.md",
+    "externalUrlHint": "請輸入 Markdown URL。",
+    "externalRawHint": "如果連結 GitHub 上的 Markdown，請使用以 https://raw.githubusercontent.com/ 開頭的 URL。",
+    "externalLoading": "正在載入連結內容...",
+    "externalLoaded": "Markdown 已載入",
+    "externalError": "載入 Markdown 失敗",
+    "bodyPlaceholder": "請輸入套件的詳細說明。支援 Markdown。建議說明它在 UI 中出現的位置、如何存取以及如何使用。也可以嵌入外部圖片。"
+  },
+  "changelog": {
+    "title": "變更記錄",
+    "body": "選填項目。設定後，可在更新中心與詳細畫面確認更新內容。",
+    "formatTitle": "變更記錄格式",
+    "formatBody": "請為每個版本建立 `## 版本名 日期(YYYY-MM-DD)` 標題，並確保版本名與上方版本歷史一致。\n每個版本內可使用 `###` 及之後層級的標題。\n建議用項目符號列表撰寫變更內容。\n\n範例:",
+    "formatExample": "# 更新履歴\n\n## 2.0.0 2025-07-07\n### 新功能\n- 新增功能1\n- 新增功能2\n\n### 修正\n- 修正1",
+    "externalUrl": "外部 Markdown URL"
+  },
+  "noticeMarkdown": {
+    "title": "注意事項",
+    "body": "選填項目。請輸入下載時要顯示給使用者的注意事項。",
+    "placeholder": "請用 Markdown 輸入注意事項。"
+  },
+  "markdownControls": {
+    "modeInline": "內嵌輸入",
+    "modeExternal": "外部 MD 連結"
+  },
+  "relations": {
+    "title": "相關套件",
+    "description": "全部都是選填項目。多個套件 ID 請用逗號分隔。",
+    "requires": "必要相依套件",
+    "recommends": "建議套件",
+    "conflicts": "衝突套件",
+    "similar": "類似套件",
+    "replaces": "取代目標套件",
+    "forkOf": "fork 來源套件",
+    "placeholder": "套件 ID（以逗號分隔）",
+    "forkOfPlaceholder": "套件 ID"
+  },
+  "license": {
+    "title": "授權",
+    "typeAria": "選擇授權類型",
+    "selectPlaceholder": "請選擇",
+    "name": "授權名稱",
+    "namePlaceholder": "輸入授權名稱",
+    "nameHint": "如果是自訂授權，請輸入 \"Custom License\"。",
+    "useTemplate": "使用範本",
+    "body": "授權本文",
+    "bodyPlaceholder": "輸入授權本文",
+    "templateHint": "正在使用範本。請輸入版權年份與版權持有人。",
+    "copyrightYears": "版權年份",
+    "copyrightYearsPlaceholder": "（例如：2025）",
+    "copyrightHolder": "版權持有人",
+    "copyrightHolderPlaceholder": "（例如：KEN-kun）",
+    "copy": "複製授權文字",
+    "copyTitle": "複製到剪貼簿",
+    "copySuccess": "已複製",
+    "copyError": "複製失敗",
+    "previewHint": "輸入授權類型與版權持有人後會顯示預覽。",
+    "typeOptions": {
+      "other": "其他",
+      "unknown": "未知"
+    }
+  },
+  "images": {
+    "title": "圖片",
+    "thumbnailTitle": "縮圖",
+    "thumbnailDescription": "顯示於套件清單（1 張圖片）",
+    "thumbnailHint": "建議：1:1 比例（約 206×206px）\n如果可以，建議加入一張以提升清單可讀性。",
+    "selectThumbnail": "選擇縮圖",
+    "selectImage": "選擇圖片",
+    "dropToAdd": "拖放到此處新增",
+    "thumbnailPreviewEmpty": "無預覽",
+    "unset": "未設定",
+    "removeThumbnail": "移除縮圖",
+    "thumbnailEmpty": "未設定縮圖",
+    "dragAndDrop": "拖放圖片",
+    "infoTitle": "說明圖片",
+    "infoDescription": "顯示於套件詳細頁（可多張）",
+    "infoHint": "建議比例：16:9",
+    "selectInfo": "選擇說明圖片",
+    "addImages": "新增圖片",
+    "infoEmpty": "未設定說明圖片",
+    "removeImage": "移除",
+    "defaultInfoFilename": "./image/{{packageId}}_{{index}}.(ext)"
+  }
+}

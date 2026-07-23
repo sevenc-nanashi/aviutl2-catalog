@@ -2,6 +2,7 @@ import { isbot } from 'isbot';
 import { renderToReadableStream } from 'react-dom/server';
 import type { AppLoadContext, EntryContext } from 'react-router';
 import { ServerRouter } from 'react-router';
+import { initializeI18n } from '@/i18n';
 
 const ABORT_DELAY = 5000;
 
@@ -12,6 +13,8 @@ export default async function handleRequest(
   remixContext: EntryContext,
   _loadContext: AppLoadContext,
 ) {
+  const requestedLocale = request.headers.get('accept-language')?.split(',')[0];
+  await initializeI18n(requestedLocale);
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), ABORT_DELAY);
 

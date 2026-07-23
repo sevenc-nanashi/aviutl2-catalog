@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle2, ExternalLink } from 'lucide-react';
 import Button, { buttonVariants } from '@/components/ui/Button';
 import type { FeedbackSuccessDialogProps } from '../types';
@@ -6,6 +7,7 @@ import { layout, surface, text } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
 
 export default function FeedbackSuccessDialog({ dialog, primaryText, onClose }: FeedbackSuccessDialogProps) {
+  const { t } = useTranslation(['feedback', 'common']);
   if (!dialog.open) return null;
   return createPortal(
     <div
@@ -16,7 +18,7 @@ export default function FeedbackSuccessDialog({ dialog, primaryText, onClose }: 
     >
       <button
         type="button"
-        aria-label="閉じる"
+        aria-label={t('common:actions.close')}
         className="absolute inset-0 cursor-pointer bg-black/30 backdrop-blur-[2px]"
         onClick={onClose}
       />
@@ -31,7 +33,7 @@ export default function FeedbackSuccessDialog({ dialog, primaryText, onClose }: 
             <CheckCircle2 size={18} />
           </div>
           <h3 id="submit-success-title" className={text.titleLg}>
-            送信完了
+            {t('common:submit.completeTitle')}
           </h3>
         </div>
 
@@ -48,7 +50,7 @@ export default function FeedbackSuccessDialog({ dialog, primaryText, onClose }: 
               rel="noreferrer noopener"
             >
               <ExternalLink size={16} />
-              公開ページを開く
+              {t('common:actions.openPublicPage')}
             </a>
           ) : null}
           <Button
@@ -58,7 +60,7 @@ export default function FeedbackSuccessDialog({ dialog, primaryText, onClose }: 
             className="cursor-pointer shadow-sm"
             onClick={onClose}
           >
-            閉じる
+            {t('common:actions.close')}
           </Button>
         </div>
       </div>

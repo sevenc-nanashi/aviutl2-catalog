@@ -1,0 +1,123 @@
+{
+  "appName": "AviUtl2 Catalog",
+  "router": {
+    "loading": "Loading...",
+    "notFoundTitle": "Page Not Found",
+    "notFoundDescription": "The page you requested does not exist or has been moved.",
+    "goHome": "Back to Package List"
+  },
+  "actions": {
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "browse": "Browse",
+    "submit": "Submit",
+    "preview": "Preview",
+    "openPublicPage": "Open public page"
+  },
+  "labels": {
+    "id": "ID",
+    "type": "Type",
+    "author": "Author",
+    "tags": "Tags",
+    "licenses": "Licenses",
+    "summary": "Summary",
+    "description": "Description",
+    "niconiCommonsId": "Niconi Commons ID",
+    "noMatches": "No matches",
+    "senderNickname": "Sender nickname",
+    "targetPath": "Target path"
+  },
+  "progress": {
+    "percent": "Progress {{percent}}%"
+  },
+  "status": {
+    "preparing": "Preparing...",
+    "processing": "Processing...",
+    "done": "Done",
+    "error": "An error occurred"
+  },
+  "installerActions": {
+    "download": "Downloading",
+    "extract": "Extracting",
+    "copy": "Copying",
+    "delete": "Removing",
+    "run": "Running"
+  },
+  "packageTypes": {
+    "core": "Core",
+    "mod": "Mod",
+    "inputPlugin": "Input Plugins",
+    "outputPlugin": "Output Plugins",
+    "generalPlugin": "General Plugins",
+    "filterPlugin": "Filter Plugins",
+    "script": "Script",
+    "other": "Other"
+  },
+  "errors": {
+    "unknown": "Unknown error",
+    "submitFailed": "Submission failed. Please check your Internet connection.",
+    "submitEndpointRequired": "VITE_SUBMIT_ENDPOINT is not configured.",
+    "submitEndpointHttps": "VITE_SUBMIT_ENDPOINT must start with https://.",
+    "downloadSourceMissing": "Download source is not specified.",
+    "installerSourceInvalid": "installer.source is invalid.",
+    "installerInstallStepInvalid": "installer.installSteps[{{index}}] is invalid.",
+    "installerUninstallStepInvalid": "installer.uninstallSteps[{{index}}] is invalid."
+  },
+  "submit": {
+    "successDefault": "Submission completed!",
+    "completeTitle": "Submitted"
+  },
+  "process": {
+    "checkFailed": "Could not check whether AviUtl2 is running: {{detail}}",
+    "running": "AviUtl2 is running!\nClose the app before installing or uninstalling packages."
+  },
+  "github": {
+    "rateLimit": "You have been ratelimited by GitHub's API. Retry after {{resetAt}}."
+  },
+  "markdownAlerts": {
+    "note": "Note",
+    "tip": "Tip",
+    "important": "Important",
+    "warning": "Warning",
+    "caution": "Caution"
+  },
+  "errorDialog": {
+    "eyebrow": "Error",
+    "defaultTitle": "Something went wrong",
+    "copy": "Copy error message",
+    "copied": "Copied",
+    "closeAria": "Close error dialog"
+  },
+  "updateDialog": {
+    "eyebrow": "Update",
+    "title": "A new version is available",
+    "publishedOn": "Published {{date}}",
+    "notesUnavailable": "Release notes are unavailable.",
+    "later": "Later",
+    "updating": "Updating...",
+    "updateNow": "Update Now",
+    "appliedMessage": "Update applied! Please restart the app.",
+    "failed": "The update failed. Check your network connection and permissions."
+  },
+  "windowControls": {
+    "minimize": "Minimize",
+    "maximize": "Maximize",
+    "restore": "Restore"
+  },
+  "backend": {
+    "windowTitles": {
+      "setup": "Setup",
+      "main": "AviUtl2 Catalog",
+      "boothLogin": "BOOTH Login"
+    },
+    "errors": {
+      "aviutlFolderRequired": "Please select the AviUtl2 folder.",
+      "packageIdEmpty": "The package ID is empty.",
+      "aviutlExeNotFound": "aviutl2.exe was not found: {{path}}",
+      "launchAviutlFailed": "Failed to launch AviUtl2: {{detail}}",
+      "exedit2NotInstalled": "Kenkun.AviUtlExEdit2 is not installed. Install it and try again.",
+      "aviutlRootNotConfigured": "The AviUtl2 root folder is not configured in settings.json."
+    }
+  }
+}

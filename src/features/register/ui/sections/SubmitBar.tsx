@@ -1,6 +1,7 @@
 /**
  * 送信バーコンポーネント
  */
+import { useTranslation } from 'react-i18next';
 import Button, { buttonVariants } from '@/components/ui/Button';
 import { BookOpen, FileBraces, Send } from 'lucide-react';
 import type { RegisterSubmitBarProps } from '../types';
@@ -19,15 +20,16 @@ export default function RegisterSubmitBar({
   onPackageSenderChange,
   onOpenJsonImport,
 }: RegisterSubmitBarProps) {
+  const { t } = useTranslation(['register', 'common']);
   const hasBlockedDrafts = blockedSubmitCount > 0;
   const canSubmit = pendingSubmitCount > 0 && !hasBlockedDrafts;
   const submitButtonLabel = submitting
-    ? submittingLabel || '送信中…'
+    ? submittingLabel || t('submitBar.submitting')
     : hasBlockedDrafts
-      ? `テスト未完了 (${blockedSubmitCount}件)`
+      ? t('submitBar.blocked', { count: blockedSubmitCount })
       : pendingSubmitCount <= 1
-        ? '送信する'
-        : `${pendingSubmitCount}件まとめて送信`;
+        ? t('common:actions.submit')
+        : t('submitBar.submitMany', { count: pendingSubmitCount });
 
   return (
     <section
@@ -38,26 +40,26 @@ export default function RegisterSubmitBar({
           {packageGuideUrl && (
             <a className={utilityLinkButtonClass} href={packageGuideUrl} target="_blank" rel="noreferrer noopener">
               <BookOpen size={16} />
-              説明サイト
+              {t('submitBar.guide')}
             </a>
           )}
           <Button variant="secondary" size="actionSm" type="button" onClick={onOpenJsonImport}>
             <FileBraces size={16} />
-            JSON入力
+            {t('submitBar.jsonImport')}
           </Button>
         </div>
         <div className={layout.inlineGap3}>
           <div className="hidden sm:flex items-center gap-3">
             <span className={cn(layout.dividerRightMuted, text.mutedXs, 'text-[11px]')}>
-              作者の方はできる限りご入力ください
+              {t('submitBar.authorHint')}
             </span>
             <input
               type="text"
               value={packageSender}
               onChange={(e) => onPackageSenderChange(e.target.value)}
-              placeholder="送信者のニックネーム"
+              placeholder={t('common:labels.senderNickname')}
               className="min-w-[200px]"
-              aria-label="送信者のニックネーム"
+              aria-label={t('common:labels.senderNickname')}
             />
           </div>
           <Button

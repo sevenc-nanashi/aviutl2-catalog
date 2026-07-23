@@ -2,6 +2,7 @@
  * バージョン情報コンポーネント
  */
 import { memo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 import { ChevronUp, History, Plus } from 'lucide-react';
 import type { PackageVersionSectionProps } from '../types';
@@ -23,6 +24,7 @@ const PackageVersionSection = memo(
     openDatePicker,
     versionDateRefs,
   }: PackageVersionSectionProps) {
+    const { t } = useTranslation('register');
     const [showAll, setShowAll] = useState(false);
     const hiddenCount = versions.length - 3;
     const visibleVersions = showAll ? versions : versions.slice(Math.max(0, versions.length - 3));
@@ -30,16 +32,14 @@ const PackageVersionSection = memo(
     return (
       <section className={surface.cardSection}>
         <div className={layout.rowBetweenWrapGap2}>
-          <h2 className={text.titleLg}>バージョン履歴</h2>
+          <h2 className={text.titleLg}>{t('versions.title')}</h2>
           <Button variant="primary" size="xs" type="button" className="shadow-sm" onClick={addVersion}>
             <Plus size={16} />
-            <span>新しいバージョンを追加</span>
+            <span>{t('versions.addVersion')}</span>
           </Button>
         </div>
         <div className="space-y-4">
-          <p className={text.bodySmMuted}>
-            GitHub Release をご利用の場合は、バージョン名とリリースタグを同じ内容にしていただけますと助かります。
-          </p>
+          <p className={text.bodySmMuted}>{t('versions.githubReleaseHint')}</p>
           {!showAll && hiddenCount > 0 && (
             <Button
               variant="plain"
@@ -49,7 +49,7 @@ const PackageVersionSection = memo(
               onClick={() => setShowAll(true)}
             >
               <ChevronUp size={14} />
-              <span>以前のバージョン ({hiddenCount}件) を表示</span>
+              <span>{t('versions.showOlder', { count: hiddenCount })}</span>
             </Button>
           )}
           {visibleVersions.map((ver) => (
@@ -71,8 +71,8 @@ const PackageVersionSection = memo(
           {!versions.length && (
             <div className={cn(surface.dashedPlaceholder, 'h-32 text-slate-500 dark:text-slate-400')}>
               <History size={32} className="mb-2 opacity-50" />
-              <p className="text-sm font-medium">バージョン情報がありません</p>
-              <p className="text-xs opacity-70">右上のボタンから追加してください</p>
+              <p className="text-sm font-medium">{t('versions.emptyTitle')}</p>
+              <p className="text-xs opacity-70">{t('versions.emptyDescription')}</p>
             </div>
           )}
         </div>

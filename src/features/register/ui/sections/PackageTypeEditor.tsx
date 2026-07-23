@@ -1,30 +1,37 @@
 import { memo, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { packageTypeKeyToTranslationKey, PRIMARY_PACKAGE_TYPES } from '@/utils/query';
 import SelectableChipInput from '../components/SelectableChipInput';
-import { PRIMARY_PACKAGE_TYPES } from '@/utils/query';
 
 interface PackageTypeEditorProps {
   value: string;
   onChange?: (next: string) => void;
 }
 
-const PACKAGE_TYPE_SUGGESTIONS = PRIMARY_PACKAGE_TYPES.map((entry) => entry.label);
-
 const PackageTypeEditor = memo(function PackageTypeEditor({ value, onChange }: PackageTypeEditorProps) {
+  const { t } = useTranslation(['register', 'common']);
   const normalizedValue = String(value || '').trim();
   const selectedValues = useMemo(() => (normalizedValue ? [normalizedValue] : []), [normalizedValue]);
+  const suggestions = useMemo(
+    () =>
+      PRIMARY_PACKAGE_TYPES.map((entry) =>
+        t(`common:packageTypes.${packageTypeKeyToTranslationKey(entry.key)}`, { defaultValue: entry.label }),
+      ),
+    [t],
+  );
 
   return (
     <SelectableChipInput
-      label="種類"
+      label={t('common:labels.type')}
       inputId="package-type"
       inputName="type"
       values={selectedValues}
-      suggestions={PACKAGE_TYPE_SUGGESTIONS}
-      suggestionsLabel="種類一覧"
+      suggestions={suggestions}
+      suggestionsLabel={t('packageType.suggestions')}
       onChange={(next) => onChange?.(next[0] || '')}
-      inputAriaLabel="種類を入力"
-      placeholder="種類を入力または一覧から選択"
-      helperText="一覧から選択できます。候補にない種類は手入力で追加できます。"
+      inputAriaLabel={t('packageType.inputAria')}
+      placeholder={t('packageType.placeholder')}
+      helperText={t('packageType.helper')}
       required
       multiple={false}
       commitOnBlur

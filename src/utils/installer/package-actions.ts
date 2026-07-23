@@ -1,14 +1,14 @@
+import { i18n } from '@/i18n';
+import { MISSING_DETECT_RESULT } from '../detectResult';
 import { detectInstalledVersionsMap, loadInstalledMap, removeInstalledId } from '../installed-map';
 import type { CatalogDispatch } from '../catalogStore';
 import { runInstallerForItem } from './install';
 import { hasInstaller } from './shape';
-import type { InstallProgressPayload, InstallerRunnableItem } from './types';
+import type { Installer, InstallProgressPayload, InstallerRunnableItem } from './types';
 import { runUninstallerForItem } from './uninstall';
 
-function hasUninstallScript(item: InstallerRunnableItem): boolean {
-  const installer =
-    typeof item.installer === 'object' && item.installer ? (item.installer as { uninstall?: unknown }) : null;
-  return Array.isArray(installer?.uninstall) && installer.uninstall.length > 0;
+function hasUninstallScript(item: InstallerRunnableItem & { installer: Installer }): boolean {
+  return item.installer.uninstallSteps.length > 0;
 }
 
 async function syncRemovedPackageState(
@@ -22,8 +22,10 @@ async function syncRemovedPackageState(
     dispatch({ type: 'SET_INSTALLED_MAP', payload: installedMap });
 
     const detectedMap = await detectInstalledVersionsMap([item]);
-    const detectedVersion = String(detectedMap?.[item.id] || '');
-    dispatch({ type: 'SET_DETECTED_ONE', payload: { id: item.id, version: detectedVersion } });
+    dispatch({
+      type: 'SET_DETECTED_ONE',
+      payload: { id: item.id, result: detectedMap[item.id] ?? MISSING_DETECT_RESULT },
+    });
   }
 }
 
@@ -31,7 +33,7 @@ export async function runPackageInstallAction(
   item: InstallerRunnableItem,
   dispatch: CatalogDispatch | null | undefined,
   onProgress?: (progress: InstallProgressPayload) => void,
-  missingInstallerMessage: string = 'インストーラーがありません',
+  missingInstallerMessage: string = i18n.t('package:actions.missingInstaller'),
 ): Promise<void> {
   if (!hasInstaller(item)) throw new Error(missingInstallerMessage);
   await runInstallerForItem(item, dispatch, onProgress);

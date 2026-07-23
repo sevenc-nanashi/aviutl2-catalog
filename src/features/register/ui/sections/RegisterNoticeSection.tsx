@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import { Info } from 'lucide-react';
 import { layout, surface } from '@/components/ui/_styles';
 import { cn } from '@/lib/cn';
 
 export default function RegisterNoticeSection() {
+  const { t } = useTranslation('register');
   return (
     <section>
       <div
@@ -14,9 +16,11 @@ export default function RegisterNoticeSection() {
       >
         <Info size={20} className="mt-0.5 flex-shrink-0 text-blue-500" />
         <div>
-          このフォームに入力するプラグイン情報はすべて公開されます。
-          <br />
-          パッケージ登録は作者本人でなくてもどなたでも行えます。
+          {t('notice.body')
+            .split('\n')
+            .map((line, index) => (
+              <div key={`${line}-${index}`}>{line}</div>
+            ))}
         </div>
       </div>
     </section>

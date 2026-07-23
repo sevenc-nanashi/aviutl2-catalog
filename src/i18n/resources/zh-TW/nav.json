@@ -1,0 +1,22 @@
+{
+  "navigation": {
+    "home": "套件清單",
+    "updates": "更新中心",
+    "links": "連結",
+    "niconiCommons": "Niconi Commons",
+    "register": "套件登錄",
+    "feedback": "回饋",
+    "settings": "設定"
+  },
+  "sections": {
+    "mainMenu": "主選單",
+    "shortcuts": "捷徑"
+  },
+  "items": {
+    "launchAviutl2": "啟動 AviUtl2",
+    "openDataDir": "開啟資料夾",
+    "downloadCatalog": "取得目錄應用程式",
+    "openSidebar": "開啟側邊欄",
+    "closeSidebar": "關閉側邊欄"
+  }
+}

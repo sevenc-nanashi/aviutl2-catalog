@@ -1,0 +1,66 @@
+{
+  "page": {
+    "title": "Links",
+    "description": "Access related sites and support resources\n(Note: Some information may be only available in Japanese.)"
+  },
+  "sections": {
+    "official": {
+      "title": "AviUtl2",
+      "description": "Official AviUtl2 sites and related references"
+    },
+    "community": {
+      "title": "Community",
+      "description": "AviUtl2 community links"
+    },
+    "support": {
+      "title": "Support",
+      "description": "Support links for AviUtl2 Catalog"
+    },
+    "developers": {
+      "title": "For developers",
+      "description": "Resources for developers who publish packages to AviUtl2 Catalog"
+    },
+    "catalog": {
+      "title": "GitHub repositories",
+      "description": "GitHub repositories related to AviUtl2 Catalog"
+    }
+  },
+  "entries": {
+    "official-site": {
+      "title": "Official site",
+      "description": "The official site of AviUtl2 (Japanese only)"
+    },
+    "official-changelog": {
+      "title": "Changelog (by Nanashi.)",
+      "description": "An unofficial site for checking AviUtl2's release history (Japanese only)"
+    },
+    "community-discord": {
+      "title": "Discord",
+      "description": "An unofficial Discord community for discussions and questions regarding AviUtl2"
+    },
+    "support-feedback": {
+      "title": "Feedback",
+      "description": "Form for bug reports, feature requests, and inquiries"
+    },
+    "support-register": {
+      "title": "Package registration",
+      "description": "Form for adding new packages to the catalog, or updating existing entries"
+    },
+    "developers-register-guide": {
+      "title": "How to publish a package",
+      "description": "Guide explaining how to publish a package"
+    },
+    "developers-update-status": {
+      "title": "Auto-update support status",
+      "description": "Document summarizing auto-update support for listed packages"
+    },
+    "catalog-github-app": {
+      "title": "AviUtl2 Catalog repository",
+      "description": "The GitHub repository for the AviUtl2 Catalog app"
+    },
+    "catalog-github-data": {
+      "title": "Catalog data repository",
+      "description": "The GitHub repository for package listing data"
+    }
+  }
+}

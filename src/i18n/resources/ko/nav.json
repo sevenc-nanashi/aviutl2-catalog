@@ -1,0 +1,22 @@
+{
+  "navigation": {
+    "home": "패키지 목록",
+    "updates": "업데이트 센터",
+    "links": "링크",
+    "niconiCommons": "Niconi Commons",
+    "register": "패키지 등록",
+    "feedback": "피드백",
+    "settings": "설정"
+  },
+  "sections": {
+    "mainMenu": "메인 메뉴",
+    "shortcuts": "바로가기"
+  },
+  "items": {
+    "launchAviutl2": "AviUtl2 실행",
+    "openDataDir": "데이터 폴더 열기",
+    "downloadCatalog": "카탈로그 앱 받기",
+    "openSidebar": "사이드바 열기",
+    "closeSidebar": "사이드바 닫기"
+  }
+}

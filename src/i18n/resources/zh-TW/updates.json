@@ -1,0 +1,37 @@
+{
+  "page": {
+    "title": "更新中心",
+    "description": "查看可更新的套件",
+    "updateAll": "全部更新"
+  },
+  "sections": {
+    "available": "可用更新",
+    "paused": "已暫停",
+    "changelog": "更新內容"
+  },
+  "empty": {
+    "available": "沒有可更新的套件",
+    "loadingPaused": "正在載入暫停的更新設定...",
+    "paused": "沒有已暫停的套件"
+  },
+  "table": {
+    "package": "套件",
+    "before": "目前",
+    "after": "最新",
+    "resume": "繼續",
+    "pause": "暫停",
+    "update": "更新",
+    "saving": "儲存中...",
+    "progressAria": "{{name}} 的更新進度"
+  },
+  "errors": {
+    "bulkFailed": "{{count}} 個套件更新失敗（例如：{{name}}：{{detail}}）",
+    "updateFailed": "更新失敗\n\n{{detail}}",
+    "pauseSaveFailed": "無法儲存已暫停的更新設定\n\n{{detail}}"
+  },
+  "changelog": {
+    "loading": "正在載入更新紀錄...",
+    "empty": "沒有可顯示的更新紀錄。",
+    "loadFailed": "無法載入更新紀錄。"
+  }
+}

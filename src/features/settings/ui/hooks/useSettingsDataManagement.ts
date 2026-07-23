@@ -1,21 +1,39 @@
 import { useCallback, useState } from 'react';
 import * as tauriDialog from '@tauri-apps/plugin-dialog';
 import * as tauriFs from '@tauri-apps/plugin-fs';
+import { useTranslation } from 'react-i18next';
 import type { Dispatch, SetStateAction } from 'react';
-import type { CatalogAction, CatalogEntryState } from '@/utils/catalogStore';
+import type { CatalogAction, CatalogStorePackage } from '@/utils/catalogStore';
+import { resolveInstallableCatalogItem } from '@/utils/catalogInstallItem';
+import { isInstalledDetectResult } from '@/utils/detectResult';
 import { detectInstalledVersionsMap, loadInstalledMap, saveInstalledSnapshot } from '@/utils/installed-map';
 import { hasInstaller, runInstallerForItem, runUninstallerForItem } from '@/utils/installer';
 import { logError } from '@/utils/logging';
 import { normalizeInstalledImport, toErrorMessage } from '../../model/helpers';
 
 interface UseSettingsDataManagementParams {
-  catalogItems: CatalogEntryState[];
+  catalogItems: CatalogStorePackage[];
   dispatch: Dispatch<CatalogAction>;
   setError: Dispatch<SetStateAction<string>>;
 }
 
-function hasUninstaller(item: CatalogEntryState | null | undefined): boolean {
-  return Array.isArray(item?.installer?.uninstall) && item.installer.uninstall.length > 0;
+async function logSettingsDataError(message: string, error: unknown): Promise<void> {
+  try {
+    await logError(`[settings] ${message}: ${toErrorMessage(error, 'unknown')}`);
+  } catch {}
+}
+
+async function showDialogMessage(
+  message: string,
+  options: { title: string; kind: 'info' | 'warning' | 'error' },
+): Promise<void> {
+  try {
+    await tauriDialog.message(message, options);
+  } catch {}
+}
+
+function hasUninstaller(item: Awaited<ReturnType<typeof resolveInstallableCatalogItem>> | null | undefined): boolean {
+  return Array.isArray(item?.installer?.uninstallSteps) && item.installer.uninstallSteps.length > 0;
 }
 
 export default function useSettingsDataManagement({
@@ -23,6 +41,7 @@ export default function useSettingsDataManagement({
   dispatch,
   setError,
 }: UseSettingsDataManagementParams) {
+  const { t } = useTranslation(['settings', 'common']);
   const [syncBusy, setSyncBusy] = useState(false);
   const [syncStatus, setSyncStatus] = useState('');
 
@@ -30,7 +49,7 @@ export default function useSettingsDataManagement({
     if (syncBusy) return;
     setError('');
     setSyncBusy(true);
-    setSyncStatus('エクスポート先を選択しています…');
+    setSyncStatus(t('dataManagement.status.pickExport'));
     try {
       const now = new Date();
       const stamp = [
@@ -39,48 +58,44 @@ export default function useSettingsDataManagement({
         String(now.getDate()).padStart(2, '0'),
       ].join('');
       const output = await tauriDialog.save({
-        title: 'パッケージ一覧のエクスポート',
+        title: t('dataManagement.dialogs.exportTitle'),
         defaultPath: `installed-export-${stamp}.json`,
         filters: [{ name: 'JSON', extensions: ['json'] }],
       });
       const savePath = Array.isArray(output) ? output[0] : output;
       if (typeof savePath !== 'string' || !savePath.trim()) return;
 
-      setSyncStatus('エクスポートを作成中…');
+      setSyncStatus(t('dataManagement.status.exporting'));
       const installed = await loadInstalledMap();
       await tauriFs.writeTextFile(savePath, JSON.stringify(installed || {}, null, 2));
-      try {
-        await tauriDialog.message('エクスポートを保存しました。', { title: 'エクスポート', kind: 'info' });
-      } catch {}
+      await showDialogMessage(t('dataManagement.messages.exportSaved'), {
+        title: t('dataManagement.dialogs.exportTitle'),
+        kind: 'info',
+      });
     } catch (exportError) {
-      setError('エクスポートに失敗しました。\n権限や保存先を確認してください。');
-      try {
-        await logError(`[settings] export failed: ${toErrorMessage(exportError, 'unknown')}`);
-      } catch {}
+      setError(t('dataManagement.errors.exportFailed'));
+      await logSettingsDataError('export failed', exportError);
     } finally {
       setSyncBusy(false);
       setSyncStatus('');
     }
-  }, [setError, syncBusy]);
+  }, [setError, syncBusy, t]);
 
   const onImport = useCallback(async () => {
     if (syncBusy) return;
     setError('');
     setSyncBusy(true);
-    setSyncStatus('インポート準備中…');
+    setSyncStatus(t('dataManagement.status.prepareImport'));
     try {
-      const ok = await tauriDialog.confirm(
-        'インポート内容に合わせてパッケージをインストール/削除します。\n続行しますか？',
-        {
-          title: 'インポート',
-          kind: 'warning',
-        },
-      );
+      const ok = await tauriDialog.confirm(t('dataManagement.messages.importConfirm'), {
+        title: t('dataManagement.import'),
+        kind: 'warning',
+      });
       if (!ok) return;
 
-      setSyncStatus('インポートファイルを選択しています…');
+      setSyncStatus(t('dataManagement.status.pickImport'));
       const selected = await tauriDialog.open({
-        title: 'インポートファイルを選択',
+        title: t('dataManagement.dialogs.importFileTitle'),
         multiple: false,
         directory: false,
         filters: [{ name: 'JSON', extensions: ['json'] }],
@@ -88,33 +103,33 @@ export default function useSettingsDataManagement({
       const selectedPath = Array.isArray(selected) ? selected[0] : selected;
       if (typeof selectedPath !== 'string' || !selectedPath.trim()) return;
 
-      setSyncStatus('インポートファイルを読み込み中…');
+      setSyncStatus(t('dataManagement.status.readingImport'));
       const raw = await tauriFs.readTextFile(selectedPath);
 
       let parsed: unknown;
       try {
         parsed = JSON.parse(raw || '{}');
       } catch {
-        throw new Error('インポートファイルのJSONを読み込めませんでした。');
+        throw new Error(t('dataManagement.errors.invalidJson'));
       }
 
       const targetMap = normalizeInstalledImport(parsed);
       const targetIds = Object.keys(targetMap);
-      if (!targetIds.length) throw new Error('インポートファイルの内容が空です。');
+      if (!targetIds.length) throw new Error(t('dataManagement.errors.emptyImport'));
       const targetIdSet = new Set(targetIds);
 
-      if (!catalogItems.length) throw new Error('カタログ情報が読み込まれていません。');
+      if (!catalogItems.length) throw new Error(t('dataManagement.errors.catalogMissing'));
 
       const idToItem = new Map(catalogItems.map((item) => [item.id, item] as const));
       const unknownIds = targetIds.filter((id) => !idToItem.has(id));
 
-      setSyncStatus('インストール状態を検出中…');
+      setSyncStatus(t('dataManagement.status.detecting'));
       const detected = await detectInstalledVersionsMap(catalogItems);
       const currentIds = Object.entries(detected || {})
-        .filter(([, version]) => Boolean(version))
+        .filter(([, result]) => isInstalledDetectResult(result))
         .map(([id]) => id);
 
-      const toInstall = targetIds.filter((id) => idToItem.has(id) && !detected?.[id]);
+      const toInstall = targetIds.filter((id) => idToItem.has(id) && !isInstalledDetectResult(detected?.[id]));
       const toRemove = currentIds.filter((id) => !targetIdSet.has(id));
 
       const skippedInstall: string[] = [];
@@ -127,52 +142,65 @@ export default function useSettingsDataManagement({
       for (let i = 0; i < toInstall.length; i += 1) {
         const id = toInstall[i];
         const item = idToItem.get(id);
-        if (!item || !hasInstaller(item)) {
+        if (!item) {
+          skippedInstall.push(id);
+          continue;
+        }
+        const resolvedItem = await resolveInstallableCatalogItem(item);
+        if (!resolvedItem || !hasInstaller(resolvedItem)) {
           skippedInstall.push(id);
           continue;
         }
         const label = item.name ? `${item.name} (${id})` : id;
-        setSyncStatus(`インストール中… (${i + 1}/${toInstall.length}) ${label}`);
+        setSyncStatus(t('dataManagement.status.installing', { current: i + 1, total: toInstall.length, label }));
         try {
-          await runInstallerForItem(item, dispatch);
+          await runInstallerForItem(resolvedItem, dispatch);
           installedCount += 1;
         } catch (installError) {
-          failedInstall.push(`${id}: ${toErrorMessage(installError, '不明なエラー')}`);
+          failedInstall.push(`${id}: ${toErrorMessage(installError, t('common:errors.unknown'))}`);
         }
       }
 
       for (let i = 0; i < toRemove.length; i += 1) {
         const id = toRemove[i];
         const item = idToItem.get(id);
-        if (!item || !hasUninstaller(item)) {
+        if (!item) {
+          skippedRemove.push(id);
+          continue;
+        }
+        const resolvedItem = await resolveInstallableCatalogItem(item);
+        if (!resolvedItem || !hasUninstaller(resolvedItem)) {
           skippedRemove.push(id);
           continue;
         }
         const label = item.name ? `${item.name} (${id})` : id;
-        setSyncStatus(`アンインストール中… (${i + 1}/${toRemove.length}) ${label}`);
+        setSyncStatus(t('dataManagement.status.removing', { current: i + 1, total: toRemove.length, label }));
         try {
-          await runUninstallerForItem(item, dispatch);
+          await runUninstallerForItem(resolvedItem, dispatch);
           removedCount += 1;
         } catch (removeError) {
-          failedRemove.push(`${id}: ${toErrorMessage(removeError, '不明なエラー')}`);
+          failedRemove.push(`${id}: ${toErrorMessage(removeError, t('common:errors.unknown'))}`);
         }
       }
 
-      setSyncStatus('インストール状態を更新中…');
+      setSyncStatus(t('dataManagement.status.refreshing'));
       const finalDetected = await detectInstalledVersionsMap(catalogItems);
       dispatch({ type: 'SET_DETECTED_MAP', payload: finalDetected });
       const snapshot = normalizeInstalledImport(await saveInstalledSnapshot(finalDetected));
       dispatch({ type: 'SET_INSTALLED_MAP', payload: snapshot });
 
       const summary = [
-        `インストール: ${installedCount}/${toInstall.length}件`,
-        `削除: ${removedCount}/${toRemove.length}件`,
+        t('dataManagement.summary.installed', { installed: installedCount, total: toInstall.length }),
+        t('dataManagement.summary.removed', { removed: removedCount, total: toRemove.length }),
       ];
-      if (unknownIds.length) summary.push(`未登録ID: ${unknownIds.join(', ')}`);
-      if (skippedInstall.length) summary.push(`インストール不可: ${skippedInstall.join(', ')}`);
-      if (skippedRemove.length) summary.push(`削除不可: ${skippedRemove.join(', ')}`);
-      if (failedInstall.length) summary.push(`インストール失敗: ${failedInstall.join(', ')}`);
-      if (failedRemove.length) summary.push(`削除失敗: ${failedRemove.join(', ')}`);
+      if (unknownIds.length) summary.push(t('dataManagement.summary.unknownIds', { ids: unknownIds.join(', ') }));
+      if (skippedInstall.length)
+        summary.push(t('dataManagement.summary.skippedInstall', { ids: skippedInstall.join(', ') }));
+      if (skippedRemove.length)
+        summary.push(t('dataManagement.summary.skippedRemove', { ids: skippedRemove.join(', ') }));
+      if (failedInstall.length)
+        summary.push(t('dataManagement.summary.failedInstall', { ids: failedInstall.join(', ') }));
+      if (failedRemove.length) summary.push(t('dataManagement.summary.failedRemove', { ids: failedRemove.join(', ') }));
 
       const hasIssues =
         unknownIds.length > 0 ||
@@ -180,22 +208,18 @@ export default function useSettingsDataManagement({
         skippedRemove.length > 0 ||
         failedInstall.length > 0 ||
         failedRemove.length > 0;
-      try {
-        await tauriDialog.message(summary.join('\n'), {
-          title: 'インポート結果',
-          kind: hasIssues ? 'warning' : 'info',
-        });
-      } catch {}
+      await showDialogMessage(summary.join('\n'), {
+        title: t('dataManagement.dialogs.importResultTitle'),
+        kind: hasIssues ? 'warning' : 'info',
+      });
     } catch (importError) {
-      setError(toErrorMessage(importError, 'インポートに失敗しました。'));
-      try {
-        await logError(`[settings] import failed: ${toErrorMessage(importError, 'unknown')}`);
-      } catch {}
+      setError(toErrorMessage(importError, t('dataManagement.errors.importFailed')));
+      await logSettingsDataError('import failed', importError);
     } finally {
       setSyncBusy(false);
       setSyncStatus('');
     }
-  }, [catalogItems, dispatch, setError, syncBusy]);
+  }, [catalogItems, dispatch, setError, syncBusy, t]);
 
   return {
     syncBusy,

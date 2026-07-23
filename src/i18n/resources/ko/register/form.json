@@ -1,0 +1,138 @@
+{
+  "meta": {
+    "title": "기본 정보",
+    "idPlaceholder": "Kenkun.AviUtlExEdit2",
+    "idHint": "authorName.packageName 형식을 사용해 주세요. 영문자, 숫자, 기호 . - _ 만 사용할 수 있습니다.",
+    "name": "패키지 이름",
+    "namePlaceholder": "AviUtl2",
+    "author": "작성자",
+    "authorPlaceholder": "KEN-kun",
+    "originalAuthor": "원저작자 (선택 사항)",
+    "originalAuthorPlaceholder": "원본 버전이 있는 경우 입력해 주세요",
+    "sourceLocale": "편집할 언어",
+    "sourceLocaleHint": "여기에서 선택한 언어를 편집합니다. 지원 언어는 일본어, 영어, 한국어, 중국어 간체, 중국어 번체입니다.",
+    "sourceLocaleOptions": {
+      "ja": "일본어",
+      "en": "영어",
+      "ko": "한국어",
+      "zh-CN": "중국어 간체",
+      "zh-TW": "중국어 번체"
+    },
+    "repoUrl": "패키지 사이트",
+    "repoUrlPlaceholder": "패키지를 설명하는 URL",
+    "niconiCommonsId": "Niconi Commons ID (선택 사항)",
+    "packageRole": "패키지 역할",
+    "packageRoleHint": "AviUtl2 본체에 기능을 추가하지 않고 다른 패키지의 동작에만 필요한 패키지는 \"보조 패키지\"를 선택해 주세요.",
+    "packageRoleOptions": {
+      "primaryPackage": "기본 패키지",
+      "supportPackage": "보조 패키지"
+    },
+    "deprecationEnabled": "지원 종료로 표시",
+    "deprecationMessage": "지원 종료 메시지",
+    "deprecationHint": "이 패키지를 지원 종료로 표시하려면 이유와 대체 패키지를 여기에 설명해 주세요.",
+    "deprecationPlaceholder": "가능하면 대체 패키지나 이전 대상을 입력해 주세요"
+  },
+  "packageType": {
+    "suggestions": "유형 목록",
+    "inputAria": "패키지 유형 입력",
+    "placeholder": "유형을 입력하거나 목록에서 선택해 주세요",
+    "helper": "목록에서 선택할 수 있습니다. 원하는 유형이 없으면 직접 입력할 수 있습니다."
+  },
+  "tags": {
+    "suggestions": "기존 태그",
+    "inputAria": "태그 입력",
+    "placeholder": "태그를 입력해 주세요 (Enter로 추가)",
+    "helper": "기존 태그에서 선택할 수 있습니다. 원하는 태그가 없으면 직접 입력할 수 있습니다."
+  },
+  "description": {
+    "summaryPlaceholder": "패키지 요약 (최대 35자)",
+    "modeInline": "직접 입력",
+    "modeExternal": "외부 MD 링크",
+    "markdown": "Markdown",
+    "tabEdit": "편집",
+    "tabExternalEdit": "외부 링크",
+    "externalUrlPlaceholder": "https://example.com/description.md",
+    "externalUrlHint": "Markdown URL을 입력해 주세요.",
+    "externalRawHint": "GitHub의 Markdown을 링크할 때는 https://raw.githubusercontent.com/ 로 시작하는 URL을 사용해 주세요.",
+    "externalLoading": "링크된 내용을 불러오는 중...",
+    "externalLoaded": "Markdown 로드 완료",
+    "externalError": "Markdown 로드 실패",
+    "bodyPlaceholder": "패키지 상세 내용을 입력해 주세요. Markdown을 지원합니다. UI에서 어디에 표시되는지, 어떻게 접근하고 사용하는지 설명하면 도움이 됩니다. 외부 이미지도 포함할 수 있습니다."
+  },
+  "changelog": {
+    "title": "변경 이력",
+    "body": "선택 사항입니다. 설정하면 업데이트 센터와 상세 화면에서 업데이트 내용을 확인할 수 있습니다.",
+    "formatTitle": "변경 이력 형식",
+    "formatBody": "버전마다 `## 버전명 날짜(YYYY-MM-DD)` 제목을 만들고, 버전명은 위의 버전 이력과 맞춰 주세요.\n각 버전 안에서는 `###` 이후의 제목을 사용할 수 있습니다.\n변경 내용은 글머리 기호 목록으로 작성하는 것을 권장합니다.\n\n예:",
+    "formatExample": "# 更新履歴\n\n## 2.0.0 2025-07-07\n### 새 기능\n- 기능 추가 1\n- 기능 추가 2\n\n### 수정\n- 수정 1",
+    "externalUrl": "외부 Markdown URL"
+  },
+  "noticeMarkdown": {
+    "title": "주의사항",
+    "body": "선택 사항입니다. 다운로드 시 사용자에게 표시할 주의사항을 입력해 주세요.",
+    "placeholder": "주의사항을 Markdown으로 입력해 주세요."
+  },
+  "markdownControls": {
+    "modeInline": "직접 입력",
+    "modeExternal": "외부 MD 링크"
+  },
+  "relations": {
+    "title": "관련 패키지",
+    "description": "모두 선택 사항입니다. 여러 개가 있으면 쉼표로 구분해 주세요.",
+    "requires": "필수 의존 패키지",
+    "recommends": "추천 패키지",
+    "conflicts": "충돌 패키지",
+    "similar": "유사 패키지",
+    "replaces": "대체 대상 패키지",
+    "forkOf": "fork 원본 패키지",
+    "placeholder": "패키지 ID (쉼표로 구분)",
+    "forkOfPlaceholder": "패키지 ID"
+  },
+  "license": {
+    "title": "라이선스",
+    "typeAria": "라이선스 유형 선택",
+    "selectPlaceholder": "하나 선택",
+    "name": "라이선스 이름",
+    "namePlaceholder": "라이선스 이름 입력",
+    "nameHint": "커스텀 라이선스인 경우 \"Custom License\" 를 입력해 주세요.",
+    "useTemplate": "템플릿 사용",
+    "body": "라이선스 본문",
+    "bodyPlaceholder": "라이선스 본문 입력",
+    "templateHint": "템플릿을 사용 중입니다. 저작권 연도와 권리자를 입력해 주세요.",
+    "copyrightYears": "저작권 연도",
+    "copyrightYearsPlaceholder": "(예: 2025)",
+    "copyrightHolder": "저작권자",
+    "copyrightHolderPlaceholder": "(예: KEN-kun)",
+    "copy": "라이선스 텍스트 복사",
+    "copyTitle": "클립보드에 복사",
+    "copySuccess": "복사됨",
+    "copyError": "복사 실패",
+    "previewHint": "유형과 권리자를 입력하면 미리보기가 표시됩니다.",
+    "typeOptions": {
+      "other": "기타",
+      "unknown": "알 수 없음"
+    }
+  },
+  "images": {
+    "title": "이미지",
+    "thumbnailTitle": "썸네일",
+    "thumbnailDescription": "패키지 목록에 표시됨 (1장)",
+    "thumbnailHint": "권장: 1:1 비율 (약 206×206px)\n목록 가독성을 위해 가능하면 추가해 주세요.",
+    "selectThumbnail": "썸네일 이미지 선택",
+    "selectImage": "이미지 선택",
+    "dropToAdd": "여기에 드롭하여 추가",
+    "thumbnailPreviewEmpty": "미리보기 없음",
+    "unset": "설정 안 됨",
+    "removeThumbnail": "썸네일 제거",
+    "thumbnailEmpty": "썸네일이 설정되지 않았습니다",
+    "dragAndDrop": "이미지를 드래그 앤 드롭",
+    "infoTitle": "설명 이미지",
+    "infoDescription": "패키지 상세 페이지에 표시됨 (여러 장 가능)",
+    "infoHint": "권장 비율: 16:9",
+    "selectInfo": "설명 이미지 선택",
+    "addImages": "이미지 추가",
+    "infoEmpty": "설명 이미지가 설정되지 않았습니다",
+    "removeImage": "제거",
+    "defaultInfoFilename": "./image/{{packageId}}_{{index}}.(ext)"
+  }
+}

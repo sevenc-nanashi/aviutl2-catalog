@@ -1,0 +1,66 @@
+{
+  "page": {
+    "title": "連結",
+    "description": "存取相關網站與支援資源"
+  },
+  "sections": {
+    "official": {
+      "title": "AviUtl2",
+      "description": "AviUtl2 官方網站與相關資料"
+    },
+    "community": {
+      "title": "社群",
+      "description": "AviUtl2 社群連結"
+    },
+    "support": {
+      "title": "支援",
+      "description": "AviUtl2 目錄的支援連結"
+    },
+    "developers": {
+      "title": "開發者",
+      "description": "面向在 AviUtl2 目錄發佈套件的開發者資源"
+    },
+    "catalog": {
+      "title": "GitHub 儲存庫",
+      "description": "與 AviUtl2 目錄相關的 GitHub 儲存庫"
+    }
+  },
+  "entries": {
+    "official-site": {
+      "title": "官方網站",
+      "description": "AviUtl2 官方網站"
+    },
+    "official-changelog": {
+      "title": "更新日誌（Nanashi.）",
+      "description": "用來查看 AviUtl2 發佈歷史的非官方網站"
+    },
+    "community-discord": {
+      "title": "Discord",
+      "description": "用於討論與提問 AviUtl2 的非官方 Discord 社群"
+    },
+    "support-feedback": {
+      "title": "回饋",
+      "description": "提交錯誤回報、功能請求與詢問的表單"
+    },
+    "support-register": {
+      "title": "套件登錄",
+      "description": "用來新增新套件或更新既有條目的表單"
+    },
+    "developers-register-guide": {
+      "title": "如何發佈套件",
+      "description": "說明如何發佈套件的指南"
+    },
+    "developers-update-status": {
+      "title": "自動更新支援狀態",
+      "description": "整理已列出套件的自動更新支援情況的文件"
+    },
+    "catalog-github-app": {
+      "title": "AviUtl2 目錄儲存庫",
+      "description": "AviUtl2 目錄應用的 GitHub 儲存庫"
+    },
+    "catalog-github-data": {
+      "title": "目錄資料儲存庫",
+      "description": "套件清單資料的 GitHub 儲存庫"
+    }
+  }
+}

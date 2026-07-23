@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 import type { UpdatesHeaderSectionProps } from '../types';
 import { page, text } from '@/components/ui/_styles';
@@ -9,11 +10,13 @@ export default function UpdatesHeaderSection({
   updatableCount,
   onBulkUpdate,
 }: UpdatesHeaderSectionProps) {
+  const { t } = useTranslation('updates');
+
   return (
     <div className={page.headerRow}>
       <div>
-        <h2 className={cn(text.titleXl, 'mb-1')}>アップデートセンター</h2>
-        <p className={text.mutedSm}>更新可能なパッケージを確認します</p>
+        <h2 className={cn(text.titleXl, 'mb-1')}>{t('page.title')}</h2>
+        <p className={text.mutedSm}>{t('page.description')}</p>
       </div>
       <Button
         variant="primary"
@@ -22,7 +25,7 @@ export default function UpdatesHeaderSection({
         onClick={onBulkUpdate}
         disabled={bulkUpdating || hasAnyItemUpdating || updatableCount === 0}
       >
-        すべて更新
+        {t('page.updateAll')}
       </Button>
     </div>
   );

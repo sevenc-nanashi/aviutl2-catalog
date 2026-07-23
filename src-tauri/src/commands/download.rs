@@ -273,7 +273,7 @@ pub async fn ensure_booth_auth_window(app: tauri::AppHandle) -> Result<(), Strin
         }
         let app_for_event = app_handle.clone();
         let mut builder = WebviewWindowBuilder::new(&app_handle, "booth-auth", WebviewUrl::External(login_url))
-            .title("BOOTH ログイン")
+            .title(crate::paths::common_message_current("backend.windowTitles.boothLogin"))
             .inner_size(900.0, 720.0)
             .resizable(true)
             .visible(false)

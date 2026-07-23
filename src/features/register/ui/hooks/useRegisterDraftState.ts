@@ -10,8 +10,8 @@ import {
   type RegisterDraftTestKind,
 } from '../../model/draft';
 import { computeRegisterRelevantHash } from '../../model/registerTestRequirement';
-import type { CatalogEntry } from '@/utils/catalogSchema';
-import type { RegisterPackageForm } from '../../model/types';
+import type { RegisterCatalogItem, RegisterPackageForm } from '../../model/types';
+import type { RegisterMarkdownTab } from '../types';
 import useRegisterDraftPersistence from './useRegisterDraftPersistence';
 import useRegisterDraftRestore from './useRegisterDraftRestore';
 
@@ -21,15 +21,15 @@ interface UseRegisterDraftStateArgs {
   currentTags: string[];
   userEditToken: number;
   selectedPackageId: string;
-  catalogItems: CatalogEntry[];
+  catalogItems: RegisterCatalogItem[];
   setSelectedPackageId: React.Dispatch<React.SetStateAction<string>>;
-  getCatalogPackageById: (packageId: string) => CatalogEntry | null;
-  onSelectCatalogPackage: (item: CatalogEntry | null) => void;
+  getCatalogPackageById: (packageId: string) => RegisterCatalogItem | null;
+  onSelectCatalogPackage: (item: RegisterCatalogItem | null) => void;
   onStartCatalogNewPackage: () => void;
   applyTagList: (list: string[]) => void;
   setPackageForm: React.Dispatch<React.SetStateAction<RegisterPackageForm>>;
   setPackageSender: React.Dispatch<React.SetStateAction<string>>;
-  setDescriptionTab: React.Dispatch<React.SetStateAction<string>>;
+  setDescriptionTab: React.Dispatch<React.SetStateAction<RegisterMarkdownTab>>;
   setExpandedVersionKeys: React.Dispatch<React.SetStateAction<Set<string>>>;
   setError: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -98,7 +98,7 @@ export default function useRegisterDraftState({
   });
 
   const handleSelectPackage = useCallback(
-    (item: CatalogEntry | null) => {
+    (item: RegisterCatalogItem | null) => {
       if (!flushBeforeNavigation()) return;
       suspendNextAutoSave();
       onSelectCatalogPackage(item);

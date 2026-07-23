@@ -8,6 +8,12 @@ interface TitleBarControlsProps {
   onToggleMaximize: () => Promise<void>;
   onClose: () => Promise<void>;
   noDragStyle: CSSProperties;
+  labels: {
+    minimize: string;
+    maximize: string;
+    restore: string;
+    close: string;
+  };
 }
 
 export default function TitleBarControls({
@@ -16,6 +22,7 @@ export default function TitleBarControls({
   onToggleMaximize,
   onClose,
   noDragStyle,
+  labels,
 }: TitleBarControlsProps) {
   const baseBtn = 'h-8 w-12 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors';
   const controlBtn = 'hover:bg-slate-200 dark:hover:bg-slate-800 active:bg-slate-300 dark:active:bg-slate-700';
@@ -25,8 +32,8 @@ export default function TitleBarControls({
       <button
         className={cn(baseBtn, controlBtn)}
         onClick={() => void onMinimize()}
-        title="最小化"
-        aria-label="最小化"
+        title={labels.minimize}
+        aria-label={labels.minimize}
         type="button"
         style={noDragStyle}
       >
@@ -36,8 +43,8 @@ export default function TitleBarControls({
         className={cn(baseBtn, controlBtn)}
         onClick={() => void onToggleMaximize()}
         onDoubleClick={() => void onToggleMaximize()}
-        title={max ? '元に戻す' : '最大化'}
-        aria-label="最大化"
+        title={max ? labels.restore : labels.maximize}
+        aria-label={max ? labels.restore : labels.maximize}
         type="button"
         style={noDragStyle}
       >
@@ -46,8 +53,8 @@ export default function TitleBarControls({
       <button
         className={cn(baseBtn, 'hover:bg-red-600 hover:text-white active:bg-red-700')}
         onClick={() => void onClose()}
-        title="閉じる"
-        aria-label="閉じる"
+        title={labels.close}
+        aria-label={labels.close}
         type="button"
         style={noDragStyle}
       >

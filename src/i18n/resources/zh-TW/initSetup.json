@@ -1,0 +1,79 @@
+{
+  "intro": {
+    "title": "AviUtl2 目錄",
+    "description": "為首次使用設定 AviUtl2 目錄",
+    "start": "開始設定"
+  },
+  "steps": {
+    "intro": "開始",
+    "installStatus": "安裝狀態",
+    "detailsExisting": "確認設定",
+    "detailsInstall": "安裝",
+    "packages": "推薦套件"
+  },
+  "installStatus": {
+    "title": "安裝狀態",
+    "description": "請選擇符合目前 AviUtl2 環境的選項",
+    "installedTitle": "已安裝",
+    "installedDescription": "如果 AviUtl2 已經安裝，請選擇此項",
+    "freshTitle": "全新安裝",
+    "freshDescription": "如果 AviUtl2 尚未安裝，請選擇此項。\n系統會自動下載並安裝最新版本。"
+  },
+  "details": {
+    "portableMode": "可攜模式",
+    "standard": "標準（推薦）",
+    "portable": "可攜",
+    "standardDescription": "將外掛與腳本安裝到 ProgramData。",
+    "portableDescription": "將外掛與腳本安裝到 aviutl2.exe 旁邊的 data 資料夾。",
+    "existing": {
+      "title": "選擇資料夾",
+      "description": "請選擇已安裝 AviUtl2 的資料夾",
+      "label": "AviUtl2 資料夾路徑",
+      "hint": "請選擇包含 aviutl2.exe 的資料夾"
+    },
+    "install": {
+      "title": "選擇安裝位置",
+      "description": "請選擇要安裝 AviUtl2 的資料夾",
+      "label": "安裝資料夾",
+      "next": "安裝並繼續",
+      "installing": "安裝中...",
+      "progressAria": "安裝進度"
+    }
+  },
+  "packages": {
+    "title": "推薦套件",
+    "allInstalled": "所有推薦套件都已安裝",
+    "description": "安裝標準使用所需的核心外掛",
+    "loading": "正在載入套件資訊...",
+    "missingSummary": "載入詳細資訊失敗",
+    "progressAria": "{{name}} 的進度",
+    "installed": "已安裝",
+    "notInstalled": "未安裝",
+    "skip": "不安裝並繼續",
+    "installAndNext": "全部安裝並繼續"
+  },
+  "done": {
+    "title": "設定完成",
+    "description": "所有設定都已準備就緒",
+    "openApp": "開啟 AviUtl2 目錄"
+  },
+  "errors": {
+    "aviutlRootRequired": "請輸入 AviUtl2 資料夾。",
+    "saveFailed": "儲存設定失敗。",
+    "installDirRequired": "請輸入安裝資料夾。",
+    "setupFailed": "設定失敗。",
+    "installFailed": "安裝失敗。",
+    "bulkInstallPartialFailed": "部分安裝失敗。",
+    "generic": "發生錯誤。",
+    "packageInfoPartialFailed": "無法載入部分套件資訊：{{ids}}",
+    "requiredPackagesLoadFailed": "無法載入必要套件資訊。",
+    "packageInfoMissing": "找不到套件資訊：{{id}}",
+    "networkRequired": "請連接到網際網路。",
+    "packageInfoUnavailable": "無法取得套件資訊。",
+    "packageNotInstallable": "此套件無法安裝。",
+    "pickInstallDir": "選擇安裝資料夾",
+    "pickExistingDir": "選擇 AviUtl2 資料夾",
+    "pickDirFailed": "選擇資料夾失敗。",
+    "finalizeFailed": "無法完成初始設定。"
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "appName": "AviUtl2 카탈로그",
+  "router": {
+    "loading": "로딩 중...",
+    "notFoundTitle": "페이지를 찾을 수 없습니다",
+    "notFoundDescription": "요청한 페이지가 없거나 이동되었습니다.",
+    "goHome": "패키지 목록으로 돌아가기"
+  },
+  "actions": {
+    "close": "닫기",
+    "back": "뒤로",
+    "next": "다음",
+    "browse": "찾아보기",
+    "submit": "보내기",
+    "preview": "미리보기",
+    "openPublicPage": "공개 페이지 열기"
+  },
+  "labels": {
+    "id": "ID",
+    "type": "유형",
+    "author": "작성자",
+    "tags": "태그",
+    "licenses": "라이선스",
+    "summary": "요약",
+    "description": "상세 설명",
+    "niconiCommonsId": "Niconi Commons ID",
+    "noMatches": "일치 없음",
+    "senderNickname": "보내는 사람 닉네임",
+    "targetPath": "대상 경로"
+  },
+  "progress": {
+    "percent": "진행률 {{percent}}%"
+  },
+  "status": {
+    "preparing": "준비 중...",
+    "processing": "처리 중...",
+    "done": "완료",
+    "error": "오류가 발생했습니다"
+  },
+  "installerActions": {
+    "download": "다운로드 중",
+    "extract": "압축 해제 중",
+    "copy": "복사 중",
+    "delete": "삭제 중",
+    "run": "실행 중"
+  },
+  "packageTypes": {
+    "core": "본체",
+    "mod": "MOD",
+    "inputPlugin": "입력 플러그인",
+    "outputPlugin": "출력 플러그인",
+    "generalPlugin": "일반 플러그인",
+    "filterPlugin": "필터 플러그인",
+    "script": "스크립트",
+    "other": "기타"
+  },
+  "errors": {
+    "unknown": "알 수 없는 오류",
+    "submitFailed": "전송에 실패했습니다. 네트워크와 설정을 확인해 주세요.",
+    "submitEndpointRequired": "VITE_SUBMIT_ENDPOINT가 설정되어 있지 않습니다.",
+    "submitEndpointHttps": "VITE_SUBMIT_ENDPOINT는 https://로 시작해야 합니다.",
+    "downloadSourceMissing": "다운로드 소스가 지정되지 않았습니다.",
+    "installerSourceInvalid": "installer.source 형식이 올바르지 않습니다.",
+    "installerInstallStepInvalid": "installer.installSteps[{{index}}] 형식이 올바르지 않습니다.",
+    "installerUninstallStepInvalid": "installer.uninstallSteps[{{index}}] 형식이 올바르지 않습니다."
+  },
+  "submit": {
+    "successDefault": "전송이 완료되었습니다.",
+    "completeTitle": "전송 완료"
+  },
+  "process": {
+    "checkFailed": "AviUtl2 실행 여부를 확인하지 못했습니다: {{detail}}",
+    "running": "AviUtl2가 실행 중입니다.\n패키지를 설치하거나 제거하기 전에 앱을 종료해 주세요."
+  },
+  "github": {
+    "rateLimit": "GitHub API 기본 rate limit에 도달했습니다. {{resetAt}} 이후에 다시 시도해 주세요."
+  },
+  "markdownAlerts": {
+    "note": "참고",
+    "tip": "팁",
+    "important": "중요",
+    "warning": "경고",
+    "caution": "주의"
+  },
+  "errorDialog": {
+    "eyebrow": "오류",
+    "defaultTitle": "오류가 발생했습니다",
+    "copy": "오류 메시지 복사",
+    "copied": "복사됨",
+    "closeAria": "오류 대화상자 닫기"
+  },
+  "updateDialog": {
+    "eyebrow": "업데이트",
+    "title": "새 버전을 사용할 수 있습니다",
+    "publishedOn": "게시일 {{date}}",
+    "notesUnavailable": "릴리스 노트를 가져오지 못했습니다.",
+    "later": "나중에",
+    "updating": "업데이트 중...",
+    "updateNow": "지금 업데이트",
+    "appliedMessage": "업데이트가 적용되었습니다. 앱을 다시 시작해 주세요.",
+    "failed": "업데이트에 실패했습니다. 네트워크와 권한을 확인해 주세요."
+  },
+  "windowControls": {
+    "minimize": "최소화",
+    "maximize": "최대화",
+    "restore": "복원"
+  },
+  "backend": {
+    "windowTitles": {
+      "setup": "설정",
+      "main": "AviUtl2 카탈로그",
+      "boothLogin": "BOOTH 로그인"
+    },
+    "errors": {
+      "aviutlFolderRequired": "AviUtl2 폴더를 선택해 주세요.",
+      "packageIdEmpty": "패키지 ID가 비어 있습니다.",
+      "aviutlExeNotFound": "aviutl2.exe를 찾을 수 없습니다: {{path}}",
+      "launchAviutlFailed": "AviUtl2를 시작하지 못했습니다: {{detail}}",
+      "exedit2NotInstalled": "Kenkun.AviUtlExEdit2가 설치되어 있지 않습니다. 설치한 뒤 다시 실행해 주세요.",
+      "aviutlRootNotConfigured": "settings.json에 AviUtl2 루트 폴더가 설정되어 있지 않습니다."
+    }
+  }
+}
